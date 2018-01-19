@@ -33,13 +33,13 @@ BIN=$(patsubst %,$(BINDIR)/%,$(_EXEC))
 all: $(BIN)
 
 $(OBJDIR)/%.o : $(OBJDIR)/%.cc
-	$(CXX) -c -o $@ $< $(CXXFLAGS) $(INC) $(FASTINC) -lboost_system -lboost_filesystem -lboost_regex
+	$(CXX) -c -o $@ $< $(CXXFLAGS) $(INC) $(FASTINC) 
 
 $(EXECDIR)/%.o : $(EXECDIR)/%.cc
-	$(CXX) -c -o $@ $< $(CXXFLAGS) $(INC) $(FASTINC) -lboost_system -lboost_filesystem -lboost_regex
+	$(CXX) -c -o $@ $< $(CXXFLAGS) $(INC) $(FASTINC)
 	
 $(BINDIR)/% : $(EXECDIR)/%.o $(OBJ)
-	$(CXX) $< $(OBJ) -o $@ $(CXXFLAGS) $(FASTLIB) -lboost_system -lboost_filesystem -lboost_regex
+	$(CXX) $< $(OBJ) -o $@ $(CXXFLAGS) $(FASTLIB)
 
 .PHONY: clean
 .PRECIOUS: $(OBJ) $(EXEC)
