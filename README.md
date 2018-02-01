@@ -72,7 +72,7 @@ This repository is concerned with steps (4) to (6) only. Steps (1) to (3) are ca
     
      ```
      
-   If you would like to perform plotting for PFCs, run the Python script `python/pfc_parse.py` and then run `python/plots.py` with the same arguments as before. Make sure to uncomment the lines in plots.py producing the parsed_pfc_hists if you would like to plot the PFC observables. Furthermore, to generate plots for additional variables, you can modify or add in create_multi_page_plot commands to `python/plots.py`. See `python/plots.py` for examples of linear, log, and PFC plot outputs. 
+   If you would like to perform plotting for PFCs, run the Python script `python/pfc_parse.py` and then run `python/plots.py` with the same arguments as before. Make sure to uncomment the lines in plots.py producing the parsed_pfc_hists if you would like to plot the PFC observables. Furthermore, to generate plots for additional variables, you can modify or add in create_multi_page_plot commands to `python/plots.py`. See `python/plots.py` for examples of linear, log, and PFC plot outputs. Plots currently get output into the plots/version 1 subdirectory. Change the default_dir in `python/plots.py` if you would like to modify this, making sure the directory exists. 
 
 ## TODO
 - [ ] Fix plot formatting.
