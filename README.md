@@ -37,32 +37,42 @@ This repository is concerned with steps (4) to (6) only. Steps (1) to (3) are ca
  - First, we run the skimmer to filter those N MOD files you produced to get only those files for which the correct trigger fired. This is accomplished by the Python script `utilities/skim.py`. This script takes two arguments- a path to the directory that contains all the MOD files and another path to the directory where you'd like to store the skimmed files.
    
    ```
-   python ./utilities/skim.py /home/aashish/opendata/MIT_CMS/eos/opendata/cms/Run2010B/Jet/MOD/Apr21ReReco-v1/0000/ /home/aashish/opendata/MIT_CMS/eos/opendata/cms/Run2010B/Jet/SKIM/Apr21ReReco-v1/0000/
+   python ./utilities/skim.py /home/opendata/eos/opendata/cms/Run2010B/Jet/MOD/Apr21ReReco-v1/0000/ /home/opendata/eos/opendata/cms/Run2010B/Jet/SKIM/Apr21ReReco-v1/0000/
    ```
  
     This step maintains the same directory structure as the input directory except MOD replaced with SKIM. That's why you do not need to enter an output directory. It will also output an error log in the same directory.
 
-
- - Next, we run the analyzer. We use the Python script `utilities/analyze.py` for data analysis. This script will run the executable `bin/analyze` M times for M "skimmed" MOD files. This script takes two arguments:
+ - Next, we run the analyzer. We use the Python script `utilities/analyze.py` for general data analysis.  This script will run the executable `bin/analyze` M times for M "skimmed" MOD files. This script takes two arguments:
  
    1. path to the directory that holds the skimmed files.
    2. path to a filename to write the analyzed data into. 
 
      ```
-     python ./utilities/analyze.py /home/opendata/MIT_CMS/eos/opendata/cms/Run2010B/Jet/SKIM/Apr21ReReco-v1/0000/ /home/Documents/analyzed_data.dat
+     python ./utilities/analyze.py /home/opendata/eos/opendata/cms/Run2010B/Jet/SKIM/Apr21ReReco-v1/0000/ /home/Documents/analyzed_data.dat
+    
+     ```
+     If you would like to analyze particle flow candidates, use the script `utilities/analyze_pfc.py` with the same two  arguments. 
+     
+     
+ - Finally, we are ready to produce plots. Note that the plotting framework makes use of [matplotlib](http://matplotlib.org/ "matplotlib") and [rootpy](http://rootpy.org/ "rootpy") so please make sure these are installed. 
+ 
+    To run the plotting, first run the Python script `python/parse.py`. This will produce a data.root and data_log.root files with the histogram templates. This script takes two arguments:
+ 
+   1. path to the directory to hold the data.root and data_log.root.
+   2. path to a filename to read the analyzed_data from. 
+
+     ```
+     python ./python/parse.py /home/Documents/cms-opendata-plots/ /home/Documents/analyzed_data.dat
+    
+     ```
+   Next, to produce the actual plots, run the script `python/plots.py` using the same arguments as for `python/parse.py`. 
+   
+     ```
+     python ./python/parse.py /home/Documents/cms-opendata-plots/ /home/Documents/analyzed_data.dat
+    
      ```
      
- - Finally, were are ready to produce plots using the Python script `python/plots.py`. Note that the plotting framework makes use of [matplotlib](http://matplotlib.org/ "matplotlib") and [rootpy](http://rootpy.org/ "rootpy"). 
- 
-The framework is adaptable for producing many different types of plots but requires a bit of user manipulation. Here, we highlight the most important steps of the framework as well as changes you may need to make for error-free execution. 
-
-You will need to start by deciding the properties(e.g. hardest_pT, hardest_eta, etc) for which you want to create plots. You have two possible functions for creating a plot, the simplest of which is 'create_multi_page_plot'. You will need to add this in 'plots.py' with your desired filename, the property to plot, and the correct histograms to use. See the existing 'plots.py' for samples. You can also change the default_dir to change where your plots get output. 
-
-The plot construction is found in the MODPlot class. Be sure to change the MOD logo_location in this file if you want to use the existing logo. Furthermore, any aesthetic changes for the plots can be made in MODPlot. 
-
-Next, 'parse.py'(and analogously, 'pfc_parse.py') is used to actually parse our data file. Be sure to specify the correct path to your data file here and an output directory for where the intermediary root files are created to save memory. 'parse.py' actually reads in the data file line by line and fills in the non-empty histogram templates with the appropriate values. 
-
-Finally, 'hists.py' is where the histogram templates are created. You must create a template for any property that you want to plot -- otherwise, you will end up with an empty pdf. You can specify in the template functions in 'hists.py' (e.g.  multi_page_log_plot_hist_templates() and multi_page_log_plot_hist_templates() for 'parse.py') how you would like the formatting to be. See the available file in the github repository for an example(e.g. under the log templates function, a template for frac_pT_loss has been added). 
+   If you would like to perform plotting for PFCs, run the Python script `python/pfc_parse.py` and then run `python/plots.py` with the same arguments as before. Make sure to uncomment the lines in plots.py producing the parsed_pfc_hists if you would like to plot the PFC observables. Furthermore, to generate plots for additional variables, you can modify or add in create_multi_page_plot commands to `python/plots.py`. See `python/plots.py` for examples of linear, log, and PFC plot outputs. 
 
 ## TODO
 - [ ] Fix plot formatting.
