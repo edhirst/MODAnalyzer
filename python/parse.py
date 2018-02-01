@@ -18,9 +18,9 @@ import matplotlib.pyplot as plt
 import rootpy.plotting.root2matplotlib as rplt
 
 
-output_directory = "/home/preksha/Documents/mengproject/"
+output_directory = sys.argv[1]
 
-data_file = "/home/preksha/Documents/mengproject/analyzed_data.dat"
+data_file = sys.argv[2]
 
 average_prescales = {}
 
@@ -63,6 +63,9 @@ def parse_file(input_file, output_filename, all_hists, log_hists):
 
             line_number += 1
 
+            if int(line_number) % 10000 == 0:
+                print(line_number)
+
             if line_number % 100000 == 0:
                 print "At line number {} with parse count = {}".format(line_number, parse_count)
                 # print "Largest pT so far is", largest_pT
@@ -81,7 +84,7 @@ def parse_file(input_file, output_filename, all_hists, log_hists):
                     for keyword_index, keyword in enumerate(keywords):
                         keywords_index_dictionary[keyword] = keyword_index
 
-                    # print keywords_index_dictionary['hardest_pT']
+                    #print keywords_index_dictionary['hardest_pT']
 
                     prescale_index = keywords.index("prescale")
 
@@ -154,8 +157,9 @@ def parse_file(input_file, output_filename, all_hists, log_hists):
                                 #print(hist)
 
             except Exception as e:
-                print "Some exception occured!",
-                print e
+                pass
+                #print "Some exception occured!",
+                #print e.message
 
             end = time.time()
 
@@ -331,20 +335,8 @@ def parse_to_root_file(input_filename, output_filename, hist_templates):
 
     # First, get the already histogrammed hists.
 
-    if os.path.exists(output_filename[0]) and os.path.exists(output_filename[1]):
-
-        if "pythia" in input_filename or "herwig" in input_filename or "sherpa" in input_filename:
-            is_this_data = False
-        else:
-            is_this_data = True
-
-        hists = root_file_to_hist(
-            output_filename[0], hist_templates[0], is_this_data)
-        log_hists = root_file_to_hist(
-            output_filename[1], hist_templates[1], is_this_data)
-    else:
-        hists, log_hists = copy.deepcopy(
-            hist_templates[0]), copy.deepcopy(hist_templates[1])
+    hists, log_hists = copy.deepcopy(
+        hist_templates[0]), copy.deepcopy(hist_templates[1])
 
     start = time.time()
 
@@ -403,7 +395,6 @@ def root_file_to_hist(input_filename, hist_templates, is_this_data):
 def parse_to_root_files():
     hist_templates = hists.multi_page_plot_hist_templates()
 
-    print(hist_templates)
     log_hist_templates = hists.multi_page_log_plot_hist_templates()
 
     parse_to_root_file(input_filename=data_file, output_filename=(output_directory + "data.root",
@@ -414,11 +405,11 @@ def load_root_files_to_hist(log=False):
 
     if not log:
         hist_templates = hists.multi_page_plot_hist_templates()
-        filenames = ["data.root", "data.root", "data.root", "data.root"]
+        filenames = ["data.root"]
     else:
         hist_templates = hists.multi_page_log_plot_hist_templates()
-        filenames = ["data_log.root", "data_log.root",
-                     "data_log.root", "data_log.root"]
+        print(hist_templates)
+        filenames = ["data_log.root"]
 
     return [root_file_to_hist(output_directory + filename, hist_templates, is_this_data) for filename, is_this_data in zip(filenames, [True, False, False, False])]
 

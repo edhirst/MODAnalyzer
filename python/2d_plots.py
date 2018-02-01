@@ -82,10 +82,10 @@ mpl.rcParams['text.latex.preamble'] = [r'\boldmath']
 plt.rc('font', family='serif', size=43)
 
 
-default_dir = "plots/Version 6/"
+default_dir = "plots/Version 1/"
 
 
-logo_location = "/home/aashish/root/macros/MODAnalyzer/mod_logo.png"
+logo_location = "/home/preksha/Documents/mengproject/MODAnalyzer/mod_logo.png"
 logo_text = ""
 
 
@@ -104,10 +104,10 @@ def normalize_hist(hist):
 
 def two_dim_plots(track=False):
 
-    colors = ['Greys', 'Blues', 'Greens', 'purple']
-    hatch_colors = ['gray', 'blue', 'green', 'purple']
-    sources = ['data', 'pythia', 'herwig', 'sherpa']
-    source_labels = ["CMS 2010 Open Data", "Pythia 8.219", "Herwig 7.0.3", "Sherpa 2.2.1"]
+    colors = ['Greys']
+    hatch_colors = ['gray']
+    sources = ['data']
+    source_labels = ["CMS 2010 Open Data"]
 
     if track:
         sources = [sources[0]]
@@ -130,6 +130,8 @@ def two_dim_plots(track=False):
 
     a = 0
     for a in range(len(sources)):
+
+        print(a)
         color, source, source_label, hatch_color = colors[a], sources[a], source_labels[a], hatch_colors[a]
 
         if track:
@@ -137,7 +139,9 @@ def two_dim_plots(track=False):
         else:
             filename = "big5_zg_vs_rg_" + source + "_linear.pdf"
 
-        with PdfPages("plots/Version 5/zg_against_theta_g/" + filename) as pdf:
+        print(filename)
+
+        with PdfPages("plots/Version 1/" + filename) as pdf:
 
             if track:
                 var = ('track_zg_10', 'track_rg_10')
@@ -236,7 +240,7 @@ def two_dim_plots(track=False):
                 plt.ylim(0.0, 1.0)
 
                 logo_offset_image = OffsetImage(read_png(get_sample_data(
-                    "/home/aashish/root/macros/MODAnalyzer/mod_logo.png", asfileobj=False)), zoom=0.25, resample=1, dpi_cor=1)
+                    logo_location, asfileobj=False)), zoom=0.25, resample=1, dpi_cor=1)
                 text_box = TextArea(logo_text, textprops=dict(color='#444444', fontsize=50, weight='bold'))
                 logo_and_text_box = HPacker(children=[logo_offset_image, text_box], align="center", pad=0, sep=25)
 
@@ -262,10 +266,10 @@ def two_dim_plots(track=False):
 
 def two_dim_log_plots(track=False):
 
-    colors = ['Greys', 'Blues', 'Greens', 'purple']
-    hatch_colors = ['gray', 'blue', 'green', 'purple']
-    sources = ['data', 'pythia', 'herwig', 'sherpa']
-    source_labels = ["CMS 2010 Open Data", "Pythia 8.219", "Herwig 7.0.3", "Sherpa 2.2.1"]
+    colors = ['Greys']
+    hatch_colors = ['gray']
+    sources = ['data']
+    source_labels = ["CMS 2010 Open Data"]
 
     if track:
         sources = [sources[0]]
@@ -289,7 +293,7 @@ def two_dim_log_plots(track=False):
         else:
             filename = "big5_zg_vs_rg_" + source + "_log.pdf"
 
-        with PdfPages("plots/Version 5/zg_against_theta_g/" + filename) as pdf:
+        with PdfPages("plots/Version 1/" + filename) as pdf:
 
             if track:
                 var = ('track_zg_10', 'track_rg_10')
@@ -447,11 +451,11 @@ def two_dim_log_plots(track=False):
 start = time.time()
 
 
-# two_dim_plots(track=False)
+two_dim_plots(track=False)
 # two_dim_plots(track=True)
 
-two_dim_log_plots(track=False)
-two_dim_log_plots(track=True)
+# two_dim_log_plots(track=False)
+# two_dim_log_plots(track=True)
 
 end = time.time()
 

@@ -66,9 +66,10 @@ from scipy import arange, array, exp
 from scipy.stats import binned_statistic
 
 import rootpy.plotting.views
+import os 
 
-
-logo_location = "/home/preksha/Documents/mengproject/MODAnalyzer/mod_logo.png"
+dir_path = os.path.join( os.path.dirname( __file__ ), '..' )
+logo_location = dir_path +"/mod_logo.png"
 # logo_text = "v1.3"
 logo_text = ""
 
@@ -1167,7 +1168,7 @@ def create_multi_page_plot(filename, hists, theory=False, x_scale='linear', text
                 # ratio_to_index = 0
                 ratio_to_label = "Ratio to\nPythia" 
 
-                plot = MODPlot(mod_hists, plot_types=types, plot_colors=colors, plot_labels=labels, line_styles=line_styles, x_scale=mod_hists[-1].x_scale(), y_scale=mod_hists[-1].y_scale(), ratio_plot=True, ratio_to_index=ratio_to_index, ratio_label=ratio_to_label, mark_regions=mod_hists[-1].mark_regions(), x_label=mod_hists[-1].x_label(), legend_location=mod_hists[-1].legend_location(), y_label=mod_hists[-1].y_label(), x_lims=mod_hists[-1].x_range(), y_lims=mod_hists[-1].y_range(), text_outside_the_frame=text_outside_the_frame)
+                plot = MODPlot(mod_hists, plot_types=types, plot_colors=colors, plot_labels=labels, line_styles=line_styles, x_scale=mod_hists[-1].x_scale(), y_scale=mod_hists[-1].y_scale(), ratio_plot=False, ratio_to_index=ratio_to_index, ratio_label=ratio_to_label, mark_regions=mod_hists[-1].mark_regions(), x_label=mod_hists[-1].x_label(), legend_location=mod_hists[-1].legend_location(), y_label=mod_hists[-1].y_label(), x_lims=mod_hists[-1].x_range(), y_lims=mod_hists[-1].y_range(), text_outside_the_frame=text_outside_the_frame)
                 plot.plot()
             
                 pdf.savefig()

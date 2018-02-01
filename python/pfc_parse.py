@@ -13,15 +13,11 @@ from rootpy.io import File as TFile
 
 
 import matplotlib.pyplot as plt
-#import rootpy.plotting.root2matplotlib as rplt
 
-output_directory = "/home/preksha/Documents/mengproject/"
+output_directory = sys.argv[1]
 
 
-pfc_data_file = "/home/preksha/Documents/mengproject/analyzed_data.dat"
-pfc_pythia_file = "/media/aashish/opendata_mod/Feb5/analyzed/pfc/jul13/pythia_pfc.dat"
-pfc_herwig_file = "/media/aashish/opendata_mod/Feb5/analyzed/pfc/jul13/herwig_pfc.dat"
-pfc_sherpa_file = "/media/aashish/opendata_mod/Feb5/analyzed/pfc/jul13/sherpa_pfc.dat"
+pfc_data_file = sys.argv[2]
 
 average_prescales = {}
 
@@ -55,21 +51,12 @@ def parse_file(input_file, output_filename, all_hists):
 
         for line in infile:
 
-            # if line_number > 10000:  # Ideal length.
-            # if line_number > 100000:	# Big enough.
-            # if line_number > 100:		# Small tests.
-            # if line_number > 30000:		# Small tests.
-            # if line_number > 1000000:		# Small tests.
-            # if line_number > 150000:		# Small tests.
-            # if line_number > 100000:		# Small tests.
-            # if line_number > 100000:		# Small tests.
-            if False:
-                break
-
             if len(line.strip()) == 0:
                 continue
 
             line_number += 1
+
+            print(line_number)
 
             if line_number % 1000000 == 0 and line_number > 1:
                 print "At line number {}".format(line_number)
@@ -107,12 +94,6 @@ def parse_file(input_file, output_filename, all_hists):
                                     for condition_keyword, condition_boundaries in conditions:
                                         keyword_index = keywords.index(
                                             condition_keyword) + 1
-
-                                        # print condition_boundaries[0],
-                                        # condition_boundaries[1],
-                                        # keyword_index
-
-                                        # print numbers[keyword_index]
 
                                         if len(condition_boundaries) <= 2:
                                             if condition_boundaries[0] == None and condition_boundaries[1] != None:
@@ -182,11 +163,6 @@ def parse_file(input_file, output_filename, all_hists):
                                         hist.fill_array(
                                             [x], [float(numbers[prescale_index])])
 
-                                    # if keyword == "hardest_area":
-                                        # print "Tada"
-                                        # print [type(x)],
-                                        # [float(numbers[prescale_index])]
-
             except Exception as e:
                 print "Some exception occured!",
                 print e
@@ -253,29 +229,18 @@ def parse_pfc_to_root_files(output_directory, pfc_data_file):
 
     parse_to_root_file(input_filename=pfc_data_file, output_filename=output_directory +
                         "data_pfc.root", hist_templates=hist_templates)
-    # parse_to_root_file(input_filename=pfc_pythia_file, output_filename=output_directory +
-    #                    "pythia_pfc.root", hist_templates=hist_templates)
-    # parse_to_root_file(input_filename=pfc_herwig_file,
-    # output_filename=output_directory +
-    # "herwig_pfc.root", hist_templates=hist_templates)
-    #parse_to_root_file(input_filename=pfc_sherpa_file, output_filename=output_directory +
-     #                  "sherpa_pfc.root", hist_templates=hist_templates)
 
 
 def load_pfc_root_files_to_hist():
     hist_templates = hists.get_pfc_hists()
 
-    filenames = ['data_pfc.root', 'pythia_pfc.root',
-                 'herwig_pfc.root', 'sherpa_pfc.root']
-    filenames = ['data_pfc.root', 'data_pfc.root', 'data_pfc.root', 'data_pfc.root']
-    # filenames = ['data_pfc.root', 'pythia_pfc.root', 'pythia_pfc.root',
-    # 'pythia_pfc.root']
+    filenames = ['data_pfc.root']
 
     return [root_file_to_hist(output_directory + filename, hist_templates) for filename in filenames]
 
 
 if __name__ == "__main__":
     # load_root_files_to_hist()
-    parse_pfc_to_root_files()
+    parse_pfc_to_root_files(output_directory, pfc_data_file)
     pass
 
