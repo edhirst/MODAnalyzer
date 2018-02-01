@@ -10,12 +10,18 @@
 #include <limits>
 #include <chrono>
 
-#include "fastjet/ClusterSequence.hh"
 #include "fastjet/contrib/SoftDrop.hh"
+#include "fastjet/contrib/JetsWithoutJets.hh"
+#include "fastjet/contrib/VariableRPlugin.hh"
 
+#include "fastjet/PseudoJet.hh"
 
 #include "../interface/Event.h"
 #include "../interface/Property.h"
+#include "fastjet/ClusterSequence.hh"
+#include "fastjet/JetDefinition.hh"
+#include "fastjet/tools/Filter.hh"
+
 
 using namespace std;
 using namespace fastjet;
@@ -99,12 +105,16 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
 
    Selector pT_1_GeV_selector = SelectorPtMin(1.0);
    Selector pT_0_5_GeV_selector = SelectorPtMin(0.5);
+   Selector pT_015_020_GeV_selector = SelectorPtRange(0.15, 0.2);
 
    
-   // cout << "Event number is " << event_being_read.event_number() << endl;
+   cout << "Event number is " << event_being_read.event_number() << endl;
 
    vector<PseudoJet> hardest_jet_constituents = pT_1_GeV_selector(event_being_read.hardest_jet().constituents());
+   vector<PseudoJet> filtered_hardest_jet_constituents = pT_015_020_GeV_selector(event_being_read.hardest_jet().constituents());
+
    // vector<PseudoJet> hardest_jet_constituents = event_being_read.hardest_jet().constituents();
+    
 
    ClusterSequence cs = ClusterSequence(hardest_jet_constituents, jet_def_cambridge);
    
@@ -130,8 +140,10 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
    // PseudoJet hardest_jet = uncorrected_hardest_jet_with_softkiller * jec;
    PseudoJet hardest_jet = uncorrected_hardest_jet_with_softkiller;
    
+    
+   double beta = 1.5;
 
-   SoftDrop soft_drop(0.0, 0.1);
+   SoftDrop soft_drop(beta, 0.1);
    PseudoJet soft_drop_jet = soft_drop(hardest_jet);
    
    vector<MOD::Property> properties;
@@ -141,6 +153,13 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
 
 
    properties.push_back(MOD::Property("prescale", event_being_read.weight()));
+    
+   
+   // multiplicity, jet_multiplicity
+   properties.push_back(MOD::Property("multiplicity", (int) event_being_read.particles().size()));
+    
+
+   properties.push_back(MOD::Property("events_being_read", event_being_read.weight()));
    properties.push_back(MOD::Property("hardest_pT", jec * event_being_read.hardest_jet().pt()));
    properties.push_back(MOD::Property("uncor_hardest_pT", uncorrected_hardest_jet_no_softkiller.pt()));
 
@@ -162,6 +181,7 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
 
 
    vector<pair<string, double>> zg_cuts { make_pair("05", 0.05), make_pair("10", 0.1), make_pair("20", 0.2) };
+    
 
    // zg, dr, and mu for zg_cuts of 0.05, 0.1 and 0.2.
 
@@ -170,7 +190,7 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
       string label = zg_cuts[i].first;
       double zg_cut = zg_cuts[i].second;
 
-      SoftDrop soft_drop(0.0, zg_cut);
+      SoftDrop soft_drop(beta, zg_cut);
    
       PseudoJet soft_drop_jet = soft_drop(hardest_jet);
 
@@ -185,6 +205,12 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
       properties.push_back(MOD::Property("e2_" + label, pow(rg, 2) * zg ));
       properties.push_back(MOD::Property("e05_" + label, sqrt(rg) * zg ));
    }
+    
+    
+    // H_T(summed scalar transverse momentum) test
+    
+    // ShapeJetMultiplicity Nj(jet_radius, 200.0);
+    //cout << "N_jet=" << Nj(hardest_jet_constituents) << endl;
 
     
 
@@ -193,7 +219,10 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
    properties.push_back(MOD::Property("pT_after_SD", soft_drop_jet.pt()));
 
    properties.push_back( MOD::Property("mul_pre_SD", (int) hardest_jet_constituents.size()) );
-   properties.push_back( MOD::Property("mul_post_SD", (int) soft_drop(hardest_jet).constituents().size() ) );   
+   properties.push_back( MOD::Property("mul_post_SD", (int) soft_drop(hardest_jet).constituents().size() ) );
+    
+   properties.push_back( MOD::Property("mul_filtered_SD", (int) filtered_hardest_jet_constituents.size()) );
+
 
    properties.push_back( MOD::Property("mass_pre_SD", hardest_jet.m()) );
    properties.push_back( MOD::Property("mass_post_SD", soft_drop(hardest_jet).m()) );
@@ -212,8 +241,11 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
    properties.push_back( MOD::Property("thrust_post_SD", angularity_lambda(soft_drop(hardest_jet), jet_radius, 1, 2)) );
 
 
-
-
+    
+    //----------------------------------------------------------
+    // illustrate how this SubjetCounting contrib works
+    
+    
 
    // ================================================================ Track Based Analysis ================================================================
 
@@ -234,7 +266,7 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
          string label = zg_cuts[i].first;
          double zg_cut = zg_cuts[i].second;
 
-         SoftDrop soft_drop_track(0.0, zg_cut);
+         SoftDrop soft_drop_track(beta, zg_cut);
          PseudoJet soft_drop_jet_track = soft_drop_track(hardest_track_jet);
 
          double zg = soft_drop_jet_track.structure_of<SoftDrop>().symmetry();
@@ -305,8 +337,6 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
 
    }
  
-   
-
    // Now that we've calculated all observables, write them out.
 
    string name;
