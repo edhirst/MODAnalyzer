@@ -47,14 +47,16 @@ default_dir = "plots/Version 1/"
 
 start = time.time()
 
-#parsed_pfc = pfc_parse.load_pfc_root_files_to_hist()
-#parsed_pfc_hists = compile_sources(parsed_pfc)
-
+# Make sure you have run ./python/parse.py first
 parsed_linear = parse.load_root_files_to_hist(log=False)
 parsed_hists = compile_sources(parsed_linear)
 
 parsed_log = parse.load_root_files_to_hist(log=True)
 parsed_log_hists = compile_sources(parsed_log)
+
+# Uncomment to load PFC hists. Make sure you have run ./python/pfc_parse.py first
+# parsed_pfc = pfc_parse.load_pfc_root_files_to_hist()
+# parsed_pfc_hists = compile_sources(parsed_pfc)
 
 
 
@@ -66,22 +68,34 @@ print "Finished parsing all files in {} seconds. Now plotting them!".format(end 
 
 start = time.time()
 
-create_multi_page_plot(filename=default_dir + "multiplicity_all_linear.pdf", hists=compile_hists('multiplicity', parsed_hists))
-create_multi_page_plot(filename=default_dir + "mul_pre_SD_all_linear.pdf", hists=compile_hists('mul_pre_SD', parsed_hists))
+# LINEAR PLOTS
+create_multi_page_plot(filename=default_dir + "multiplicity_all_linear.pdf", 
+                       hists=compile_hists('multiplicity', parsed_hists))
+create_multi_page_plot(filename=default_dir + "mul_pre_SD_all_linear.pdf", 
+                       hists=compile_hists('mul_pre_SD', parsed_hists))
 
-create_multi_page_plot(filename=default_dir + "basic_sub_pTD_track_log.pdf",
-                        hists=compile_hists('track_pT_D_pre_SD', parsed_log_hists,
-                                           x_scale='log'), x_scale='log')
 create_multi_page_plot(filename=default_dir + "hardest_jet_phi_all_linear.pdf",
                         hists=compile_hists('hardest_phi', parsed_hists))
 create_multi_page_plot(filename=default_dir + "hardest_jet_eta_all_linear.pdf",
                        hists=compile_hists('hardest_eta', parsed_hists))
 
+# LOGARITHMIC PLOTS
+create_multi_page_plot(filename=default_dir + "basic_sub_pTD_track_log.pdf",
+                        hists=compile_hists('track_pT_D_pre_SD', parsed_log_hists,
+                                           x_scale='log'), x_scale='log')
+create_multi_page_plot(filename=default_dir + "basic_sub_lha_all_log.pdf",
+                        hists=compile_hists('LHA_pre_SD', parsed_log_hists), x_scale='log')
+create_multi_page_plot(filename=default_dir + "basic_sub_lha_track_log.pdf",
+                       hists=compile_hists(
+                           'track_LHA_pre_SD', parsed_log_hists),
+                       x_scale='log')
 
-create_multi_page_plot(filename=default_dir + "basic_sub_mul_all_linear.pdf",
-                       hists=compile_hists('mul_pre_SD', parsed_hists))
-create_multi_page_plot(filename=default_dir + "basic_sub_mul_track_linear.pdf",
-                       hists=compile_hists('track_mul_pre_SD', parsed_hists))
+# PFC PLOTS
+# create_multi_page_plot(filename=default_dir + "pfc_pT.pdf", 
+#                        hists=compile_hists('pfc_pT', parsed_pfc_hists))
+# create_multi_page_plot(filename=default_dir + "pfc_eta.pdf",
+#                        hists=compile_hists('pfc_eta', parsed_pfc_hists))
+
 
 
 
