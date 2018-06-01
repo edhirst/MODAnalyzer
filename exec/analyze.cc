@@ -66,27 +66,169 @@ int main(int argc, char * argv[]) {
       cout << "ALL" << endl << endl;
    else
       cout << number_of_events_to_process << endl << endl;
+    
+    
+   unordered_map<int, pair <int, double>> lumi_block_lumi_info;
+    
+   ifstream lumi_data_file("/Users/prekshanaik/Documents/MEng_Project/11MODAnalyzer-master/2011lumibyls.csv");
+   vector <vector <string> > data;
+    
+   while (lumi_data_file)
+    {
+        string s;
+        if (!getline( lumi_data_file, s )) break;
+        
+        istringstream ss( s );
+        vector <string> record;
+        
+        while (ss)
+        {
+            string s;
+            if (!getline( ss, s, ',' )) break;
+            record.push_back( s );
+        }
+        
+        data.push_back( record );
+        
+    }
+
+    for (int i=0; i< data.size(); i++) {
+        
+        if (data[i][0].find('#') == string::npos) {
+            
+            replace(data[i][0].begin(), data[i][0].end(), ':', ' ');
+            vector<int> array;
+            stringstream ss(data[i][0]);
+            int temp;
+            while (ss >> temp)
+            array.push_back(temp);
+            
+            int run_number = array[0];
+            
+            replace(data[i][1].begin(), data[i][1].end(), ':', ' ');
+            vector<int> array2;
+            stringstream ss2(data[i][1]);
+            int temp2;
+            while (ss2 >> temp2)
+            array2.push_back(temp2);
+            
+            int lumi_block = array2[0];
+            
+            double recorded_lumi = atof(data[i][6].c_str());
+            
+            // cout << "this is the lumi_data" << lumi_block << " " << run_number << " " << recorded_lumi << endl;
+            
+            int hash_value = run_number*1000+lumi_block;
+            
+            auto it = lumi_block_lumi_info.find(hash_value);
+            if(it != lumi_block_lumi_info.end()){
+                pair <int, double> current_pair;
+                current_pair = it->second;
+                current_pair.first += 1;
+                current_pair.second += recorded_lumi;
+                it->second = current_pair;
+            }
+            else{
+                pair <int, double> new_pair;
+                new_pair = make_pair(1, recorded_lumi);
+                lumi_block_lumi_info[hash_value] = new_pair;
+            }
+            
+            // cout << hash_value << endl;
+        }
+    }
+
+    
+   unordered_map<int, double> recorded_luminosities_30;
+   unordered_map<int, double> recorded_luminosities_60;
+   unordered_map<int, double> recorded_luminosities_80;
+   unordered_map<int, double> recorded_luminosities_110;
+   unordered_map<int, double> recorded_luminosities_150;
+   unordered_map<int, double> recorded_luminosities_240;
+   unordered_map<int, double> recorded_luminosities_270;
+   unordered_map<int, double> recorded_luminosities_300;
+   unordered_map<int, double> recorded_luminosities_370;
+
+
 
    MOD::Event event_being_read;
 
    int event_serial_number = 1;
    while( event_being_read.read_event(data_file) && ( event_serial_number <= number_of_events_to_process ) ) {
       
-      if( (event_serial_number % 5000) == 0 )
+      if( (event_serial_number % 500) == 0 )
          cout << "Processing event number " << event_serial_number << endl;
 
       // Write out version info in the output file for the "syncing plots" thing to work (as it needs to figure out which directory to put things into).
       if (event_serial_number == 1)
          output_file << "%" << " Version " << event_being_read.version() << endl;
 
+      //cout << event_being_read.assigned_trigger_fired() << endl;
+      if (event_being_read.assigned_trigger_fired()) { analyze_event(event_being_read, output_file, event_serial_number);}
       
-      analyze_event(event_being_read, output_file, event_serial_number);
-      
-      
+      int lumi_block = event_being_read.condition().lumi_block();
+      int run_number = event_being_read.condition().run_number();
+      int hash_value = run_number*1000+lumi_block;
+      // cout << event_being_read.condition().event_number() << endl;
+      // recorded_luminosities[hash_value] = lumi_block_lumi_info[hash_value].second;
+      // cout << hash_value << endl;
+      // cout << (lumi_block_lumi_info.find(hash_value) != lumi_block_lumi_info.end()) << endl;
+       
+       if (event_being_read.trigger_exists(event_being_read.assigned_trigger_name()) and (lumi_block_lumi_info.find(hash_value) != lumi_block_lumi_info.end()) ){
+           MOD::Trigger trigger_current;
+           trigger_current = event_being_read.trigger_by_short_name(event_being_read.assigned_trigger_name());
+           int trigger_current_prescale;
+           trigger_current_prescale = trigger_current.prescale();
+           // recorded_luminosities_30[hash_value] = lumi_block_lumi_info[hash_value].second/trigger_current_prescale*1.0;
+           if (event_being_read.assigned_trigger_name() == "HLT_Jet30") {
+           recorded_luminosities_30[hash_value] = lumi_block_lumi_info[hash_value].second;
+           }
+           if (event_being_read.assigned_trigger_name() == "HLT_Jet60"){
+               recorded_luminosities_60[hash_value] = lumi_block_lumi_info[hash_value].second;
+           }
+           if(event_being_read.assigned_trigger_name() == "HLT_Jet80"){
+               recorded_luminosities_80[hash_value] = lumi_block_lumi_info[hash_value].second;
+           }
+           if (event_being_read.assigned_trigger_name() == "HLT_Jet110"){
+               recorded_luminosities_110[hash_value] = lumi_block_lumi_info[hash_value].second;
+           }
+           if (event_being_read.assigned_trigger_name() == "HLT_Jet150"){
+               recorded_luminosities_150[hash_value] = lumi_block_lumi_info[hash_value].second;
+           }
+           if (event_being_read.assigned_trigger_name() == "HLT_Jet240"){
+               recorded_luminosities_240[hash_value] = lumi_block_lumi_info[hash_value].second;
+           }
+           if(event_being_read.assigned_trigger_name() == "HLT_Jet270"){
+               recorded_luminosities_270[hash_value] = lumi_block_lumi_info[hash_value].second;
+           }
+           if(event_being_read.assigned_trigger_name() == "HLT_Jet300"){
+               recorded_luminosities_300[hash_value] = lumi_block_lumi_info[hash_value].second;
+           }
+           if (event_being_read.assigned_trigger_name() == "HLT_Jet370"){
+               recorded_luminosities_370[hash_value] = lumi_block_lumi_info[hash_value].second;
+           }
+
+           // cout << "prescale" << trigger_current_prescale << endl;
+           // cout << "val" << trigger_current_prescale*1.0/lumi_block_lumi_info[hash_value].second << endl;
+       }
+
       event_being_read = MOD::Event();
       event_serial_number++;
 
    }
+    
+    
+   //cout << "total_luminosity" << total_luminosity << endl;
+   double total_luminosity_30 = 0;
+    int count = 0;
+    
+    for (std::unordered_map<int,double>::iterator it=recorded_luminosities_30.begin(); it!=recorded_luminosities_30.end(); ++it){
+        total_luminosity_30 += it->second;
+        count += 1;
+    }
+    
+
+
 
    auto finish = std::chrono::steady_clock::now();
    double elapsed_seconds = std::chrono::duration_cast<std::chrono::duration<double> >(finish - start).count();
@@ -98,7 +240,7 @@ int main(int argc, char * argv[]) {
 
 void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & event_serial_number) {
 
-   
+   /*
    double jet_radius = 0.5;
 
    JetDefinition jet_def_cambridge(cambridge_algorithm, fastjet::JetDefinition::max_allowable_R);
@@ -106,11 +248,14 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
    Selector pT_1_GeV_selector = SelectorPtMin(1.0);
    Selector pT_0_5_GeV_selector = SelectorPtMin(0.5);
    Selector pT_015_020_GeV_selector = SelectorPtRange(0.15, 0.2);
+    
+   // cout << "reached here" << endl;
 
    
-   cout << "Event number is " << event_being_read.event_number() << endl;
-
    vector<PseudoJet> hardest_jet_constituents = pT_1_GeV_selector(event_being_read.hardest_jet().constituents());
+    
+   // cout << "reached here33" << endl;
+
    vector<PseudoJet> filtered_hardest_jet_constituents = pT_015_020_GeV_selector(event_being_read.hardest_jet().constituents());
 
    // vector<PseudoJet> hardest_jet_constituents = event_being_read.hardest_jet().constituents();
@@ -124,17 +269,26 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
 
    // This is the hardest FastJet jet. This does not have JEC applied to it. We need to go through this mess because we want to apply the pT selector to the hardest jet's constituents and then use the corresponding hardest jet.
    // But since JEC does not apply to individual PFCs, we can't directly use event_being_read.hardest_jet().constituents().
+    
+   cout << "reached here22" << endl;
+
 
    ClusterSequence cs_uncorrected_jet_no_softkiller = ClusterSequence(event_being_read.hardest_jet().constituents(), jet_def_cambridge);
    PseudoJet uncorrected_hardest_jet_no_softkiller = cs_uncorrected_jet_no_softkiller.inclusive_jets()[0];
 
 
    PseudoJet uncorrected_hardest_jet_with_softkiller = cs.inclusive_jets()[0];
+    
+   cout << "reached here2" << endl;
+
 
    double jec = 1.0;
 
    if ((event_being_read.data_source() == 3) || (event_being_read.data_source() == 0))
       jec = event_being_read.get_hardest_jet_jec();
+    
+   cout << "reached here3" << endl;
+
    
 
    // PseudoJet hardest_jet = uncorrected_hardest_jet_with_softkiller * jec;
@@ -145,8 +299,16 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
 
    SoftDrop soft_drop(beta, 0.1);
    PseudoJet soft_drop_jet = soft_drop(hardest_jet);
+    
+   */
    
    vector<MOD::Property> properties;
+    
+   double jec = 1.0;
+    
+   if ((event_being_read.data_source() == 3) || (event_being_read.data_source() == 0))
+        jec = event_being_read.get_hardest_jet_jec();
+
    
 
    properties.push_back(MOD::Property("# Entry", "  Entry"));
@@ -161,14 +323,17 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
 
    properties.push_back(MOD::Property("events_being_read", event_being_read.weight()));
    properties.push_back(MOD::Property("hardest_pT", jec * event_being_read.hardest_jet().pt()));
-   properties.push_back(MOD::Property("uncor_hardest_pT", uncorrected_hardest_jet_no_softkiller.pt()));
+   // properties.push_back(MOD::Property("uncor_hardest_pT", uncorrected_hardest_jet_no_softkiller.pt()));
 
    properties.push_back(MOD::Property("jec", jec));
 
-   properties.push_back( MOD::Property("softkill_pT_loss", (uncorrected_hardest_jet_no_softkiller.pt() - uncorrected_hardest_jet_with_softkiller.pt() ) / uncorrected_hardest_jet_no_softkiller.pt() ) );
-   properties.push_back( MOD::Property("frac_pT_loss", (hardest_jet.pt() - soft_drop( hardest_jet ).pt() ) / hardest_jet.pt() ) );
+   // properties.push_back( MOD::Property("softkill_pT_loss", (uncorrected_hardest_jet_no_softkiller.pt() - uncorrected_hardest_jet_with_softkiller.pt() ) / uncorrected_hardest_jet_no_softkiller.pt() ) );
+   // properties.push_back( MOD::Property("frac_pT_loss", (hardest_jet.pt() - soft_drop( hardest_jet ).pt() ) / hardest_jet.pt() ) );
    properties.push_back( MOD::Property("hardest_eta", event_being_read.hardest_jet().eta()) );   
 
+    properties.push_back(MOD::Property("crosssection", 1.0));
+    
+    properties.push_back(MOD::Property("trigger_fired", event_being_read.assigned_trigger_name()));
 
 
    properties.push_back( MOD::Property("hardest_phi", event_being_read.hardest_jet().phi()) );
@@ -179,6 +344,7 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
    else
       properties.push_back( MOD::Property("hardest_area", 0.0) );
 
+    /*
 
    vector<pair<string, double>> zg_cuts { make_pair("05", 0.05), make_pair("10", 0.1), make_pair("20", 0.2) };
     
@@ -336,6 +502,8 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
 
 
    }
+    
+    */
  
    // Now that we've calculated all observables, write them out.
 
