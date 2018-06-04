@@ -18,26 +18,10 @@ import rootpy.plotting.root2matplotlib as rplt
 
 
 
-# output_directory = "/media/aashish/opendata_mod/Feb5/histogrammed/Apr2/"
-# output_directory = "/media/aashish/opendata_mod/Feb5/histogrammed/backup/wed_morning/"
-output_directory = "/media/aashish/My Files/Dropbox (MIT)/histogrammed/"
-# output_directory = "/home/aashish/Dropbox (MIT)/Research/data/June Generation (MC)/"
-# output_directory = "/media/aashish/My Files/Dropbox (MIT)/Research/data/June Generation (MC)/"
-# output_directory = "/home/aashish/"
 
-# data_file = "/home/aashish/Dropbox (MIT)/Research/data/June Generation (MC)/analyzed/experiment/trig.dat"
-data_file = "/media/aashish/opendata_mod/Feb5/analyzed/trigger/trigger.dat"
+output_directory = "/home/preksha/Documents/mengproject/"
 
-
-
-average_prescales = {}
-
-average_prescales[(250, None)] = 1.	
-average_prescales[(200, 250)] = 1.933420103
-average_prescales[(150, 200)] = 5.361922609
-average_prescales[(115, 150)] =  100.3122906
-average_prescales[(85, 115)] =  851.3943491
-
+data_file = "/home/preksha/Documents/mengproject/pt_spectrum_2011_trigger_analysis_all_try1.dat"
 
 
 def parse_file(input_file, all_hists):
@@ -94,7 +78,7 @@ def parse_file(input_file, all_hists):
 					prescale = float(numbers[prescale_index])
 					current_line_trig_name = numbers[trig_name_index]
 
-					if abs(eta_of_this_event) > 2.4:
+					if abs(eta_of_this_event) > 2.5:
 						# print "oops, pseudorapidity too large.", eta_of_this_event
 						continue
 
@@ -104,7 +88,11 @@ def parse_file(input_file, all_hists):
 						mod_hist = all_hists[key]
 						hist = mod_hist.hist()
 
-						if key in current_line_trig_name or ("prescale" in key and key.split("_prescale")[0] in current_line_trig_name):
+						#print(key)
+
+						#print(current_line_trig_name)
+
+						if 'NoJetID' not in current_line_trig_name and (key+"_" in current_line_trig_name or ("prescale" in key and key.split("_prescale")[0]+"_" in current_line_trig_name)):
 													
 							conditions = mod_hist.conditions()
 
@@ -140,6 +128,7 @@ def parse_file(input_file, all_hists):
 				print "\n"
 					
 
+        print(all_hists)
 	return all_hists
 
 
@@ -200,6 +189,6 @@ if __name__ == "__main__":
 	
 	parse_to_root_files()
 
-	# load_root_files_to_hist()
+	#load_root_files_to_hist()
 
 	pass

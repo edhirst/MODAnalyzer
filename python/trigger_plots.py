@@ -8,7 +8,7 @@ import hists
 from MODPlot import *
 
 
-import trigger_parse
+import trigger_parse, parse
 
 
 
@@ -90,16 +90,17 @@ plt.rc('font', family='serif', size=43)
 
 
 
-default_dir = "plots/Version 6/"
+default_dir = "plots/Version1/"
 
 
-logo_location = "/home/aashish/root/macros/MODAnalyzer/mod_logo.png"
+logo_location = "/home/preksha/Documents/mengproject/MODAnalyzer/mod_logo.png"
 logo_text = ""
 
 
 
 
-parsed_linear = trigger_parse.load_root_files_to_hist()
+parsed_linear = parse.load_root_files_to_hist()
+print(len(parsed_linear))
 
 
 def logo_box(x, y):
@@ -129,10 +130,13 @@ def trigger_turn_on_curves():
 
 	mod_hists = parsed_linear[0]
 
-	colors = ['green', 'magenta', 'blue', 'red', 'orange', '#cecece']
-	labels = ["Jet140U", "Jet100U", "Jet70U", "Jet50U", "Jet30U", "Jet15\_HNF" ]
-	hist_labels = ["Jet140U", "Jet100U", "Jet70U", "Jet50U", "Jet30U", "Jet15U_HcalNoiseFiltered" ]
-	lower_pTs = [140, 100, 70, 50, 30, 15]
+	colors = ['green', 'magenta', 'blue', 'red', 'orange', '#cecece', 'yellow', 'cyan', 'purple']
+	labels = ["Jet370", "Jet300", "Jet240", "Jet190", "Jet150", "Jet110", "Jet80", "Jet60", "Jet30"]
+	hist_labels = ["HLT_Jet370", "HLT_Jet300", "HLT_Jet240", "HLT_Jet190", "HLT_Jet150", "HLT_Jet110", "HLT_Jet80", "HLT_Jet60", "HLT_Jet30" ]
+	lower_pTs = [370, 300, 240, 190, 150, 110, 80, 60, 30]
+
+
+
 
 
 	for i in range(len(hist_labels)):
@@ -160,7 +164,7 @@ def trigger_turn_on_curves():
 	# Info about R, pT_cut, etc.
 	extra = Rectangle((0, 0), 1, 1, fc="w", fill=False, edgecolor='none', linewidth=0)
 	handles = [extra]
-	labels = ["AK5; $\left| \eta \\right| < 2.4$"]
+	labels = ["AK5; $\left| \eta \\right| < 2.5$"]
 	info_legend = plt.gca().legend(handles, labels, loc=7, frameon=0, borderpad=0.1, fontsize=60, bbox_to_anchor=[0.28, 0.92])
 	plt.gca().add_artist(info_legend)
 
@@ -175,12 +179,11 @@ def trigger_turn_on_curves():
 
 	handles, labels = plt.gca().get_legend_handles_labels()
 
-
 	legend = plt.legend(handles[::-1], labels[::-1], frameon=0, fontsize=60, bbox_to_anchor=[0.97, 0.99])
 
 	ax = plt.gca().add_artist(legend)
 
-	outside_text = plt.gca().legend( [extra], ["CMS 2010 Open Data"], frameon=0, borderpad=0, fontsize=50, bbox_to_anchor=(1.0, 1.005), loc='lower right')
+	outside_text = plt.gca().legend( [extra], ["CMS 2011 Open Data"], frameon=0, borderpad=0, fontsize=50, bbox_to_anchor=(1.0, 1.005), loc='lower right')
 	plt.gca().add_artist(outside_text)
 
 
@@ -201,6 +204,73 @@ def trigger_turn_on_curves():
 	plt.clf()
 
 
+def ratios_efficiency_plot():
+	hists_2011 = parsed_linear[0]
+	hists_sim = parsed_linear[2]
+
+	print(hists_2011['hardest_pT'][0].hist())
+
+	plots = []
+	plot_quantity = ['hardest_pT']
+	for i in plot_quantity:
+		ratio_hist = hists_sim[i][0].hist()/hists_2011[i][0].hist()
+		plots.append( rplt.errorbar(ratio_hist, emptybins=True, alpha=0.) )
+
+	for i in range(len(plots)):
+	    data_plot = plots[i]
+
+	    data_x_errors, data_y_errors = [], []
+	    for x_segment in data_plot[2][0].get_segments():
+	      data_x_errors.append((x_segment[1][0] - x_segment[0][0]) / 2.)
+	    for y_segment in data_plot[2][1].get_segments():
+	      data_y_errors.append((y_segment[1][1] - y_segment[0][1]) / 2.)
+
+	    data_points_x = data_plot[0].get_xdata()
+	    data_points_y = data_plot[0].get_ydata()
+
+	    filtered_x, filtered_y, filtered_x_err, filtered_y_err = [], [], [], []
+
+
+	    plt.errorbar(data_points_x, data_points_y, zorder=range(len(plots))[len(plots) - i - 1], color='blue', markeredgecolor='blue', xerr=data_x_errors, yerr=data_y_errors, ls='None', alpha=1.0, marker='o')
+
+	plt.autoscale()
+	plt.gca().set_xlabel("pT", fontsize=30, labelpad=50)
+	plt.gca().set_ylabel("Ratio", fontsize=30, labelpad=50)
+	plt.gca().set_yscale('log')
+	plt.tick_params(which='major', labelsize=10)
+	plt.tick_params(which='minor', )
+	"""
+	extra = Rectangle((0, 0), 1, 1, fc="w", fill=False, edgecolor='none', linewidth=0)
+
+	plt.autoscale()
+	
+	plt.gca().set_xlabel("pT", fontsize=70, labelpad=50)
+	plt.gca().set_ylabel("Ratio", fontsize=70, labelpad=50)
+
+	plt.gca().add_artist(logo_box(0.114, 0.98))
+
+	plt.gca().xaxis.set_minor_locator(MultipleLocator(10))
+	plt.gca().set_yscale('log')
+
+	handles, labels = plt.gca().get_legend_handles_labels()
+	legend = plt.legend(handles[::-1][:-5], labels[::-1][:-5], fontsize=60, frameon=0, bbox_to_anchor=[0.99, 0.99])
+	ax = plt.gca().add_artist(legend)
+
+
+	outside_text = plt.gca().legend( [extra], ["CMS 2011 Open Data"], frameon=0, borderpad=0, fontsize=50, bbox_to_anchor=(1.0, 1.005), loc='lower right')
+	plt.gca().add_artist(outside_text)
+	
+
+	plt.tick_params(which='major', width=5, length=25, labelsize=70)
+	plt.tick_params(which='minor', width=3, length=15)
+
+	plt.tight_layout()
+
+	plt.gcf().set_size_inches(30, 24, forward=1)
+	"""
+	plt.savefig(default_dir + "trigger_efficiency.pdf")
+
+
 
 
 
@@ -208,10 +278,11 @@ def trigger_efficiency_plot():
 	mod_hists = parsed_linear[0]
 
 	
-	colors = ['green', 'magenta', 'blue', 'red', 'orange', '#cecece']
+	colors = ['green', 'magenta', 'blue', 'red', 'orange', '#cecece', 'yellow', 'cyan', 'purple']
 	labels = ["Jet140U / 100U", "Jet100U / 70U", "Jet70U / 50U", "Jet50U / 30U", "Jet30U / 15U\_HNF", "" ]
-	hist_labels = [("Jet140U", "Jet100U"), ("Jet100U", "Jet70U"), ("Jet70U", "Jet50U"), ("Jet50U", "Jet30U"), ("Jet30U", "Jet15U_HcalNoiseFiltered") ]
-	lower_pTs = [140, 100, 70, 50, 30, 15]
+	labels = ["Jet370 / Jet300", "Jet300 / Jet240", "Jet240 / Jet190", "Jet190 / Jet150", "Jet150 / Jet110", "Jet 110 / Jet80", "Jet80 / Jet60", "Jet60 / Jet30"]
+	hist_labels = [("HLT_Jet370", "HLT_Jet300"),("HLT_Jet300", "HLT_Jet240"), ("HLT_Jet240", "HLT_Jet190"), ("HLT_Jet190", "HLT_Jet150"), ("HLT_Jet150", "HLT_Jet110"), ("HLT_Jet110", "HLT_Jet80"), ("HLT_Jet80", "HLT_Jet60"), ("HLT_Jet60", "HLT_Jet30") ]
+	lower_pTs = [370, 300, 240, 190, 150, 110, 80, 60, 30]
 
 	# rplt.hist(mod_hists[0].hist())
 
@@ -258,7 +329,8 @@ def trigger_efficiency_plot():
 	plt.autoscale()
 	plt.gca().set_ylim(1e-3, 7e4)
 
-	cms_turn_on_pTs = [250, 200, 150, 115, 85]
+        """
+	cms_turn_on_pTs = [250, 200, 150, 120, 70]
 	for i in range(0, len(hist_labels)):
 
 		'''
@@ -270,7 +342,8 @@ def trigger_efficiency_plot():
 		plt.plot([ cms_turn_on_pTs[i], cms_turn_on_pTs[i] ], [ 1e0, 2e1 ], lw=10, ls="dashed", color=colors[i])
 
 		plt.gca().text((cms_turn_on_pTs[i]), 3e1, str(cms_turn_on_pTs[i]) + " GeV", color=colors[i], horizontalalignment='center')
-		  
+
+        """
 	# Horizontal Line.
 	plt.plot([0] + list(mod_hists[hist_labels[i][0]].hist().x()), [1] * (1 + len(list(mod_hists[hist_labels[i][0]].hist().x()))), color="black", linewidth=5, linestyle="dashed")
 
@@ -281,7 +354,7 @@ def trigger_efficiency_plot():
 	# Info about R, pT_cut, etc.
 	
 	handles = [extra]
-	labels = ["AK5; $\left| \eta \\right| < 2.4$"]
+	labels = ["AK5; $\left| \eta \\right| < 2.5$"]
 	info_legend = plt.gca().legend(handles, labels, loc=7, frameon=0, borderpad=0.1, fontsize=60, bbox_to_anchor=[0.28, 0.92])
 	plt.gca().add_artist(info_legend)
 
@@ -299,7 +372,7 @@ def trigger_efficiency_plot():
 	ax = plt.gca().add_artist(legend)
 
 
-	outside_text = plt.gca().legend( [extra], ["CMS 2010 Open Data"], frameon=0, borderpad=0, fontsize=50, bbox_to_anchor=(1.0, 1.005), loc='lower right')
+	outside_text = plt.gca().legend( [extra], ["CMS 2011 Open Data"], frameon=0, borderpad=0, fontsize=50, bbox_to_anchor=(1.0, 1.005), loc='lower right')
 	plt.gca().add_artist(outside_text)
 	
 
@@ -328,9 +401,9 @@ def trigger_prescales():
 
 
 	
-	colors = ['green', 'magenta', 'blue', 'red', 'orange'][::-1]
-	legend_labels = ["Jet140U", "Jet100U", "Jet70U", "Jet50U", "Jet30U"][::-1]
-	hist_labels = ["Jet140U", "Jet100U", "Jet70U", "Jet50U", "Jet30U" ][::-1]
+	colors = ['green', 'magenta', 'blue', 'red', 'orange', '#cecece', 'yellow', 'cyan', 'purple'][::-1]
+	legend_labels = ["Jet370", "Jet300", "Jet240", "Jet190", "Jet150", "Jet110", "Jet80", "Jet60", "Jet30"][::-1]
+	hist_labels = ["HLT_Jet370", "HLT_Jet300", "HLT_Jet240", "HLT_Jet190", "HLT_Jet150", "HLT_Jet110", "HLT_Jet80", "HLT_Jet60", "HLT_Jet30" ][::-1]
 	
 
 	plots = []
@@ -350,10 +423,10 @@ def trigger_prescales():
 	
 
 	plt.autoscale()
-	plt.gca().set_ylim(1e1, 5e7)
-	plt.gca().set_xlim(0.5, 1e4)
+	plt.gca().set_ylim(1e1, 5e8)
+	plt.gca().set_xlim(0.5, 1e6)
 
-	average_prescales = [1.00, 1.93, 5.36, 100.31, 851.39][::-1]
+	average_prescales = [1.00, 1.00, 4.15, 27.80, 74.71, 575.46,2151.41,9848.00, 239202.97  ][::-1]
 	for i in range(0, len(hist_labels)):
 
 		plt.plot([ average_prescales[i], average_prescales[i] ], [ 3e1, 1e2 ], lw=10, ls="dashed", color=colors[i])
@@ -368,7 +441,7 @@ def trigger_prescales():
 	# # Info about R, pT_cut, etc.
 	extra = Rectangle((0, 0), 1, 1, fc="w", fill=False, edgecolor='none', linewidth=0)
 	handles = [extra]
-	labels = ["AK5; $\left| \eta \\right| < 2.4$"]
+	labels = ["AK5; $\left| \eta \\right| < 2.5$"]
 	info_legend = plt.gca().legend(handles, labels, frameon=0, borderpad=0.1, fontsize=60, bbox_to_anchor=[0.30, 0.98])
 	plt.gca().add_artist(info_legend)
 
@@ -389,7 +462,7 @@ def trigger_prescales():
 
 	# plt.gca().xaxis.set_major_formatter(mpl.ticker.ScalarFormatter(useMathText=False))
 	
-	outside_text = plt.gca().legend( [extra], ["CMS 2010 Open Data"], frameon=0, borderpad=0, fontsize=50, bbox_to_anchor=(1.0, 1.005), loc='lower right')
+	outside_text = plt.gca().legend( [extra], ["CMS 2011 Open Data"], frameon=0, borderpad=0, fontsize=50, bbox_to_anchor=(1.0, 1.005), loc='lower right')
 	plt.gca().add_artist(outside_text)
 
 
@@ -408,12 +481,12 @@ def trigger_prescales():
 
 start = time.time()
 
+#trigger_turn_on_curves()
 
-# trigger_turn_on_curves()
+#trigger_efficiency_plot()
 
-# trigger_efficiency_plot()
-
-trigger_prescales()
+#trigger_prescales()
+ratios_efficiency_plot()
 
 end = time.time()
 

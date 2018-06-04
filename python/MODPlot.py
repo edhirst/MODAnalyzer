@@ -170,7 +170,7 @@ class MODPlot:
                     bin_width = (self._hists[i].hist().upperbound() - self._hists[i].hist().lowerbound()) / self._hists[i].hist().nbins()
                 
                 if self._hists[i].hist().GetSumOfWeights() != 0.0:
-                    self._hists[i].hist().Scale(1.0 / ( self._hists[i].hist().GetSumOfWeights() * bin_width ))
+                    self._hists[i].hist().Scale(1.0 / (bin_width ))
 
     def set_formatting(self):
 
@@ -1121,15 +1121,16 @@ class MODPlot:
 
 
 
-
-plot_labels = { "data": "CMS 2010 Open Data", "pythia": "Pythia 8.219", "herwig": "Herwig 7.0.3", "sherpa": "Sherpa 2.2.1", "theory": "Theory (MLL)" }
-plot_track_labels = { "data": "CMS 2010 Open Data", "pythia": "Pythia 8.219", "herwig": "Herwig 7.0.3", "sherpa": "Sherpa 2.2.1", "theory": "Theory (MLL; all)" }
+"""
+plot_labels = { "data": "CMS 2011 Open Data", "pythia": "CMS Simulated Data", "herwig": "CMS 2011 Open Data - binwidth change", "sherpa": "CMS Simulated data", "theory": "CMS Simulated data - More Data" }
+plot_track_labels = { "data": "CMS 2011 Open Data", "pythia": "CMS Simulated Data", "herwig": "CMS 2011 Simulated Data - Gen", "sherpa": "Sherpa 2.2.1", "theory": "Theory (MLL; all)" }
 plot_colors = {"theory": "red", "pythia": "blue", "herwig": "green", "sherpa": "purple", "pythia_post": "red", "data": "black", "data_post": "red"}
+"""
 
-global_plot_types = ['error', 'hist', 'hist', 'hist']
-global_colors = [ plot_colors['data'], plot_colors['pythia'], plot_colors['herwig'], plot_colors['sherpa'] ]
-global_labels = [ plot_labels['data'], plot_labels['pythia'], plot_labels['herwig'], plot_labels['sherpa'] ]
-global_line_styles = [ [], [], [21, 7], [7, 7] ]
+global_plot_types = ['error', 'error', 'error', 'error', 'error']
+global_colors = [ 'black', 'blue', 'green', 'purple', 'yellow']
+global_labels = ['CMS 2011 Open Data', 'CMS Simulated Data - PFC','CMS Simulated Data - GEN' ]
+global_line_styles = [ [], [], [], [], [] ]
 
 def create_multi_page_plot(filename, hists, theory=False, x_scale='linear', text_outside_the_frame=False):
     # mod_hists is a list of MODHist objects.
@@ -1174,17 +1175,3 @@ def create_multi_page_plot(filename, hists, theory=False, x_scale='linear', text
                 pdf.savefig()
                 plot.get_plt().close()
 
-
-
-def create_data_only_plot(filename, hists, labels, types, colors, line_styles, ratio_plot=True, ratio_to_label="", ratio_to_index=1, x_scale='linear', text_outside_the_frame=False):
-    # mod_hists is a list of MODHist objects.
-
-    with PdfPages(filename) as pdf:
-
-        for mod_hists in hists: # mod_hists contains a list [ data_mod_hist, pythia_mod_hist, ... ]
-
-            plot = MODPlot(mod_hists, plot_types=types, plot_colors=colors, plot_labels=labels, line_styles=line_styles, ratio_plot=ratio_plot, ratio_to_index=ratio_to_index, ratio_label=ratio_to_label, x_scale=mod_hists[-1].x_scale(), y_scale=mod_hists[-1].y_scale(), x_label=mod_hists[-1].x_label(), y_label=mod_hists[-1].y_label(), x_lims=mod_hists[-1].x_range(), y_lims=mod_hists[-1].y_range(), legend_location=mod_hists[-1].legend_location(), mark_regions=mod_hists[-1].mark_regions(), text_outside_the_frame=text_outside_the_frame)
-            plot.plot()
-        
-            pdf.savefig()
-            plot.get_plt().close()
