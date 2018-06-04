@@ -95,13 +95,17 @@ int main(int argc, char * argv[]) {
              cout << "Processing event number " << event_serial_number_2011 << endl;
            }
            
+           // cout << "Processing event number " << event_serial_number_2011 << endl;
+           
            // Compute 'hash_value' for lumi_block. Since number of lumi_block less than <1000, this is okay as unique id
            int lumi_block = event_being_read.condition().lumi_block();
            int run_number = event_being_read.condition().run_number();
            int hash_value = run_number*1000+lumi_block;
         
           // If the event being read has the assigned trigger fired and event is good, analyze and write it out
-          if (event_being_read.assigned_trigger_fired() and (lumi_block_lumi_info.find(hash_value) != lumi_block_lumi_info.end())) { analyze_event(event_being_read, output_file, event_serial_number_2011);}
+          if (event_being_read.assigned_trigger_fired() and (lumi_block_lumi_info.find(hash_value) != lumi_block_lumi_info.end())) { analyze_event(event_being_read, output_file, event_serial_number_2011);
+              event_serial_number_2011++;
+          }
            
           // Go through all possible triggers (regardless of whether assigned trigger fired), check if trigger exists and event is good, and keep cumulative total of effective luminosities
           // Checks to make sure for each trigger, each lumi_block is only counted once
@@ -122,11 +126,10 @@ int main(int argc, char * argv[]) {
            }
         
           event_being_read = MOD::Event();
-          event_serial_number_2011++;
 
        }
        
-       ofstream effective_luminosity_output("effective_luminosity_by_jet.csv", ios::out | ios::app);
+       ofstream effective_luminosity_output("effective_luminosity_by_trigger.csv", ios::out | ios::app);
 
        unordered_map<string, double>::iterator it = recorded_luminosities.begin();
 
@@ -144,6 +147,7 @@ int main(int argc, char * argv[]) {
             
             it++;
         }
+       effective_luminosity_output << endl;
        
    }
    int event_serial_number_pfc = 1;
