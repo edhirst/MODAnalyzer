@@ -551,6 +551,7 @@ bool MOD::Event::read_event(istream & data_stream, std::string type_of_data) {
             // Just ignore it.
          }
          else {
+            cout << "unrecognized tag" << endl;
             throw runtime_error("Invalid file format! Unrecognized tag: " + tag + "!");
          }
       }
@@ -851,7 +852,7 @@ bool MOD::Event::is_trigger_jet_matched() {
 
 
 void MOD::Event::set_hardest_jet() {
-   _hardest_jet = sorted_by_pt(_cms_jets)[0];
+   _hardest_jet = sorted_by_pt(_jets)[0];
 }
 
 
