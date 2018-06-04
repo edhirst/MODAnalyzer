@@ -60,9 +60,10 @@ void MOD::Event::add_particle(istringstream & input_stream) {
 
    input_stream >> tag >> px >> py >> pz >> energy >> pdgId;
 
+  //cout << "reached here" << endl;
    PseudoJet new_particle = PseudoJet(px, py, pz, energy);
    new_particle.set_user_info(new InfoPFC(pdgId, tag));
-
+    
 
    _particles.push_back(new_particle);
 }
@@ -139,13 +140,18 @@ const vector<MOD::Trigger> & MOD::Event::triggers() const {
 
 
 const double MOD::Event::weight() const {
-   return _weight;
-   // return _assigned_trigger.prescale();
+   //return _weight;
+    // cout <<"assigned trigger" << _assigned_trigger.prescale() << "   " << _weight << endl;
+   return _assigned_trigger.prescale();
 }
 
 
 void MOD::Event::set_weight(double weight) {
    _weight = weight;
+}
+
+void MOD::Event::set_multiplicity(int multiplicity) {
+    _multiplicity = multiplicity;
 }
 
 
@@ -202,6 +208,8 @@ string MOD::Event::make_string() const {
 
       // First, write out conditions.
       file_to_write << _condition.make_header_string();
+       
+     //  cout << "condition " << _condition << endl;
       file_to_write << _condition;   
 
       // Then, write out all triggers. 
@@ -367,7 +375,7 @@ void MOD::Event::establish_properties() {
       // cout << "Assigned trigger!" << endl;
       set_assigned_trigger();
 
-      //cout << "Assigned trigger is " << _assigned_trigger.name() << endl;
+     // cout << "Assigned trigger is " << _assigned_trigger.name() << endl;
 
    }
    else if (data_source() == PRISTINE) {
@@ -385,9 +393,10 @@ void MOD::Event::establish_properties() {
 
 
 
-bool MOD::Event::read_event(istream & data_stream) {
+bool MOD::Event::read_event(istream & data_stream, std::string type_of_data) {
 
    string line;
+   // cout << "in read event " << endl;
    while(getline(data_stream, line)) {
       istringstream iss(line);
 
@@ -396,6 +405,8 @@ bool MOD::Event::read_event(istream & data_stream) {
       double area;
       string tag, version_keyword, a, b, c;
       double px, py, pz, energy, jec;
+       
+      int cur_count;
 
       iss >> tag;      
       istringstream stream(line);
@@ -416,6 +427,9 @@ bool MOD::Event::read_event(istream & data_stream) {
 
 
             set_weight(weight);
+             
+            cur_count = 0;
+            
 
          }
          else if (tag == "1JET") {
@@ -438,15 +452,32 @@ bool MOD::Event::read_event(istream & data_stream) {
                throw runtime_error("Invalid file format 1JET! Something's wrong the way 1JETs have been written!");
             }
          }
-         else if (tag == "PFC") {
+         else if (tag == "PFC" and type_of_data == "2011") {
             try {
                set_data_source(EXPERIMENT);
-               // cout << "Adding PFC" << endl;
                add_particle(stream);
             }
             catch (exception& e) {
                throw runtime_error("Invalid file format PFC! Something's wrong with the way PFCs have been written.");
             }
+         }
+         else if (tag == "PFC" and type_of_data == "sim_pfc") {
+              try {
+                  set_data_source(MC_RECO);
+                  add_particle(stream);
+              }
+              catch (exception& e) {
+                  throw runtime_error("Invalid file format PFC! Something's wrong with the way PFCs have been written.");
+              }
+         }
+         else if ((tag == "GEN" or tag == "Gen") and type_of_data == "sim_gen") {
+              try {
+                  set_data_source(MC_TRUTH);
+                  add_particle(stream);
+              }
+              catch (exception& e) {
+                  throw runtime_error("Invalid file format PFC! Something's wrong with the way PFCs have been written.");
+              }
          }
          else if (tag == "AK5") {
             try {
@@ -454,6 +485,7 @@ bool MOD::Event::read_event(istream & data_stream) {
                // cout << "Adding AK5" << endl;
                add_cms_jet(stream);
             }
+        
             catch (exception& e) {
                throw runtime_error("Invalid file format AK5! Something's wrong with the way jets have been written.");
             }
@@ -498,6 +530,7 @@ bool MOD::Event::read_event(istream & data_stream) {
             try {
                set_data_source(PRISTINE);
                add_particle(stream);
+               cur_count++;
             }
             catch (exception& e) {
                throw runtime_error("Invalid file format! Something's wrong with the way RPFC has been written. ;)");
@@ -507,11 +540,15 @@ bool MOD::Event::read_event(istream & data_stream) {
             
             // cout << "EndEvent" << endl;
 
+            set_multiplicity(cur_count);
             establish_properties();
             return true;
          }
-         else if (tag == "#") {
-            // This line in the data file represents a comment. Just ignore it.
+         else if (tag == "#" or ((tag == "GEN" or tag == "Gen") and type_of_data == "sim_pfc") or (tag == "PFC" and type_of_data == "sim_gen") ) {
+            // Either this line in the data file represents a comment
+            // Or this line is a sim_gen_data line and we are processing sim_pfc_data
+            // Or this line is a sim_pfc_data line and we are processing sim_gen_data
+            // Just ignore it.
          }
          else {
             throw runtime_error("Invalid file format! Unrecognized tag: " + tag + "!");
@@ -519,6 +556,8 @@ bool MOD::Event::read_event(istream & data_stream) {
       }
       
    }
+    
+   // cout << "processed error " << endl;
 
    return false;
 }
@@ -551,40 +590,52 @@ void MOD::Event::set_assigned_trigger() {
    // First, figure out the hardest pT.
    PseudoJet trigger_jet = _trigger_jet;
    
-   //cout << "Pre trigger jet is: " << trigger_jet.pt() << endl;
    //cout << "JEC is: " << _hardest_jet_jec << endl;
 
    trigger_jet *= _hardest_jet_jec;
-
-   //cout << "Post trigger jet is: " << trigger_jet.pt() << endl;
+    
+  
 
    if (trigger_jet.E() == 0.0) {
       _assigned_trigger_name = "";
       _assigned_trigger = Trigger();
+      // cout << "energy is zero" << endl;
    }
    else {
 
       double hardest_pT = trigger_jet.pt();
 
-      //cout << hardest_pT << endl;
+      // cout << "hardest_pT" << hardest_pT << endl;
 
       // Next, lookup which trigger to use based on the pT value of the hardest jet.
 
-      if ( (hardest_pT > 250) && trigger_exists("HLT_Jet140U") ) {
-         trigger = "HLT_Jet140U";
+      if ( (hardest_pT > 420) && trigger_exists("HLT_Jet370") ) {
+         trigger = "HLT_Jet370";
       }
-      else if ( (hardest_pT > 200) && trigger_exists("HLT_Jet100U") ) {
-         trigger = "HLT_Jet100U";
+      else if ( (hardest_pT > 350) && trigger_exists("HLT_Jet300") ) {
+         trigger = "HLT_Jet300";
       }
-      else if ( (hardest_pT > 150) && trigger_exists("HLT_Jet70U") ) {
-         trigger = "HLT_Jet70U";
+      else if ( (hardest_pT > 275) && trigger_exists("HLT_Jet240") ) {
+         trigger = "HLT_Jet240";
       }
-      else if ( (hardest_pT > 115) && trigger_exists("HLT_Jet50U") ) {
-         trigger = "HLT_Jet50U";
+      else if ( (hardest_pT > 220) && trigger_exists("HLT_Jet190") ) {
+         trigger = "HLT_Jet190";
       }
-      else if ( (hardest_pT > 85) && trigger_exists("HLT_Jet30U") ) {
-         trigger = "HLT_Jet30U";
+      else if ( (hardest_pT > 190) && trigger_exists("HLT_Jet150") ) {
+         trigger = "HLT_Jet150";
       }
+      else if ( (hardest_pT > 130) && trigger_exists("HLT_Jet110") ) {
+           trigger = "HLT_Jet110";
+       }
+       else if ( (hardest_pT > 110) && trigger_exists("HLT_Jet80") ) {
+           trigger = "HLT_Jet80";
+       }
+       else if ( (hardest_pT > 70) && trigger_exists("HLT_Jet60") ) {
+           trigger = "HLT_Jet60";
+       }
+       else if (trigger_exists("HLT_Jet30")) {
+           trigger = "HLT_Jet30";
+       }
 
       trigger_to_use = trigger;
 
@@ -599,19 +650,22 @@ void MOD::Event::set_assigned_trigger() {
    }
 
    
-   //cout << "Here: " << _assigned_trigger.name() << endl;
+   // cout << "Here: " << _assigned_trigger.name() << endl;
 
 }
 
 
 double MOD::Event::get_hardest_jet_jec() const {
-   // return sorted_by_pt(_jets)[0].user_info<InfoCalibratedJet>().JEC();
-   return sorted_by_pt(_cms_jets)[0].user_info<InfoCalibratedJet>().JEC();
+   // cout << typeid(sorted_by_pt(_jets)[0]).name() << endl;
+   //  return sorted_by_pt(_jets)[0].user_info<InfoCalibratedJet>().JEC();
+   return _hardest_jet_jec;
 }
 
 double MOD::Event::get_hardest_jet_area() const {
-   // return sorted_by_pt(_jets)[0].user_info<InfoCalibratedJet>().area();
-   return sorted_by_pt(_cms_jets)[0].user_info<InfoCalibratedJet>().area();
+    // TODO: Area needs to be fixed.
+    // return apply_jet_energy_corrections(_cms_jets).area();
+    // return sorted_by_pt(_jets)[0].user_info<InfoCalibratedJet>().area();
+    return sorted_by_pt(_cms_jets)[0].user_info<InfoCalibratedJet>().area();
 }
 
 void MOD::Event::set_trigger_jet() {
@@ -797,7 +851,7 @@ bool MOD::Event::is_trigger_jet_matched() {
 
 
 void MOD::Event::set_hardest_jet() {
-   _hardest_jet = sorted_by_pt(_jets)[0];
+   _hardest_jet = sorted_by_pt(_cms_jets)[0];
 }
 
 
