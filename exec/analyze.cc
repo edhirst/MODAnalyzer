@@ -187,7 +187,7 @@ int main(int argc, char * argv[]) {
            event_serial_number_gen++;
        }
        
-       ofstream output_event_counts("event_count_by_data_set_and_file.csv", ios::out | ios::app);
+       ofstream output_event_counts("event_count_by_pythia_and_mod.csv", ios::out | ios::app);
        output_event_counts << get_just_file_name(output_file_pfc_name) << "," << event_serial_number_pfc -1  << endl;
        output_event_counts << get_just_file_name(output_file_gen_name) << "," << event_serial_number_gen -1  << endl;
 
