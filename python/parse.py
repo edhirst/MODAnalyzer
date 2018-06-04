@@ -32,8 +32,8 @@ def parse_file(input_files, output_filename, data_type, all_hists, log_hists):
 
     if data_type == '2011':
         trigger_luminosity_dictionary = trigger_luminosity_dictionary_2011()
-    elif (data_type == 'sim_gen' or data_type == 'sim_pfc'):
-        mod_file_to_crosssection = mod_file_to_crosssection_sim(data_type)
+    #elif (data_type == 'sim_gen' or data_type == 'sim_pfc'):
+    #    mod_file_to_crosssection = mod_file_to_crosssection_sim(data_type)
 
     for input_file in input_files:
 
@@ -118,8 +118,8 @@ def parse_file(input_files, output_filename, data_type, all_hists, log_hists):
 
                 except Exception as e:
                     pass
-                    #print "Some exception occured!",
-                    #print e.message
+                    print "Some exception occured!",
+                    print e.message
 
                 end = time.time()
 
@@ -270,14 +270,14 @@ def trigger_luminosity_dictionary_2011():
     trigger_luminosity_total = {}
     for mod_trigger in mod_trigger_luminosities:
         if mod_trigger[1] in trigger_luminosity_total:
-            current_effective_lumi = trigger_luminosity_total[mod_trigger[1]]
-            trigger_luminosity_total[mod_trigger[1]] += trigger_luminosity_total[mod_trigger]
+            #current_effective_lumi = trigger_luminosity_total[mod_trigger[1]]
+            trigger_luminosity_total[mod_trigger[1]] += mod_trigger_luminosities[mod_trigger]
         else:
-            trigger_luminosity_total[mod_trigger[1]] = trigger_luminosity_total[mod_trigger]
+            trigger_luminosity_total[mod_trigger[1]] = mod_trigger_luminosities[mod_trigger]
     return trigger_luminosity_total
 
 def mod_file_to_crosssection_sim(flag):
-    output_file_event_count = [line.rstrip('\n') for line in open("event_count_by_pythia_and_mod.csv.csv")]
+    output_file_event_count = [line.rstrip('\n') for line in open("event_count_by_pythia_and_mod.csv")]
     pythia_cross_sections = {'QCD_Pt-30to50_TuneZ2_7TeV_pythia6': 53122370.0,
                              'QCD_Pt-50to80_TuneZ2_7TeV_pythia6': 6359119.0,
                              'QCD_Pt-80to120_TuneZ2_7TeV_pythia6': 784265.0,
