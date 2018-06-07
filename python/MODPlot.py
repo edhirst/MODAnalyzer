@@ -170,7 +170,7 @@ class MODPlot:
                     bin_width = (self._hists[i].hist().upperbound() - self._hists[i].hist().lowerbound()) / self._hists[i].hist().nbins()
                 
                 if self._hists[i].hist().GetSumOfWeights() != 0.0:
-                    self._hists[i].hist().Scale(1.0 / ( self._hists[i].hist().GetSumOfWeights() * bin_width ))
+                    self._hists[i].hist().Scale(1.0 / (bin_width ))
 
     def set_formatting(self):
 
@@ -352,6 +352,8 @@ class MODPlot:
             plot_type = self._plot_types[i]
 
             if plot_type == 'hist':
+
+                print("this is hist")
             
                 # self._hists[i].hist().SetLineStyle(self._line_styles[i])
 
@@ -363,7 +365,7 @@ class MODPlot:
             
             elif plot_type == 'error':
             
-                plot = self._rplt.errorbar(self._hists[i].hist(), axes=ax0, zorder=z_indices[i], emptybins=True, xerr=1, yerr=1, ls='None', marker='o', markersize=10, pickradius=8, capthick=5, capsize=8, elinewidth=5, alpha=1.0)
+                plot = self._rplt.errorbar(self._hists[i].hist(), axes=ax0, zorder=z_indices[i], emptybins=False, xerr=1, yerr=1, ls='None', marker='o', markersize=10, pickradius=8, capthick=5, capsize=8, elinewidth=5, alpha=1.0)
                 legend_handles.append( plot )
             
             elif plot_type == "theory":
@@ -483,6 +485,7 @@ class MODPlot:
 
 
         # Ratio plot.
+        """
 
         if self._ratio_plot:
 
@@ -644,9 +647,10 @@ class MODPlot:
                         # self._plt.plot(line_plot[0], line_plot[1], ls=self._line_styles[i], axes=ax1, lw=8, color=ratio_hist.GetColor()[0])
 
                     elif plot_type == 'error':
+                        #print("error")
                         self._rplt.errorbar(ratio_hist, axes=ax1, zorder=z_indices[i], emptybins=False, xerr=1, yerr=1, ls='None', marker='o', markersize=10, pickradius=8, capthick=5, capsize=8, elinewidth=5, alpha=1.0)
                         
-
+            
             elif self._plot_types[self._ratio_to_index] == "theory":
                 # print "ratio to theory"
 
@@ -784,7 +788,7 @@ class MODPlot:
                         self._plt.errorbar(ratio_x_s, ratio_y_s, axes=ax1, zorder=z_indices[i], xerr=data_to_data_x_err, yerr=data_to_data_y_err, color=self._plot_colors[i], ls='None', marker='o', markersize=10, pickradius=8, capthick=5, capsize=8, elinewidth=5, alpha=1.0)
                         
                         
-
+        """
         # Ratio plot ends.
 
 
@@ -1121,15 +1125,17 @@ class MODPlot:
 
 
 
-
-plot_labels = { "data": "CMS 2010 Open Data", "pythia": "Pythia 8.219", "herwig": "Herwig 7.0.3", "sherpa": "Sherpa 2.2.1", "theory": "Theory (MLL)" }
-plot_track_labels = { "data": "CMS 2010 Open Data", "pythia": "Pythia 8.219", "herwig": "Herwig 7.0.3", "sherpa": "Sherpa 2.2.1", "theory": "Theory (MLL; all)" }
+"""
+plot_labels = { "data": "CMS 2011 Open Data", "pythia": "CMS Simulated Data", "herwig": "CMS 2011 Open Data - binwidth change", "sherpa": "CMS Simulated data", "theory": "CMS Simulated data - More Data" }
+plot_track_labels = { "data": "CMS 2011 Open Data", "pythia": "CMS Simulated Data", "herwig": "CMS 2011 Simulated Data - Gen", "sherpa": "Sherpa 2.2.1", "theory": "Theory (MLL; all)" }
 plot_colors = {"theory": "red", "pythia": "blue", "herwig": "green", "sherpa": "purple", "pythia_post": "red", "data": "black", "data_post": "red"}
+"""
 
-global_plot_types = ['error', 'hist', 'hist', 'hist']
-global_colors = [ plot_colors['data'], plot_colors['pythia'], plot_colors['herwig'], plot_colors['sherpa'] ]
-global_labels = [ plot_labels['data'], plot_labels['pythia'], plot_labels['herwig'], plot_labels['sherpa'] ]
-global_line_styles = [ [], [], [21, 7], [7, 7] ]
+global_plot_types = ['error', 'error', 'error', 'error', 'error']
+global_colors = [ 'black', 'blue', 'green', 'purple', 'yellow']
+global_labels = ['CMS 2011 data', 'CMS 2011 data - half amount', 'CMS Simulated Data - PFC','CMS Simulated Data - GEN' ]
+global_labels = ['CMS Simulated Data - PFC - half amount', 'CMS Simulated Data - GEN - half amount', 'CMS Simulated Data - PFC','CMS Simulated Data - GEN' ]
+global_line_styles = [ [], [], [], [], [] ]
 
 def create_multi_page_plot(filename, hists, theory=False, x_scale='linear', text_outside_the_frame=False):
     # mod_hists is a list of MODHist objects.
@@ -1156,35 +1162,31 @@ def create_multi_page_plot(filename, hists, theory=False, x_scale='linear', text
         for mod_hists in hists: # mod_hists contains a list [ data_mod_hist, pythia_mod_hist, ... ]
 
             if mod_hists[0].x_scale() == x_scale:
+
+                print("here")
                 
                 if theory:
+                    print("here2")
                     ratio_to_index = 2  # 2 = Ratio to Pythia, 1 = Ratio to Theory.
                     ratio_to_label = "Ratio to\nTheory"
                 else:
-                    ratio_to_index = 1  # 1 = Ratio to Pythia. 0 = Data
+                    print("here3")
+                    ratio_to_index = 0  # 1 = Ratio to Pythia. 0 = Data
                     ratio_to_label = "Ratio to\nPythia" 
                 
                 # ratio_to_index = 2
                 # ratio_to_index = 0
                 ratio_to_label = "Ratio to\nPythia" 
 
-                plot = MODPlot(mod_hists, plot_types=types, plot_colors=colors, plot_labels=labels, line_styles=line_styles, x_scale=mod_hists[-1].x_scale(), y_scale=mod_hists[-1].y_scale(), ratio_plot=False, ratio_to_index=ratio_to_index, ratio_label=ratio_to_label, mark_regions=mod_hists[-1].mark_regions(), x_label=mod_hists[-1].x_label(), legend_location=mod_hists[-1].legend_location(), y_label=mod_hists[-1].y_label(), x_lims=mod_hists[-1].x_range(), y_lims=mod_hists[-1].y_range(), text_outside_the_frame=text_outside_the_frame)
+                plot = MODPlot(mod_hists, plot_types=types, plot_colors=colors, plot_labels=labels,
+                               line_styles=line_styles, x_scale=mod_hists[-1].x_scale(),
+                               y_scale=mod_hists[-1].y_scale(), ratio_plot=False,
+                               ratio_to_index=ratio_to_index, ratio_label=ratio_to_label,
+                               mark_regions=mod_hists[-1].mark_regions(), x_label=mod_hists[-1].x_label(),
+                               legend_location=mod_hists[-1].legend_location(), y_label=mod_hists[-1].y_label(),
+                               x_lims=mod_hists[-1].x_range(), y_lims=mod_hists[-1].y_range(), text_outside_the_frame=text_outside_the_frame)
                 plot.plot()
             
                 pdf.savefig()
                 plot.get_plt().close()
 
-
-
-def create_data_only_plot(filename, hists, labels, types, colors, line_styles, ratio_plot=True, ratio_to_label="", ratio_to_index=1, x_scale='linear', text_outside_the_frame=False):
-    # mod_hists is a list of MODHist objects.
-
-    with PdfPages(filename) as pdf:
-
-        for mod_hists in hists: # mod_hists contains a list [ data_mod_hist, pythia_mod_hist, ... ]
-
-            plot = MODPlot(mod_hists, plot_types=types, plot_colors=colors, plot_labels=labels, line_styles=line_styles, ratio_plot=ratio_plot, ratio_to_index=ratio_to_index, ratio_label=ratio_to_label, x_scale=mod_hists[-1].x_scale(), y_scale=mod_hists[-1].y_scale(), x_label=mod_hists[-1].x_label(), y_label=mod_hists[-1].y_label(), x_lims=mod_hists[-1].x_range(), y_lims=mod_hists[-1].y_range(), legend_location=mod_hists[-1].legend_location(), mark_regions=mod_hists[-1].mark_regions(), text_outside_the_frame=text_outside_the_frame)
-            plot.plot()
-        
-            pdf.savefig()
-            plot.get_plt().close()

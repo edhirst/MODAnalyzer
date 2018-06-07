@@ -18,28 +18,10 @@ import matplotlib.pyplot as plt
 import rootpy.plotting.root2matplotlib as rplt
 
 
-output_directory = sys.argv[1]
 
-data_file = sys.argv[2]
+def parse_file(input_files, output_filename, data_type, all_hists, log_hists):
 
-average_prescales = {}
-
-average_prescales[(250, None)] = 1.
-average_prescales[(200, 250)] = 1.933420103
-average_prescales[(150, 200)] = 5.361922609
-average_prescales[(115, 150)] = 100.3122906
-average_prescales[(85, 115)] = 851.3943491
-
-
-my_prescales = defaultdict(float)
-my_numbers = defaultdict(int)
-
-
-def parse_file(input_file, output_filename, all_hists, log_hists):
-
-    print "Parsing {}".format(input_file)
-
-    # We read the file line by line, and for each line, we fill the corresponding histograms.
+    # We read all th efiles in input_file line by line, and for each line, we fill the corresponding histograms.
     # This is desirable to creating lists of values since this will not hold
     # anything in memory.
 
@@ -48,246 +30,115 @@ def parse_file(input_file, output_filename, all_hists, log_hists):
 
     parse_count = 1
 
-    with open(input_file) as infile:
+    #print(data_type)
 
-        line_number = 0
+    if data_type == '2011':
+        trigger_luminosity_dictionary = trigger_luminosity_dictionary_2011(input_files)
+        #print(trigger_luminosity_dictionary)
+    elif (data_type == 'sim_gen' or data_type == 'sim_pfc'):
+        mod_file_to_crosssection = mod_file_to_crosssection_sim(data_type, input_files)
 
-        largest_pT = 0.0
+        #print(mod_file_to_crosssection)
 
-        for line in infile:
+    for input_file in input_files:
 
-            start = time.time()
+        with open(input_file) as infile:
 
-            if len(line.strip()) == 0:
-                continue
+            #print "Parsing {}".format(input_file)
 
-            line_number += 1
+            line_number = 0
 
-            if int(line_number) % 10000 == 0:
-                print(line_number)
+            largest_pT = 0.0
 
-            if line_number % 100000 == 0:
-                print "At line number {} with parse count = {}".format(line_number, parse_count)
-                # print "Largest pT so far is", largest_pT
-                write_to_root_files(all_hists, log_hists, output_filename)
+            for line in infile:
 
-            try:
-                # if True:
-                numbers = line.split()
+                start = time.time()
 
-                if numbers[0] == "#" and (not keywords_set):
-                    keywords = numbers[1:]
-                    keywords_set = True
+                if len(line.strip()) == 0:
+                    continue
+                line_number += 1
 
-                    # Build a dictionary of keyword indices.
-                    keywords_index_dictionary = {}
-                    for keyword_index, keyword in enumerate(keywords):
-                        keywords_index_dictionary[keyword] = keyword_index
+                if line_number % 10000 == 0:
+                    print "at line number: " + str(line_number)
 
-                    #print keywords_index_dictionary['hardest_pT']
+                try:
+                    # if True:
+                    numbers = line.split()
 
-                    prescale_index = keywords.index("prescale")
+                    if numbers[0] == "#" and (not keywords_set):
+                        keywords = numbers[1:]
+                        keywords_set = True
 
-                elif numbers[0] == "Entry":
+                        # Build a dictionary of keyword indices.
+                        keywords_index_dictionary = {}
+                        for keyword_index, keyword in enumerate(keywords):
+                            keywords_index_dictionary[keyword] = keyword_index
 
-                    # Find what prescale to use.
-                    # + 1 because we ignore the first keyword "Entry".
-                    pT_of_this_event = float(
-                        numbers[keywords_index_dictionary['hardest_pT']])
+                    elif numbers[0] == "Entry":
 
-                    # Find out what prescale to use.
-                    if input_file == data_file:  # For data file only.
-
-
-                        # print " i am data lol"
-                        #  Average prescale.
-
-                        # To find which prescale to use, we need to find which trigger fired.
-                        # To do that, we need to find the pT of the hardest
-                        # jet.
+                        pT_of_this_event = float(numbers[keywords_index_dictionary['hardest_pT']])
 
                         prescale_to_use = 0.0
+                        
+                        if data_type == '2011':
+                            trigger = numbers[keywords_index_dictionary['trigger_fired']]
+                            prescale_to_use = 1000000.0/trigger_luminosity_dictionary[trigger]
+                        elif (data_type == 'sim_pfc' or data_type == 'sim_gen'):
+                            short_name = input_file.split('/')[-1]
+                            #input_file = numbers[keywords_index_dictionary['filename']]
+                            prescale_to_use = mod_file_to_crosssection[short_name]
+                                                    
+                        for some_hists in [all_hists, log_hists]:
 
-                        if pT_of_this_event > 250.:
-                            prescale_to_use = 1.0
-                        else:
+                            #for keyword in some_hists.keys():
+                            for keyword in ['hardest_pT', 'hardest_eta', 'mass_pre_SD', 'mul_pre_SD', 'track_mass_pre_SD', 'track_mul_pre_SD', 'hardest_phi']:
 
-                            for pT_boundaries, prescale in average_prescales.items():
+                                for mod_hist in some_hists[keyword]:
 
-                                lower, upper = pT_boundaries
+                                    print(some_hists.keys())
 
-                                # print lower, upper, pT_of_this_event
+                                    hist = mod_hist.hist()
 
-                                if upper != None:
-                                    if pT_of_this_event > float(lower) and pT_of_this_event < float(upper):
-                                        prescale_to_use = prescale
-                                        break
+                                    # Now, see whether or not the conditions are
+                                    # met.
+                                    condition_satisfied = True
+                                    conditions = mod_hist.conditions()
 
-                    else:  # MC so always use prescales.
-                        # print "and i am a mc",
-                        prescale_to_use = float(numbers[prescale_index])
-                        # print prescale_to_use
+                                    for condition_keyword, condition_boundaries in conditions:
+                                        keyword_index = keywords_index_dictionary[
+                                            condition_keyword]
 
-                    for some_hists in [all_hists, log_hists]:
+                                        if condition_boundaries[0] != None and float(numbers[keyword_index]) < float(condition_boundaries[0]):
+                                            condition_satisfied = False
 
-                        # for i in xrange(len(keywords)):
-                        for keyword in some_hists.keys():
+                                        if condition_boundaries[1] != None and float(numbers[keyword_index]) > float(condition_boundaries[1]):
+                                            condition_satisfied = False
 
-                            #print(keyword)
+                                    if condition_satisfied:
 
-                            for mod_hist in some_hists[keyword]:
+                                        if pT_of_this_event > largest_pT:
+                                            largest_pT = pT_of_this_event
 
-                                hist = mod_hist.hist()
+                                        parse_count += 1
+                                        x = float(numbers[keywords_index_dictionary[keyword]])
 
-                                if pT_of_this_event > largest_pT:
-                                    largest_pT = pT_of_this_event
+                                        #print(x, prescale_to_use)
 
-                                # if keyword == 'hardest_eta':
-                                # print conditions
+                                        hist.fill_array([x], [prescale_to_use])
 
-                                parse_count += 1
 
-                                #print "i am here"
-                                #print keyword, keywords_index_dictionary[keyword]
-                                x = float(
-                                    numbers[keywords_index_dictionary[keyword]])
+                except Exception as e:
+                    pass
+                    #print "Some exception occured!",
+                    #print e.message
 
-                                hist.fill_array([x], [prescale_to_use])
+                end = time.time()
 
-                                #print(hist)
-
-            except Exception as e:
-                pass
-                #print "Some exception occured!",
-                #print e.message
-
-            end = time.time()
-
-            # print "Took {} seconds for current line.".format(end - start)
-
-    print "Largest pT was", largest_pT
+                # print "Took {} seconds for current line.".format(end - start)
 
     print "Total parsed count is", parse_count
 
     return all_hists, log_hists
-
-
-def parse_from_conditional_files(output_directory, source, all_hists, log_hists):
-    # print output_directory, source, all_hists
-
-    for keyword, mod_hists in all_hists.items():
-        for mod_hist in all_hists[keyword]:
-
-            conditional_filename = get_conditional_filename(
-                mod_hist.conditions())
-            file_to_read = output_directory + "/" + source + \
-                "/conditions/" + conditional_filename + ".dat"
-
-            # Now, read the file.
-    pass
-
-
-def get_conditional_filename(conditions):
-    conditional_filename = ""
-    for condition in conditions:
-        condition_keyword = condition[0]
-        condition_boundaries = ""
-        for x in condition[1]:
-            condition_boundaries += str(x) + "-"
-
-        conditional_filename += condition_keyword + \
-            "-" + condition_boundaries[:-1] + "_"
-
-    conditional_filename = conditional_filename[:-1]
-
-    return conditional_filename
-
-
-def filter_events(input_filename, output_directory, source, all_mod_hists, all_mod_log_hists):
-
-    # Get a list of unique conditions.
-
-    all_conditions = set()
-
-    for mod_hist_dicts in all_mod_hists:
-        for keyword, mod_hists in mod_hist_dicts.items():
-            for mod_hist in mod_hist_dicts[keyword]:
-
-                conditions = mod_hist.conditions()
-
-                all_conditions.add(tuple(conditions))
-
-    # Build a keyword dictionary.
-
-    keywords_index_dictionary = {}
-
-    with open(input_filename) as infile:
-
-        for line in infile:
-            if len(line.strip()) == 0:
-                continue
-
-            numbers = line.split()
-
-            if numbers[0] == "#":
-
-                keyword_line = numbers[0]
-
-                # Build a dictionary of keyword indices.
-                keywords_index_dictionary = {}
-                for keyword_index, keyword in enumerate(numbers):
-                    # + 1 to offset for 0-counting.
-                    keywords_index_dictionary[keyword] = keyword_index + 1
-
-                break
-
-    # Create a new directory in the output_directory.
-    subprocess.call(
-        ["mkdir", "-p", "{}/{}/conditions/".format(output_directory, source)])
-
-    for conditions in all_conditions:
-
-        if_conditional = "if ( "
-
-        for condition in conditions:
-
-            # Build corresponding awk from condition.
-            condition_keyword = condition[0]
-            condition_boundaries = condition[1]
-
-            keyword_index = keywords_index_dictionary[condition[0]]
-
-            if condition_boundaries[0] != None and condition_boundaries[1] != None:
-                if_conditional += "${} > {} && ${} < {}".format(keyword_index, float(
-                    condition_boundaries[0]), keyword_index, float(condition_boundaries[1]))
-            elif condition_boundaries[0] != None and condition_boundaries[1] == None:
-                if_conditional += "${} > {}".format(
-                    keyword_index, float(condition_boundaries[0]))
-            elif condition_boundaries[0] == None and condition_boundaries[1] != None:
-                if_conditional += "${} < {}".format(
-                    keyword_index, float(condition_boundaries[0]))
-
-            if_conditional += " && "
-
-        if_conditional = if_conditional[:-3] + ")"
-
-        # Now, build a filename.
-
-        conditional_filename = get_conditional_filename(conditions)
-
-        if_conditional = if_conditional + "{ print $0; }"
-
-        proc = subprocess.Popen("echo '" + keyword_line + "' > " + "{}/{}/conditions/{}.dat".format(
-            output_directory, source, conditional_filename), stdout=subprocess.PIPE, shell=True)
-
-        command = "awk '{" + if_conditional + "}' " + input_filename + " >> " + \
-            "{}/{}/conditions/{}.dat".format(output_directory,
-                                             source, conditional_filename)
-        proc = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
-        output = proc.stdout.read()
-
-        print command
-        print output
 
 
 def write_to_root_files(parsed_hists, parsed_log_hists, output_filename):
@@ -329,32 +180,20 @@ def write_to_root_files(parsed_hists, parsed_log_hists, output_filename):
     # print "Took {} seconds to write down to files.".format(end - start)
 
 
-def parse_to_root_file(input_filename, output_filename, hist_templates):
+def parse_to_root_file(input_files, output_filename, data_type, hist_templates):
 
     # print "Parsing {} to {}".format(input_filename, output_filename)
 
     # First, get the already histogrammed hists.
 
-    hists, log_hists = copy.deepcopy(
-        hist_templates[0]), copy.deepcopy(hist_templates[1])
+    hists, log_hists = copy.deepcopy(hist_templates[0]), copy.deepcopy(hist_templates[1])
 
-    start = time.time()
+    parsed_hists, parsed_log_hists = parse_file(input_files, output_filename, data_type, hists, log_hists)
 
-    # print "Is this data?", is_this_data
-
-    parsed_hists, parsed_log_hists = parse_file(
-        input_filename, output_filename, hists, log_hists)
-
-    # parsed_hists, parsed_log_hists = parse_from_conditional_files( output_directory, source, copy.deepcopy( hist_templates[0] ), copy.deepcopy(hist_templates[1]) )
-
-    end = time.time()
-
-    # print "Took {} seconds to parse everything- this is where I
-    # deepcopy.".format(end - start)
     write_to_root_files(parsed_hists, parsed_log_hists, output_filename)
 
 
-def root_file_to_hist(input_filename, hist_templates, is_this_data):
+def root_file_to_hist(input_filename, hist_templates):
 
     hists = copy.deepcopy(hist_templates)
 
@@ -364,62 +203,157 @@ def root_file_to_hist(input_filename, hist_templates, is_this_data):
 
         index = 0
 
-        # if var in ['hardest_pT', 'uncor_hardest_pT', 'hardest_eta']:
-        # if var not in ['uncor_hardest_pT']:
-        if is_this_data:
-            for mod_hist in hists[var]:
-                hist_name = "{}#{}".format(var, index)
+        for mod_hist in hists[var]:
+            hist_name = "{}#{}".format(var, index)
 
-                # Get hist from ROOT file.
-                hist = root_file.Get(hist_name)
+            # Get hist from ROOT file.
+            hist = root_file.Get(hist_name)
 
-                mod_hist.replace_hist(hist)
+            mod_hist.replace_hist(hist)
 
-                index += 1
-
-        else:
-            if var != 'uncor_hardest_pT':
-                for mod_hist in hists[var]:
-                    hist_name = "{}#{}".format(var, index)
-
-                    # Get hist from ROOT file.
-                    hist = root_file.Get(hist_name)
-
-                    mod_hist.replace_hist(hist)
-
-                    index += 1
+            index += 1
 
     return hists
 
 
 def parse_to_root_files():
+
+    input_directory = sys.argv[1]
+    data_files = os.listdir(input_directory)
+
+    output_directory = sys.argv[2]
+
+    data_files_2011 = []
+    data_files_sim_pfc = []
+    data_files_sim_gen = []
+
+    for data_file in data_files:
+        if data_file.endswith(".dat"):
+            if 'pfc' in data_file:
+                data_files_sim_pfc.append(input_directory + data_file)
+            elif 'gen' in data_file:
+                data_files_sim_gen.append(input_directory + data_file)
+            else:
+                data_files_2011.append(input_directory + data_file)
+            
     hist_templates = hists.multi_page_plot_hist_templates()
 
     log_hist_templates = hists.multi_page_log_plot_hist_templates()
-
-    parse_to_root_file(input_filename=data_file, output_filename=(output_directory + "data.root",
-                                                                  output_directory + "data_log.root"), hist_templates=(hist_templates,
+ 
+    parse_to_root_file(input_files=data_files_2011, output_filename=(output_directory + "data_20113.root",
+                                                                  output_directory + "data_2011_log.root"), data_type = "2011", hist_templates=(hist_templates,
+                                                                                                                       log_hist_templates))
+    parse_to_root_file(input_files=data_files_sim_pfc, output_filename=(output_directory + "data_sim_pfc_half.root",
+                                                                  output_directory + "data_sim_pfc_log.root"), data_type = "sim_pfc", hist_templates=(hist_templates,
+                                                                                                                       log_hist_templates))
+    parse_to_root_file(input_files=data_files_sim_gen, output_filename=(output_directory + "data_sim_gen_half.root",
+                                                                  output_directory + "data_sim_gen_log.root"), data_type = "sim_gen", hist_templates=(hist_templates,
                                                                                                                        log_hist_templates))
 
 def load_root_files_to_hist(log=False):
 
+    output_directory = sys.argv[1]
+
     if not log:
         hist_templates = hists.multi_page_plot_hist_templates()
-        filenames = ["data.root"]
+	#filenames = ["data_2011.root", "data_20112.root", "data_sim_pfc.root", "data_sim_gen.root"]
+        filenames = ["data_sim_pfc_half.root", "data_sim_gen_half.root", "data_sim_pfc.root", "data_sim_gen.root"]
+	#filenames = ["data_sim_pfc.root", "data_sim_gen.root"]
+        #filenames = ["data_2011.root", "data_20112.root"]
+	#filenames = ["data_sim_all_new.root"]
     else:
         hist_templates = hists.multi_page_log_plot_hist_templates()
-        print(hist_templates)
-        filenames = ["data_log.root"]
+        filenames = ["data_2011_log.root", "data_sim_pfc_log.root", "data_sim_gen_log.root"]
 
-    return [root_file_to_hist(output_directory + filename, hist_templates, is_this_data) for filename, is_this_data in zip(filenames, [True, False, False, False])]
+    return [root_file_to_hist(output_directory + filename, hist_templates) for filename in filenames]
 
+
+def file_merge(output, input_files):
+    with open(output, 'w') as merged_file:
+        for fname in input_files:
+            with open(fname) as infile:
+                for line in infile:
+                    merged_file.write(line)
+
+
+def trigger_luminosity_dictionary_2011(input_files):
+    input_files_short = []
+    for input_file in input_files:
+        input_files_short.append(input_file.split('/')[-1])
+    print(input_files_short)
+    mod_file_with_trigger = [line.rstrip('\n') for line in open("/home/preksha/Documents/mengproject/MODAnalyzer/effective_luminosity_by_trigger.csv")]
+    mod_trigger_luminosities = {}
+    for mod_trigger_lumi in mod_file_with_trigger:
+        if not mod_trigger_lumi.isspace():
+            #print(mod_trigger_lumi)
+            mod_file = mod_trigger_lumi.split(',')[0].replace('.mod', '.dat')
+            trigger = mod_trigger_lumi.split(',')[1]
+            lumi = mod_trigger_lumi.split(',')[2]
+            if mod_file in input_files_short:
+                mod_trigger_luminosities[(mod_file, trigger)] = lumi
+    trigger_luminosity_total = {}
+    for mod_trigger in mod_trigger_luminosities:
+        if mod_trigger[1] in trigger_luminosity_total:
+            #current_effective_lumi = trigger_luminosity_total[mod_trigger[1]]
+            trigger_luminosity_total[mod_trigger[1]] += float(mod_trigger_luminosities[mod_trigger])
+        else:
+            trigger_luminosity_total[mod_trigger[1]] = float(mod_trigger_luminosities[mod_trigger])
+    return trigger_luminosity_total
+
+def mod_file_to_crosssection_sim(flag, input_files):
+    input_files_short = []
+    for input_file in input_files:
+        input_files_short.append(input_file.split('/')[-1])
+    output_file_event_count = [line.rstrip('\n') for line in open("event_count_by_pythia_and_mod.csv")]
+    pythia_cross_sections = {'QCD_Pt-15to30_TuneZ2_7TeV_pythia6': 815912800.0, 
+                             'QCD_Pt-30to50_TuneZ2_7TeV_pythia6': 53122370.0,
+                             'QCD_Pt-50to80_TuneZ2_7TeV_pythia6': 6359119.0,
+                             'QCD_Pt-80to120_TuneZ2_7TeV_pythia6': 784265.0,
+                             'QCD_Pt-120to170_TuneZ2_7TeV_pythia6': 115134.0,
+                             'QCD_Pt-170to300_TuneZ2_7TeV_pythia6': 24262.8,
+                             'QCD_Pt-300to470_TuneZ2_7TeV_pythia6': 1168.49,
+                             'QCD_Pt-470to600_TuneZ2_7TeV_pythia6': 70.2242,
+                             'QCD_Pt-600to800_TuneZ2_7TeV_pythia6': 15.5537,
+                             'QCD_Pt-800to1000_TuneZ2_7TeV_pythia6': 1.84369,
+                             'QCD_Pt-1000to1400_TuneZ2_7TeV_pythia6': 0.332105,
+                             'QCD_Pt-1400to1800_TuneZ2_7TeV_pythia6': 0.0108721}
+
+    #print(input_files_short)
+    # Build dictionary of mod file, pythia_set and associated number of events
+    # We do it this in way as protection in case the csv file has been appended
+    # with same data set twice accidentally.
+    mod_file_and_pythia_set_count = {}
+    for line in output_file_event_count:
+        output_file = line.split(',')[0]
+        print(output_file)
+        if output_file in input_files_short:
+            event_count = line.split(',')[1]
+            mod_name_start_index = output_file.find("pythia6") + len("pythia6")
+            #mod_name_end_index = output_file.find("_"+flag)
+            #mod_name = output_file[mod_name_start_index: mod_name_end_index]+".mod"
+            pythia_set = output_file[:mod_name_start_index]
+            mod_file_and_pythia_set_count[(output_file, pythia_set)] = event_count
+
+    #print(mod_file_and_pythia_set_count)
+    pythia_set_to_event_count = {}
+    for mod_file_pythia_set in mod_file_and_pythia_set_count:
+        pythia_set = mod_file_pythia_set[1]
+        event_count = float(mod_file_and_pythia_set_count[mod_file_pythia_set])
+        if pythia_set in pythia_set_to_event_count:
+            pythia_set_to_event_count[pythia_set] += event_count
+        else:
+            pythia_set_to_event_count[pythia_set] = event_count
+
+    print(pythia_set_to_event_count)
+    mod_file_to_cross_section = {}
+    for mod_file, pythia_set in mod_file_and_pythia_set_count:
+        #print(pythia_cross_sections[pythia_set], pythia_set_to_event_count[pythia_set], pythia_set)
+        mod_file_to_cross_section[mod_file] = pythia_cross_sections[pythia_set]/pythia_set_to_event_count[pythia_set]        
+        
+    return mod_file_to_cross_section
 
 if __name__ == "__main__":
 
-    # filter_events(input_filename=pythia_file, output_directory=output_directory, source="pythia", all_mod_hists=(hists.multi_page_plot_hist_templates(), hists.multi_page_log_plot_hist_templates()))
-
     parse_to_root_files()
-
-    #load_root_files_to_hist()
 
     pass

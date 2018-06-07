@@ -56,7 +56,9 @@ def parse_file(input_file, output_filename, all_hists):
 
             line_number += 1
 
-            print(line_number)
+            #print(line_number)
+            if int(line_number) % 10000 == 0:
+                print(line_number)
 
             if line_number % 1000000 == 0 and line_number > 1:
                 print "At line number {}".format(line_number)
@@ -129,6 +131,11 @@ def parse_file(input_file, output_filename, all_hists):
                                     # + 1 because we ignore the first keyword "Entry".
                                     x = float(numbers[i + 1])
 
+                                    hist.fill_array([x], [float(numbers[prescale_index])])
+
+
+                                    """
+
                                     if input_file == pfc_data_file:  # For data file only.
 
                                         if not mod_hist.use_prescale():
@@ -162,6 +169,7 @@ def parse_file(input_file, output_filename, all_hists):
                                         # if type()
                                         hist.fill_array(
                                             [x], [float(numbers[prescale_index])])
+                                    """
 
             except Exception as e:
                 print "Some exception occured!",

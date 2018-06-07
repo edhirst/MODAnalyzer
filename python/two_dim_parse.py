@@ -20,7 +20,7 @@ import rootpy.plotting.root2matplotlib as rplt
 
 output_directory = "/home/preksha/Documents/mengproject/"
 
-data_file = "/home/preksha/Documents/mengproject/analyzed_data.dat"
+data_file = "/home/preksha/Documents/mengproject/analyzed_data10.dat"
 
 
 
