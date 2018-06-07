@@ -1252,7 +1252,7 @@ def multi_page_plot_hist_templates():
                   0]) + ", " + str(eta_boundaries[j][1]) + "]"
 
         additional_text = [((0.76, 0.6), 'upper right',
-                            "AK5; $" + eta_boundary_label )]
+                            "AK5; $" + eta_boundary_label  + "$ \n $p_T^{\mathrm{jet}} > 10~\mathrm{GeV}$")]
         all_hists['hardest_pT'].append(MODHist(Hist(400, 0, 2000, title="pT"), conditions=default_85_conditions, use_prescale=True, x_label="$p_T$ [GeV]",
                                                y_label="cross section [pb/GeV] ", y_scale='log', x_range=(0, 1200), y_range=(1e-8, 1e12), mark_regions=[(150, 1e-6, 'right', 0.04, 25)], additional_text=additional_text))
 
@@ -1270,18 +1270,24 @@ def multi_page_plot_hist_templates():
 
 
         additional_text = [((0.80, 0.60), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 10~\mathrm{GeV}$")]
-        all_hists['mass_pre_SD'].append(MODHist(copy.deepcopy(mass_hist), conditions=default_85_conditions, use_prescale=True, x_label="Mass [GeV]",
+                             eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$")]
+        all_hists['mass_pre_SD'].append(MODHist(copy.deepcopy(mass_hist), conditions=default_150_conditions, use_prescale=True, x_label="Mass [GeV]",
                                                 y_label="cross section [pb/GeV]", x_range=(0.0, 40.0), y_scale='log',  y_range=(1e0, 1e12), additional_text=additional_text))
 
 
-
-        additional_text = [((0.80, 0.6), 'upper right', eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 10~\mathrm{GeV}$")]
-        all_hists['width_pre_SD'].append(MODHist(copy.deepcopy(width_hist), conditions=default_85_conditions, use_prescale=True, x_label="Width", y_scale='log',  y_range=(1e0, 1e12), y_label="cross section [pb/GeV]", legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.80, 0.6), 'upper right', eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 10~\mathrm{GeV}$")]
-        all_hists['mul_pre_SD'].append(MODHist(copy.deepcopy(constituent_mul_hist), conditions=default_85_conditions, use_prescale=True, x_label="Constituent Multiplicity", x_range=(
+        additional_text = [((0.80, 0.6), 'upper right', eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$")]
+        all_hists['mul_pre_SD'].append(MODHist(copy.deepcopy(constituent_mul_hist), conditions=default_150_conditions, use_prescale=True, x_label="Constituent Multiplicity", x_range=(
             0, 60), y_scale='log', y_range=(1e0, 1e12), y_label="cross section [pb/GeV]", additional_text=additional_text, legend_location=('upper right', (1.0, 1.0))))
+
+        additional_text = [((0.80, 0.60), 'upper right', eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$")]
+        all_hists['track_mass_pre_SD'].append(MODHist(copy.deepcopy(track_mass_hist), conditions=default_150_conditions, use_prescale=True, x_label="Track Mass [GeV]",
+                                                y_label="cross section [pb/GeV]", x_range=(0.0, 40.0), y_scale='log',  y_range=(1e0, 1e12), additional_text=additional_text))
+
+
+        additional_text = [((0.80, 0.6), 'upper right',eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$")]
+        all_hists['track_mul_pre_SD'].append(MODHist(copy.deepcopy(track_constituent_mul_hist), conditions=default_150_conditions, use_prescale=True, x_label="Track Constituent Multiplicity", x_range=(
+            0, 60), y_scale='log', y_range=(1e0, 1e12), y_label="cross section [pb/GeV]", additional_text=additional_text, legend_location=('upper right', (1.0, 1.0))))
+
 
 
     return all_hists
@@ -1296,13 +1302,12 @@ def trigger_hists():
 
     # all_hists['corr_hardest_pT'] = []
 
-    trigger_names = ["Jet15U_HcalNoiseFiltered", "Jet30U",
-                     "Jet50U", "Jet70U", "Jet100U", "Jet140U"]
+    trigger_names = ["HLT_Jet370", "HLT_Jet300", "HLT_Jet240", "HLT_Jet190", "HLT_Jet150", "HLT_Jet110", "HLT_Jet80", "HLT_Jet60", "HLT_Jet30" ]
 
     for trigger_name in trigger_names:
         additional_text = [
             (upper_left, 'upper left', "AK5; " + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$")]
-        all_hists[trigger_name] = MODHist(Hist(50, 0, 300), conditions=[(['jet_quality', 1], lambda x, y: y >= x), (['trig_jet_matched', 1], lambda x, y: y == x)],
+        all_hists[trigger_name] = MODHist(Hist(50, 0, 600), conditions=[(['jet_quality', 1], lambda x, y: y >= x), (['trig_jet_matched', 1], lambda x, y: y == x)],
                                           use_prescale=True, x_scale='log', x_label="Fractional $p_T$ Loss", y_label="A.U.", y_range=(0., 1.2), additional_text=additional_text)
         # all_hists[trigger_name] =  MODHist(Hist(50, 0, 300),
         # conditions=[(['trig_jet_matched', 1], lambda x, y: y == x)],
@@ -1321,7 +1326,6 @@ def trigger_hists():
         # y_range=(0., 1.2), additional_text=additional_text )
 
     return all_hists
-
 
 def get_pfc_hists():
     pfc_hists = {}
