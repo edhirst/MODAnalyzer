@@ -34,7 +34,7 @@ This repository is concerned with steps (4) to (5) only. Steps (1) to (3) are ca
 
  - First, we run the analyzer. We use the Python script `utilities/analyze.py` for general data analysis.  This script will run the executable `bin/analyze` M times for M MOD files. This script has three required arguments and two optional arguments. 
 
-   1. [required] If running 2011 data, a path to the directory of where the MOD files. If running simulated data, a path to the directory where the QCD data sets are.
+   1. [required] If running 2011 data, a path to the directory of where all the MOD files. If running simulated data, a path to the directory where the QCD data sets are(e.g. 'All_QCD_data_sets' which contains 'QCD_Pt-15to30_TuneZ2_7TeV_pythia6', 'QCD_Pt-30to50_TuneZ2_7TeV_pythia6', etc.). Make sure the directory label corresponds to the pythia set. The files can be nested within the directory somewhere(e.g. 'QCD_Pt-30to50_TuneZ2_7TeV_pythia6 --> MODFILE --> SIMFiles --> x.mod') but make sure the top directory is labeled correctly.
    2. [required] Folder path to output the dat files into. 
    3. [required] '2011' if running 2011 data and 'sim' if running simulated data
    4. [optional] To limit number of arguments, use flag '-number_events'. By default, the analysis is run on all the events in the file. 
