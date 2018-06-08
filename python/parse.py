@@ -34,7 +34,7 @@ def parse_file(input_files, output_filename, data_type, all_hists, log_hists):
 
     if data_type == '2011':
         trigger_luminosity_dictionary = trigger_luminosity_dictionary_2011(input_files)
-        #print(trigger_luminosity_dictionary)
+        print(trigger_luminosity_dictionary)
     elif (data_type == 'sim_gen' or data_type == 'sim_pfc'):
         mod_file_to_crosssection = mod_file_to_crosssection_sim(data_type, input_files)
 
@@ -90,12 +90,12 @@ def parse_file(input_files, output_filename, data_type, all_hists, log_hists):
                                                     
                         for some_hists in [all_hists, log_hists]:
 
-                            #for keyword in some_hists.keys():
-                            for keyword in ['hardest_pT', 'hardest_eta', 'mass_pre_SD', 'mul_pre_SD', 'track_mass_pre_SD', 'track_mul_pre_SD', 'hardest_phi']:
+                            for keyword in some_hists.keys():
+                            #for keyword in ['track_mass_pre_SD']:
 
                                 for mod_hist in some_hists[keyword]:
 
-                                    print(some_hists.keys())
+                                    #print(some_hists.keys())
 
                                     hist = mod_hist.hist()
 
@@ -114,12 +114,19 @@ def parse_file(input_files, output_filename, data_type, all_hists, log_hists):
                                         if condition_boundaries[1] != None and float(numbers[keyword_index]) > float(condition_boundaries[1]):
                                             condition_satisfied = False
 
+                                    #print(condition_satisfied)
+
                                     if condition_satisfied:
+
+                                        #print(condition_satisfied)
 
                                         if pT_of_this_event > largest_pT:
                                             largest_pT = pT_of_this_event
 
                                         parse_count += 1
+                                        #print(keywords_index_dictionary['track_mass_pre_SD'])
+                                        #print(len(numbers))
+                                        #print(numbers[keywords_index_dictionary['track_mass_pre_SD']])
                                         x = float(numbers[keywords_index_dictionary[keyword]])
 
                                         #print(x, prescale_to_use)
@@ -240,13 +247,13 @@ def parse_to_root_files():
 
     log_hist_templates = hists.multi_page_log_plot_hist_templates()
  
-    parse_to_root_file(input_files=data_files_2011, output_filename=(output_directory + "data_20113.root",
+    parse_to_root_file(input_files=data_files_2011, output_filename=(output_directory + "data_2011.root",
                                                                   output_directory + "data_2011_log.root"), data_type = "2011", hist_templates=(hist_templates,
                                                                                                                        log_hist_templates))
-    parse_to_root_file(input_files=data_files_sim_pfc, output_filename=(output_directory + "data_sim_pfc_half.root",
+    parse_to_root_file(input_files=data_files_sim_pfc, output_filename=(output_directory + "data_sim_pfc.root",
                                                                   output_directory + "data_sim_pfc_log.root"), data_type = "sim_pfc", hist_templates=(hist_templates,
                                                                                                                        log_hist_templates))
-    parse_to_root_file(input_files=data_files_sim_gen, output_filename=(output_directory + "data_sim_gen_half.root",
+    parse_to_root_file(input_files=data_files_sim_gen, output_filename=(output_directory + "data_sim_gen.root",
                                                                   output_directory + "data_sim_gen_log.root"), data_type = "sim_gen", hist_templates=(hist_templates,
                                                                                                                        log_hist_templates))
 
@@ -256,8 +263,8 @@ def load_root_files_to_hist(log=False):
 
     if not log:
         hist_templates = hists.multi_page_plot_hist_templates()
-	#filenames = ["data_2011.root", "data_20112.root", "data_sim_pfc.root", "data_sim_gen.root"]
-        filenames = ["data_sim_pfc_half.root", "data_sim_gen_half.root", "data_sim_pfc.root", "data_sim_gen.root"]
+	filenames = ["data_2011.root", "data_sim_pfc.root", "data_sim_gen.root"]
+        #filenames = ["data_sim_pfc_half.root", "data_sim_gen_half.root", "data_sim_pfc.root", "data_sim_gen.root"]
 	#filenames = ["data_sim_pfc.root", "data_sim_gen.root"]
         #filenames = ["data_2011.root", "data_20112.root"]
 	#filenames = ["data_sim_all_new.root"]
@@ -284,7 +291,7 @@ def trigger_luminosity_dictionary_2011(input_files):
     mod_file_with_trigger = [line.rstrip('\n') for line in open("/home/preksha/Documents/mengproject/MODAnalyzer/effective_luminosity_by_trigger.csv")]
     mod_trigger_luminosities = {}
     for mod_trigger_lumi in mod_file_with_trigger:
-        if not mod_trigger_lumi.isspace():
+        if mod_trigger_lumi.replace(" ",""):
             #print(mod_trigger_lumi)
             mod_file = mod_trigger_lumi.split(',')[0].replace('.mod', '.dat')
             trigger = mod_trigger_lumi.split(',')[1]
@@ -325,7 +332,7 @@ def mod_file_to_crosssection_sim(flag, input_files):
     mod_file_and_pythia_set_count = {}
     for line in output_file_event_count:
         output_file = line.split(',')[0]
-        print(output_file)
+        #print(output_file)
         if output_file in input_files_short:
             event_count = line.split(',')[1]
             mod_name_start_index = output_file.find("pythia6") + len("pythia6")
@@ -344,7 +351,7 @@ def mod_file_to_crosssection_sim(flag, input_files):
         else:
             pythia_set_to_event_count[pythia_set] = event_count
 
-    print(pythia_set_to_event_count)
+    #print(pythia_set_to_event_count)
     mod_file_to_cross_section = {}
     for mod_file, pythia_set in mod_file_and_pythia_set_count:
         #print(pythia_cross_sections[pythia_set], pythia_set_to_event_count[pythia_set], pythia_set)
