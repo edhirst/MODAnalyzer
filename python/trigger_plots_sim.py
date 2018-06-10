@@ -133,18 +133,18 @@ def trigger_turn_on_curves():
 	print(mod_hists.keys())
 
 	colors = ['green', 'magenta', 'blue', 'red', 'orange', '#cecece', 'yellow', 'cyan', 'purple', '#FF7F50', '#EC7EA3', '#A9D9BC']
-	labels = ['QCD_Pt-15to30_TuneZ2_7TeV_pythia6',
-                       'QCD\_Pt-30to50\_TuneZ2\_7TeV\_pythia6',
-                       'QCD_Pt-50to80_TuneZ2_7TeV_pythia6',
-                       'QCD_Pt-80to120_TuneZ2_7TeV_pythia6',
-                       'QCD_Pt-120to170_TuneZ2_7TeV_pythia6',
-                       'QCD_Pt-170to300_TuneZ2_7TeV_pythia6',
-                       'QCD_Pt-300to470_TuneZ2_7TeV_pythia6',
-                       'QCD_Pt-470to600_TuneZ2_7TeV_pythia6',
-                       'QCD_Pt-600to800_TuneZ2_7TeV_pythia6',
-                       'QCD_Pt-800to1000_TuneZ2_7TeV_pythia6',
-                       'QCD_Pt-1000to1400_TuneZ2_7TeV_pythia6',
-                       'QCD_Pt-1400to1800_TuneZ2_7TeV_pythia6']
+	labels = ['QCD\_Pt15to30\_TuneZ2\_7TeV\_pythia6',
+                  'QCD\_Pt30to50\_TuneZ2\_7TeV\_pythia6',
+                  'QCD\_Pt50to80\_TuneZ2\_7TeV\_pythia6',
+                  'QCD\_Pt80to120\_TuneZ2\_7TeV\_pythia6',
+                  'QCD\_Pt120to170\_TuneZ2\_7TeV\_pythia6',
+                  'QCD\_Pt170to300\_TuneZ2\_7TeV\_pythia6',
+                  'QCD\_Pt300to470\_TuneZ2\_7TeV\_pythia6',
+                  'QCD\_Pt470to600\_TuneZ2\_7TeV\_pythia6',
+                  'QCD\_Pt600to800\_TuneZ2\_7TeV\_pythia6',
+                  'QCD\_Pt800to1000\_TuneZ2\_7TeV\_pythia6',
+                  'QCD\_Pt1000to1400\_TuneZ2\_7TeV\_pythia6',
+                  'QCD\_Pt1400to1800\_TuneZ2\_7TeV\_pythia6']
 	hist_labels = ['QCD_Pt-15to30_TuneZ2_7TeV_pythia6',
                        'QCD_Pt-30to50_TuneZ2_7TeV_pythia6',
                        'QCD_Pt-50to80_TuneZ2_7TeV_pythia6',
@@ -157,6 +157,7 @@ def trigger_turn_on_curves():
                        'QCD_Pt-800to1000_TuneZ2_7TeV_pythia6',
                        'QCD_Pt-1000to1400_TuneZ2_7TeV_pythia6',
                        'QCD_Pt-1400to1800_TuneZ2_7TeV_pythia6']
+	colors.reverse()
 	labels.reverse()
 	hist_labels.reverse()
 
@@ -197,7 +198,7 @@ def trigger_turn_on_curves():
 	# Info about R, pT_cut, etc.
 	extra = Rectangle((0, 0), 1, 1, fc="w", fill=False, edgecolor='none', linewidth=0)
 	handles = [extra]
-	labels = ["AK5; $\left| \eta \\right| < 2.5$"]
+	labels = ["AK5; $\left| \eta \\right| < 2.4$"]
 	info_legend = plt.gca().legend(handles, labels, loc=7, frameon=0, borderpad=0.1, fontsize=60, bbox_to_anchor=[0.28, 0.92])
 	plt.gca().add_artist(info_legend)
 
@@ -209,10 +210,10 @@ def trigger_turn_on_curves():
 
 	plt.gca().xaxis.set_minor_locator(MultipleLocator(10))
 	plt.gca().set_yscale('log')
-
+	
 	handles, labels = plt.gca().get_legend_handles_labels()
 
-	legend = plt.legend(handles[::-1], labels[::-1], frameon=0, fontsize=20, bbox_to_anchor=[0.97, 0.99])
+	legend = plt.legend(handles[::-1], labels[::-1], frameon=0, fontsize=30, bbox_to_anchor=[0.99, 0.99])
 
 	ax = plt.gca().add_artist(legend)
 
@@ -221,7 +222,7 @@ def trigger_turn_on_curves():
 
 
 	plt.autoscale()
-	plt.gca().set_ylim(1e-5, 1e1)
+	plt.gca().set_ylim(1e-5, 1e0)
 	
 	plt.tick_params(which='major', width=5, length=25, labelsize=70)
 	plt.tick_params(which='minor', width=3, length=15)

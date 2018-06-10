@@ -124,9 +124,7 @@ def parse_file(input_files, output_filename, data_type, all_hists, log_hists):
                                             largest_pT = pT_of_this_event
 
                                         parse_count += 1
-                                        #print(keywords_index_dictionary['track_mass_pre_SD'])
-                                        #print(len(numbers))
-                                        #print(numbers[keywords_index_dictionary['track_mass_pre_SD']])
+
                                         x = float(numbers[keywords_index_dictionary[keyword]])
 
                                         #print(x, prescale_to_use)

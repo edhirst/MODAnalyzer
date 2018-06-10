@@ -186,6 +186,7 @@ class MODPlot:
                 self._hists[i].hist().SetLineWidth(8)
 
 
+
     def convert_log_hist_to_line_plot(self, hist, helper_x_s):
         n_bins = hist.nbins()
 
@@ -699,7 +700,7 @@ class MODPlot:
 
 
 
-        legend = ax0.legend(handles, labels, frameon=0, fontsize=60, handler_map=handler_map, bbox_to_anchor=self._legend_location[1], loc=self._legend_location[0] )
+        legend = ax0.legend(handles, labels, frameon=0, fontsize=50, handler_map=handler_map, bbox_to_anchor=self._legend_location[1], loc=self._legend_location[0] )
         # legend = ax0.legend(handles, labels, frameon=0, fontsize=60, handler_map=handler_map, bbox_to_anchor=self._legend_location, loc="upper left" )
         ax0.add_artist(legend)
 
@@ -784,6 +785,7 @@ class MODPlot:
         self._plt.xscale(self._x_scale)
         self._plt.gca().xaxis.set_major_formatter(mpl.ticker.ScalarFormatter())
 
+
         if self._ratio_plot:
             self._plt.sca(ax1)
             self._plt.autoscale()
@@ -822,9 +824,7 @@ class MODPlot:
 
                 plt.sca(ax0)
                 plt.gca().set_xticklabels( [] )
-        
 
-        
 
         if self._x_scale == "log":
             if self._ratio_plot:
@@ -933,19 +933,22 @@ class MODPlot:
         # Any possible markers.
         for marker in self._mark_regions:
 
-            # print marker
+            print marker
 
             if "Area" in self._x_label:
                 ax0.plot([marker[0], marker[0]], [2, marker[1] ], zorder=9999, color='red', linewidth=8, linestyle="dashed")
             else:
-                ax0.plot([marker[0], marker[0]], [ax0.get_ylim()[0], marker[1] ], zorder=9999, color='red', linewidth=8, linestyle="dashed")
+                print([marker[0], marker[0]])
+                print( [ax0.get_ylim()[0], marker[1] ])
+                ax0.plot([marker[0], marker[0]], [ax0.get_ylim()[0], marker[1]], zorder=9999, color='red', linewidth=8, linestyle="dashed")
 
             unit_x_minor_tick_length = abs(ax0.get_xaxis().get_majorticklocs()[1] - ax0.get_xaxis().get_majorticklocs()[0]) /  10
             unit_y_minor_tick_length = abs(ax0.get_yaxis().get_majorticklocs()[1] - ax0.get_yaxis().get_majorticklocs()[0]) /  5
 
             # print ax0.get_yaxis().get_majorticklocs()[1], ax0.get_yaxis().get_majorticklocs()[0]
 
-            if marker[2] != None:
+            if False:
+            #if marker[2] != None:
                 # Arrows.
                 if marker[2] == "right":
                     

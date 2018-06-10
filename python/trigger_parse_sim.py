@@ -35,7 +35,7 @@ def parse_file(input_files, all_hists):
 
                 mod_file_to_crosssection = mod_file_to_crosssection_sim("sim_pfc", input_files)
 
-                print(mod_file_to_crosssection)
+                #print(mod_file_to_crosssection)
 
                 with open(input_file) as infile:
                         
@@ -82,7 +82,6 @@ def parse_file(input_files, all_hists):
                                                 #current_line_trig_name = numbers[trig_name_index]
                                                 #trigger = numbers[keywords_index_dictionary['trigger_fired']]
 
-                                                #print(current_line_trig_name)
 
                                                 if abs(eta_of_this_event) > 2.4:
                                                         continue
@@ -112,7 +111,7 @@ def parse_file(input_files, all_hists):
 
 
                                                 if condition_satisfied:
-                                                        #print(pythia_set, pT_of_this_event, prescale_to_use)
+                                                        print(pythia_set, pT_of_this_event, prescale_to_use)
                                                         satisfied_sets[pythia_set] = 1
                                                         all_hists[pythia_set].hist().fill_array([pT_of_this_event], [prescale_to_use])
 

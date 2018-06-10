@@ -78,14 +78,17 @@ start = time.time()
 create_multi_page_plot(filename=default_dir + "hardest_pT_all_linear_simand2011_withratio.pdf", 
                        hists=compile_hists('hardest_pT', parsed_hists))
 
+
 create_multi_page_plot(filename=default_dir + "hardest_phi_all_linear_simand2011_withratio.pdf", 
                        hists=compile_hists('hardest_phi', parsed_hists))
+
 
 create_multi_page_plot(filename=default_dir + "mul_pre_SD_all_linear__simand2011_withratio.pdf", 
                        hists=compile_hists('mul_pre_SD', parsed_hists))
 
 create_multi_page_plot(filename=default_dir + "hardest_eta_all_linear__simand2011_withratio.pdf", 
                        hists=compile_hists('hardest_eta', parsed_hists))
+
 
 create_multi_page_plot(filename=default_dir + "basic_sub_mass_all_linear__simand2011_withratio.pdf",
                        hists=compile_hists('mass_pre_SD', parsed_hists))
@@ -95,7 +98,6 @@ create_multi_page_plot(filename=default_dir + "track_mass_pre_SD_all_linear_sima
 
 create_multi_page_plot(filename=default_dir + "track_mul_pre_SD_all_linear__simand2011_withratio.pdf", 
                        hists=compile_hists('track_mul_pre_SD', parsed_hists))
-
 
 """
 create_multi_page_plot(filename=default_dir + "sim_hardest_phi_new_lumi.pdf", 

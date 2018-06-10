@@ -1166,14 +1166,14 @@ def multi_page_plot_hist_templates():
 
     all_hists = {}
 
-    hardest_pT_hist = Hist(150, 5, 1505, title="pT")
+    hardest_pT_hist = Hist(230, 0, 2300, title="pT")
     hardest_phi_hist = Hist(25, 0.0, 2 * np.pi, title="phi")
     hardest_eta_hist = Hist(50, -5, 5, title="eta")
     constituent_mul_hist, track_constituent_mul_hist = Hist(
-        61, -0.5, 60.5, title="mul"), Hist(60, -0.5, 60.5, title="mul")
+        101, -0.5, 100.5, title="mul"), Hist(101, -0.5, 100.5, title="mul")
     pT_D_hist = Hist(50, 0, 1, title="pT_D")
     mass_hist, track_mass_hist = Hist(
-        80, 0, 80, title="mass"), Hist(80, 0, 80, title="mass")
+        100, 0, 100, title="mass"), Hist(100, 0, 100, title="mass")
 
     lha_hist = Hist(50, 0, 1)
     width_hist = Hist(60, 0, 0.6)
@@ -1251,43 +1251,42 @@ def multi_page_plot_hist_templates():
              eta_boundary_label = "\left| \eta \\right| \in [" + str(eta_boundaries[j][
                   0]) + ", " + str(eta_boundaries[j][1]) + "]"
 
-        additional_text = [((0.76, 0.6), 'upper right',
-                            "AK5; $" + eta_boundary_label  + "$ \n $p_T^{\mathrm{jet}} > 10~\mathrm{GeV}$")]
+        additional_text = [((0.6, 0.7), 'upper right',
+                            "AK5; $" + eta_boundary_label  + "$ \n $p_T^{\mathrm{jet}} > 70~\mathrm{GeV}$")]
         all_hists['hardest_pT'].append(MODHist(copy.deepcopy(hardest_pT_hist), conditions=[('hardest_eta', eta_boundaries[j]),
-                                 ('hardest_pT', (10, None))], use_prescale=True, x_label="$p_T$ [GeV]",
-                                               y_label="cross section [pb/GeV] ", y_scale='log', x_range=(0, 1200), y_range=(1e-8, 1e12), mark_regions=[(150, 1e-6, 'right', 0.04, 25)], additional_text=additional_text))
-
-
-        additional_text = [((0.77, 0.97), 'upper right',
+                                 ('hardest_pT', (70, None))], use_prescale=True, x_label="$p_T$ [GeV]",
+                                               y_label="Differential Cross Section ", y_scale='log', x_range=(0, 2300), y_range=(1e-8, 1e12), mark_regions=[(150, 1e0, 'right', 0.04, 25)], additional_text=additional_text))
+    
+        additional_text = [((0.6, 0.8), 'upper right',
                             "AK5; " + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 70~\mathrm{GeV}$")]
         all_hists['hardest_phi'].append(MODHist(copy.deepcopy(hardest_phi_hist), conditions=default_70_conditions, use_prescale=True, x_label="$\phi$", x_range=(
-            0, 2 * np.pi), y_label="d(sigma)\\d(phi) ",  y_scale = 'linear', y_range=(1e4, 1e6), additional_text=additional_text, axes_label_pi=True, legend_location=('upper left', (0., 1.0))))
+            0, 2 * np.pi), y_label="Differential Cross Section ", y_range=(1e-15, 1e6),  mark_regions=[(150, 1e4, 'right', 0.04, 25)], additional_text=additional_text, axes_label_pi=True, legend_location=('upper left', (0., 1.0))))
 
 
-        additional_text = [((0.76, 0.96), 'upper right',
+        additional_text = [((0.70, 0.90), 'upper right',
                             "AK5 \n $p_T^{\mathrm{jet}} > 70~\mathrm{GeV}$")]
         all_hists['hardest_eta'].append(MODHist(copy.deepcopy(hardest_eta_hist), conditions=[('hardest_pT', (70, None))], use_prescale=True, x_label="$\eta$", x_range=(
-            -5., 5.), y_label="d(sigma)\\d(eta)", y_scale='linear',  y_range=(1e2, 1e13), mark_regions=[(-2.4, 0.20, 'right', 0.18, 0.3), (2.4, 0.20, 'left', 0.18, -0.3)], additional_text=additional_text, legend_location=('upper left', (0., 1.0))))
+            -5., 5.), y_label="Differential Cross Section", y_scale='linear',  y_range=(1e0, 1500000), mark_regions=[(-2.4, 1e6, 'right', 0.25, 0.3), (2.4, 1e6, 'left', 0.25, -0.3)], additional_text=additional_text, legend_location=('upper left', (0., 1.0))))
 
 
-        additional_text = [((0.80, 0.60), 'upper right',
+        additional_text = [((0.70, 0.7), 'upper right',
                              eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$")]
         all_hists['mass_pre_SD'].append(MODHist(copy.deepcopy(mass_hist), conditions=default_150_conditions, use_prescale=True, x_label="Mass [GeV]",
-                                                y_label="cross section [pb/GeV]", x_range=(0.0, 40.0), y_scale='linear',  y_range=(1e0, 1e12), additional_text=additional_text))
+                                                y_label="Differential Cross Section", x_range=(0.0, 60.0), y_scale='linear',  y_range=(0.0, 3500.0), additional_text=additional_text))
 
 
-        additional_text = [((0.80, 0.6), 'upper right', eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$")]
+        additional_text = [((0.70, 0.7), 'upper right', eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$")]
         all_hists['mul_pre_SD'].append(MODHist(copy.deepcopy(constituent_mul_hist), conditions=default_150_conditions, use_prescale=True, x_label="Constituent Multiplicity", x_range=(
-            0, 60), y_scale='linear', y_range=(1e0, 1e12), y_label="cross section [pb/GeV]", additional_text=additional_text, legend_location=('upper right', (1.0, 1.0))))
+            0, 75.0), y_scale='linear', y_range=(0.0, 3000.0), y_label="Differential Cross Section", additional_text=additional_text, legend_location=('upper right', (1.0, 1.0))))
 
-        additional_text = [((0.80, 0.60), 'upper right', eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$")]
+        additional_text = [((0.70, 0.70), 'upper right', eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$")]
         all_hists['track_mass_pre_SD'].append(MODHist(copy.deepcopy(track_mass_hist), conditions=default_150_conditions, use_prescale=True, x_label="Track Mass [GeV]",
-                                                y_label="cross section [pb/GeV]", x_range=(0.0, 40.0), y_scale='linear',  y_range=(1e-10, 1e10), additional_text=additional_text))
+                                                y_label="Differential Cross Section", x_range=(0.0, 50.0), y_scale='linear',  y_range=(0.0, 3500.0), additional_text=additional_text))
 
 
-        additional_text = [((0.80, 0.6), 'upper right',eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$")]
+        additional_text = [((0.7, 0.7), 'upper right',eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$")]
         all_hists['track_mul_pre_SD'].append(MODHist(copy.deepcopy(track_constituent_mul_hist), conditions=default_150_conditions, use_prescale=True, x_label="Track Constituent Multiplicity", x_range=(
-            0.0, 60.0), y_scale='linear', y_range=(1e-10, 1e10), y_label="cross section [pb/GeV]", additional_text=additional_text, legend_location=('upper right', (1.0, 1.0))))
+            0.0, 50.0), y_scale='linear', y_range=(0.0, 4000.0), y_label="Differential Cross section", additional_text=additional_text, legend_location=('upper right', (1.0, 1.0))))
 
 
 
@@ -1303,8 +1302,9 @@ def trigger_hists():
 
     # all_hists['corr_hardest_pT'] = []
 
-    trigger_names = ["HLT_Jet370", "HLT_Jet300", "HLT_Jet240", "HLT_Jet190", "HLT_Jet150", "HLT_Jet110", "HLT_Jet80", "HLT_Jet60", "HLT_Jet30" ]
-    trigger_names = ['QCD_Pt-800to1000_TuneZ2_7TeV_pythia6',
+    jet_trigger_names = ["HLT_Jet370", "HLT_Jet300", "HLT_Jet240", "HLT_Jet190", "HLT_Jet150", "HLT_Jet110", "HLT_Jet80", "HLT_Jet60", "HLT_Jet30" ]
+
+    qcd_names = ['QCD_Pt-800to1000_TuneZ2_7TeV_pythia6',
                      'QCD_Pt-1400to1800_TuneZ2_7TeV_pythia6',
                      'QCD_Pt-470to600_TuneZ2_7TeV_pythia6',
                      'QCD_Pt-50to80_TuneZ2_7TeV_pythia6',
@@ -1317,11 +1317,13 @@ def trigger_hists():
                      'QCD_Pt-120to170_TuneZ2_7TeV_pythia6',
                      'QCD_Pt-600to800_TuneZ2_7TeV_pythia6']
 
+    trigger_names = qcd_names + jet_trigger_names
+
 
     for trigger_name in trigger_names:
         additional_text = [
             (upper_left, 'upper left', "AK5; " + eta_boundary_label)]
-        all_hists[trigger_name] = MODHist(Hist(100, 0, 2000), conditions=[],
+        all_hists[trigger_name] = MODHist(Hist(100, 0, 1000), conditions=[],
                                           use_prescale=True, x_scale='log', x_label="Fractional $p_T$ Loss", y_label="A.U.", y_range=(0., 1.2), additional_text=additional_text)
         # all_hists[trigger_name] =  MODHist(Hist(50, 0, 300),
         # conditions=[(['trig_jet_matched', 1], lambda x, y: y == x)],

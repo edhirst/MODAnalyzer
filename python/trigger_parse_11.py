@@ -33,9 +33,9 @@ def parse_file(input_files, all_hists):
 
 	for input_file in input_files:
 
-                print(input_file)
+                #print(input_file)
                 trigger_luminosity_dictionary = trigger_luminosity_dictionary_2011()
-
+                print(trigger_luminosity_dictionary)
 
                 with open(input_file) as infile:
                         
@@ -78,12 +78,15 @@ def parse_file(input_files, all_hists):
                                                 #print(pT_index)
                                                 pT_of_this_event = float(numbers[pT_index])
                                                 eta_of_this_event = float(numbers[eta_index])
-                                                current_line_trig_name = numbers[trig_name_index]
+                                                if 'NoJetID' in numbers[trig_name_index]:
+                                                        print('continuing')
+                                                        continue
+                                                current_line_trig_name = '_'.join(numbers[trig_name_index].split('_')[0:2])
                                                 #trigger = numbers[keywords_index_dictionary['trigger_fired']]
 
                                                 #print(current_line_trig_name)
 
-                                                if abs(eta_of_this_event) > 2.5:
+                                                if abs(eta_of_this_event) > 2.4:
                                                         # print "oops, pseudorapidity too large.", eta_of_this_event
                                                         continue
 
@@ -197,7 +200,7 @@ def parse_file(input_files, all_hists):
                                         #print "\n"
                                                 
 
-        #print(all_hists['HLT_Jet190'])
+        print(all_hists['HLT_Jet190'])
         return all_hists
 
 
