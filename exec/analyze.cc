@@ -27,7 +27,7 @@ using namespace std;
 using namespace fastjet;
 using namespace contrib;
 
-void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & event_serial_number);
+void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & event_serial_number, string & data_set_to_process);
 
 double angularity_lambda(PseudoJet jet, double jet_radius, float k, float beta);
 double pT_D(PseudoJet jet);
@@ -74,8 +74,9 @@ int main(int argc, char * argv[]) {
 
     
    int event_serial_number_2011 = 1;
-    
+   int event_serial_number_analyzed_2011 = 1;
    if (data_set_to_process == "2011") {
+       
        
        ifstream data_file(argv[1]);
        string output_file_name(argv[2]);
@@ -103,8 +104,9 @@ int main(int argc, char * argv[]) {
            int hash_value = run_number*1000+lumi_block;
         
           // If the event being read has the assigned trigger fired and event is good, analyze and write it out
-          if (event_being_read.assigned_trigger_fired() and (lumi_block_lumi_info.find(hash_value) != lumi_block_lumi_info.end())) { analyze_event(event_being_read, output_file, event_serial_number_2011);
-              event_serial_number_2011++;
+          if (event_being_read.assigned_trigger_fired() and (lumi_block_lumi_info.find(hash_value) != lumi_block_lumi_info.end())) {
+              analyze_event(event_being_read, output_file, event_serial_number_analyzed_2011, data_set_to_process);
+              event_serial_number_analyzed_2011++;
           }
            
           // Go through all possible triggers (regardless of whether assigned trigger fired), check if trigger exists and event is good, and keep cumulative total of effective luminosities
@@ -125,6 +127,7 @@ int main(int argc, char * argv[]) {
                }
            }
         
+          event_serial_number_2011++;
           event_being_read = MOD::Event();
 
        }
@@ -149,13 +152,14 @@ int main(int argc, char * argv[]) {
         }
        effective_luminosity_output << endl;
        
+       cout << "finished writing to luminosity by trigger" << endl;
+       
    }
    int event_serial_number_pfc = 1;
    int event_serial_number_gen = 1;
     
    if (data_set_to_process == "sim"){
        
-       ifstream data_file(argv[1]);
        string output_file_name(argv[2]);
        
        
@@ -163,30 +167,33 @@ int main(int argc, char * argv[]) {
        MOD::Event event_being_read;
        string output_file_pfc_name = replace_string(output_file_name, ".dat", "_sim_pfc.dat");
        ofstream output_file_pfc(output_file_pfc_name, ios::out);
+       ifstream data_file_pfc(argv[1]);
        
-       while( event_being_read.read_event(data_file, "sim_pfc") && ( event_serial_number_pfc <= number_of_events_to_process ) ) {
+       while( event_being_read.read_event(data_file_pfc, "sim_pfc") && ( event_serial_number_pfc <= number_of_events_to_process ) ) {
            
            if( (event_serial_number_pfc % 500) == 0 ){
                cout << "Processing event number " << event_serial_number_pfc << endl;
            }
            
-           analyze_event(event_being_read, output_file_pfc, event_serial_number_pfc);
+           analyze_event(event_being_read, output_file_pfc, event_serial_number_pfc, data_set_to_process);
            event_being_read = MOD::Event();
            event_serial_number_pfc++;
        }
        
+       cout << event_serial_number_pfc << " " << event_serial_number_gen << " " << number_of_events_to_process << endl;
        
        // Next, analyze and write out the gen_data
-       string output_file_gen_name = replace_string(output_file_name, ".dat", "_sim_pfc.dat");
+       string output_file_gen_name = replace_string(output_file_name, ".dat", "_sim_gen.dat");
        ofstream output_file_gen(output_file_gen_name, ios::out);
+       ifstream data_file_gen(argv[1]);
 
-       while( event_being_read.read_event(data_file, "sim_gen") && ( event_serial_number_gen <= number_of_events_to_process ) ) {
+       while( event_being_read.read_event(data_file_gen, "sim_gen") && ( event_serial_number_gen <= number_of_events_to_process ) ) {
            
            if( (event_serial_number_gen % 500) == 0 ){
                cout << "Processing event number " << event_serial_number_gen << endl;
            }
            
-           analyze_event(event_being_read, output_file_gen, event_serial_number_gen);
+           analyze_event(event_being_read, output_file_gen, event_serial_number_gen, data_set_to_process);
            event_being_read = MOD::Event();
            event_serial_number_gen++;
        }
@@ -208,9 +215,8 @@ int main(int argc, char * argv[]) {
 }
 
 
-void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & event_serial_number) {
+void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & event_serial_number, string & data_set_to_process) {
 
-   /*
    double jet_radius = 0.5;
 
    JetDefinition jet_def_cambridge(cambridge_algorithm, fastjet::JetDefinition::max_allowable_R);
@@ -222,13 +228,14 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
    // cout << "reached here" << endl;
 
    
-   vector<PseudoJet> hardest_jet_constituents = pT_1_GeV_selector(event_being_read.hardest_jet().constituents());
+   // Don't want pfc cut currently so commented out
+   //  vector<PseudoJet> hardest_jet_constituents = pT_1_GeV_selector(event_being_read.hardest_jet().constituents());
     
    // cout << "reached here33" << endl;
 
    vector<PseudoJet> filtered_hardest_jet_constituents = pT_015_020_GeV_selector(event_being_read.hardest_jet().constituents());
 
-   // vector<PseudoJet> hardest_jet_constituents = event_being_read.hardest_jet().constituents();
+   vector<PseudoJet> hardest_jet_constituents = event_being_read.hardest_jet().constituents();
     
 
    ClusterSequence cs = ClusterSequence(hardest_jet_constituents, jet_def_cambridge);
@@ -240,8 +247,6 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
    // This is the hardest FastJet jet. This does not have JEC applied to it. We need to go through this mess because we want to apply the pT selector to the hardest jet's constituents and then use the corresponding hardest jet.
    // But since JEC does not apply to individual PFCs, we can't directly use event_being_read.hardest_jet().constituents().
     
-   cout << "reached here22" << endl;
-
 
    ClusterSequence cs_uncorrected_jet_no_softkiller = ClusterSequence(event_being_read.hardest_jet().constituents(), jet_def_cambridge);
    PseudoJet uncorrected_hardest_jet_no_softkiller = cs_uncorrected_jet_no_softkiller.inclusive_jets()[0];
@@ -249,16 +254,6 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
 
    PseudoJet uncorrected_hardest_jet_with_softkiller = cs.inclusive_jets()[0];
     
-   cout << "reached here2" << endl;
-
-
-   double jec = 1.0;
-
-   if ((event_being_read.data_source() == 3) || (event_being_read.data_source() == 0))
-      jec = event_being_read.get_hardest_jet_jec();
-    
-   cout << "reached here3" << endl;
-
    
 
    // PseudoJet hardest_jet = uncorrected_hardest_jet_with_softkiller * jec;
@@ -270,8 +265,6 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
    SoftDrop soft_drop(beta, 0.1);
    PseudoJet soft_drop_jet = soft_drop(hardest_jet);
     
-   */
-   
    vector<MOD::Property> properties;
     
    double jec = 1.0;
@@ -289,6 +282,8 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
    
    // multiplicity, jet_multiplicity
    properties.push_back(MOD::Property("multiplicity", (int) event_being_read.particles().size()));
+   properties.push_back( MOD::Property("mul_pre_SD", (int) hardest_jet_constituents.size()) );
+
     
 
    properties.push_back(MOD::Property("events_being_read", event_being_read.weight()));
@@ -303,10 +298,11 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
    // properties.push_back( MOD::Property("frac_pT_loss", (hardest_jet.pt() - soft_drop( hardest_jet ).pt() ) / hardest_jet.pt() ) );
    properties.push_back( MOD::Property("hardest_eta", event_being_read.hardest_jet().eta()) );   
 
-    properties.push_back(MOD::Property("crosssection", 1.0));
+   properties.push_back(MOD::Property("crosssection", 1.0));
     
-    properties.push_back(MOD::Property("trigger_fired", event_being_read.assigned_trigger_name()));
+   if (data_set_to_process == "2011"){   properties.push_back(MOD::Property("trigger_fired", event_being_read.assigned_trigger_name()));}
 
+   if (data_set_to_process == "sim"){   properties.push_back(MOD::Property("trigger_fired", "no_trigger"));}
 
    properties.push_back( MOD::Property("hardest_phi", event_being_read.hardest_jet().phi()) );
 
@@ -316,8 +312,42 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
    else
       properties.push_back( MOD::Property("hardest_area", 0.0) );
     
-
     /*
+    
+    properties.push_back( MOD::Property("mass_pre_SD", hardest_jet.m()) );
+    
+
+    
+    // Get all charged particles with 0.5 GeV particles removed.
+    // vector<fastjet::PseudoJet> track_constituents = MOD::filter_charged(pT_0_5_GeV_selector(event_being_read.hardest_jet().constituents()));
+    
+    // Get all charged particles no filter
+    vector<fastjet::PseudoJet> track_constituents = MOD::filter_charged(event_being_read.hardest_jet().constituents());
+
+    // Cluster them using Cambridge/Alachen with infinite radius. This makes sure that we get the same jets as "regular" ak5 jets except now with just charged particles.
+    ClusterSequence cs_track(track_constituents, jet_def_cambridge);
+    
+    if (cs_track.inclusive_jets().size() > 0 ) {
+        
+        PseudoJet hardest_track_jet = cs_track.inclusive_jets()[0];
+        
+        properties.push_back( MOD::Property("track_mul_pre_SD", (int) hardest_track_jet.constituents().size()) );
+        
+        properties.push_back( MOD::Property("track_mass_pre_SD", hardest_track_jet.m()) );
+        
+    }
+    else {
+        
+        properties.push_back( MOD::Property("track_mul_pre_SD", -1. ));
+        
+        properties.push_back( MOD::Property("track_mass_pre_SD", -1. ));
+        
+        
+    }
+
+     */
+
+    
 
    vector<pair<string, double>> zg_cuts { make_pair("05", 0.05), make_pair("10", 0.1), make_pair("20", 0.2) };
     
@@ -335,7 +365,7 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
 
       double zg = soft_drop_jet.structure_of<SoftDrop>().symmetry();
       double rg = soft_drop_jet.structure_of<SoftDrop>().delta_R() / 0.5;
-
+       
       properties.push_back(MOD::Property("zg_" + label, zg));
       properties.push_back(MOD::Property("mu_" + label, soft_drop_jet.structure_of<SoftDrop>().mu()));
 
@@ -351,7 +381,7 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
     // ShapeJetMultiplicity Nj(jet_radius, 200.0);
     //cout << "N_jet=" << Nj(hardest_jet_constituents) << endl;
 
-    
+   
 
    // Analysis related to the effects of SoftDrop- observables before and after SoftDrop.
    
@@ -359,7 +389,7 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
 
    properties.push_back( MOD::Property("mul_pre_SD", (int) hardest_jet_constituents.size()) );
    properties.push_back( MOD::Property("mul_post_SD", (int) soft_drop(hardest_jet).constituents().size() ) );
-    
+
    properties.push_back( MOD::Property("mul_filtered_SD", (int) filtered_hardest_jet_constituents.size()) );
 
 
@@ -382,9 +412,7 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
 
     
     //----------------------------------------------------------
-    // illustrate how this SubjetCounting contrib works
-    
-    
+    // illustrate how this SubjetCounting contrib works    
 
    // ================================================================ Track Based Analysis ================================================================
 
@@ -392,7 +420,11 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
 
 
    // Get all charged particles with 0.5 GeV particles removed.
-   vector<fastjet::PseudoJet> track_constituents = MOD::filter_charged(pT_0_5_GeV_selector(event_being_read.hardest_jet().constituents()));
+   // vector<fastjet::PseudoJet> track_constituents = MOD::filter_charged(pT_0_5_GeV_selector(event_being_read.hardest_jet().constituents()));
+    
+   // Get all charged particles no filter
+   vector<fastjet::PseudoJet> track_constituents = MOD::filter_charged(event_being_read.hardest_jet().constituents());
+    
 
    // Cluster them using Cambridge/Alachen with infinite radius. This makes sure that we get the same jets as "regular" ak5 jets except now with just charged particles.
    ClusterSequence cs_track(track_constituents, jet_def_cambridge);
@@ -422,6 +454,8 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
       }
 
       properties.push_back( MOD::Property("track_mul_pre_SD", (int) hardest_track_jet.constituents().size()) );
+       
+       
       properties.push_back( MOD::Property("track_mul_post_SD", (int) soft_drop(hardest_track_jet).constituents().size()) );
 
       properties.push_back( MOD::Property("track_mass_pre_SD", hardest_track_jet.m()) );
@@ -476,8 +510,6 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
 
    }
     
-    */
- 
    // Now that we've calculated all observables, write them out.
 
    string name;
@@ -634,6 +666,7 @@ unordered_map<int, double> get_lumi_info_by_block(string lumi_data_file_name){
             }
         }
     }
+    
     
     return lumi_info_by_block;
 }
