@@ -412,17 +412,7 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
 
     
     //----------------------------------------------------------
-    // illustrate how this SubjetCounting contrib works
-    ofstream pdg_id_output("pdg_id", ios::out | ios::app);
-    
-    vector<PseudoJet> hardest_jet_pfcs = hardest_jet.constituents();
-    
-    for (unsigned i = 0; i < hardest_jet_pfcs.size(); i++) {
-        
-        pdg_id_output << hardest_jet_pfcs[i].user_info<MOD::InfoPFC>().pdgId() << endl;
-        
-    }
-    
+    // illustrate how this SubjetCounting contrib works    
 
    // ================================================================ Track Based Analysis ================================================================
 
