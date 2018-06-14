@@ -34,7 +34,7 @@ def run_analyzer(input_path, output_path, type_of_data):
         for dirName, subdirList, files in os.walk(input_path + pythia_run):
             for file in files:
                 if file.endswith("mod"):
-                    if (pythia_run + file.replace(".mod", "_sim_pfc.dat")) not in existing_files:
+                    if (pythia_run + file.replace(".mod", "_sim_pfc.dat")) not in existing_files or (pythia_run + file.replace(".mod", "_sim_gen.dat")) not in existing_files:
                         to_analyze_and_output.append((dirName + "/" + file, output_path + "/" + pythia_run + file.replace(".mod", ".dat")))
   for input, output in to_analyze_and_output:
     args = ['./bin/analyze', input, output ] + sys.argv[3:]
