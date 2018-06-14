@@ -43,6 +43,7 @@ This repository is concerned with steps (4) to (5) only. Steps (1) to (3) are ca
    ```
    python ./utilities/analyze.py /home/opendata/eos/opendata/cms/eos/opendata/cms/Run2011A/Jet/MOD/12Oct2013-v1/20000/ /home/prekshan/Documents/opendata_output/ 2011 -number_events 1000 -2011_lumi_file /home/prekshan/Downloads/2011lumibyls.csv
    ```
+   The file skips analysis of anything that is already in the output directory even if partially downloaded so make sure to    delete those. For the simulated data, take care to delete both the sim_pfc version and the sim_gen versions of the file. 
    
 - The output of running this script will be the following files:
    
