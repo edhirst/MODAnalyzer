@@ -38,7 +38,7 @@ This repository is concerned with steps (4) to (5) only. Steps (1) to (3) are ca
    2. [required] Folder path to output the dat files into. 
    3. [required] '2011' if running 2011 data and 'sim' if running simulated data
    4. [optional] To limit number of arguments, use flag '-number_events'. By default, the analysis is run on all the events in the file. 
-   5. [optional] If your 2011lumibyls.csv file (which is necessary to get luminosity information for 2011 data) lives somewhere else besides the main directory, use flag '-2011_lumi_file' to specify its location. 
+   5. [optional] If your 2011lumibyls.csv file (which is necessary to get luminosity information for 2011 data) lives somewhere else besides the directory you are running the command from, use flag '-2011_lumi_file' to specify its location. 
    
    ```
    python ./utilities/analyze.py /home/opendata/eos/opendata/cms/eos/opendata/cms/Run2011A/Jet/MOD/12Oct2013-v1/20000/ /home/prekshan/Documents/opendata_output/ 2011 -number_events 1000 -2011_lumi_file /home/prekshan/Downloads/2011lumibyls.csv
@@ -58,7 +58,7 @@ To run the plotting, first run the Python script `python/parse.py`. This script 
    1. path to where all your dat files are located.
    2. path to an output directory where your plots will be produced 
    
-  Make sure the csv files produced in the previous software are in the same directory as where you are running your command from. 
+  Make sure the csv files produced in the analysis from the previous step are in the same directory as where you are running your command from. 
 
      ```
      python ./python/parse.py /home/preksha/Documents/cms-opendata-dat/ /home/preksha/Documents/MODAnalyzer/plots/
@@ -71,7 +71,7 @@ To run the plotting, first run the Python script `python/parse.py`. This script 
     
      ```
    
- Furthermore, to generate plots for additional variables, you can modify or add in create_multi_page_plot commands to `python/plots.py`. See `python/plots.py` for examples of linear, log, and PFC plot outputs. Plots currently get output into the plots/version 1 subdirectory. Change the default_dir in `python/plots.py` if you would like to modify this, making sure the directory exists. 
+ Furthermore, to generate plots for additional variables, you can modify or add in create_multi_page_plot commands to `python/plots.py`. See `python/plots.py` for examples of linear, log, and PFC plot outputs. Plots currently get output into the plots/version 1 subdirectory. Change the default_dir in `python/plots.py` if you would like to modify this, making sure the directory exists. For whatever variable you are plotting, make sure in hists.py, the functions multi_page_log_hist_templates or multi_page_hist_templates contain an histogram for that variable. 
 
 ## TODO
 - [ ] Fix plot formatting.
