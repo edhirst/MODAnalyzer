@@ -5,24 +5,18 @@ using namespace std;
 MOD::Condition::Condition(istringstream & input_stream) {
    string tag;
    int run_number, event_number, lumi_block, npv;
-   double average_instantaneous_lumi, integrated_delivered_lumi, integrated_recorded_lumi, cross_section;
+   double average_instantaneous_lumi, integrated_delivered_lumi, integrated_recorded_lumi;
    long timestamp, ms_offset;
    bool valid_lumi;
 
-   input_stream >> tag >> run_number >> event_number >> lumi_block >> valid_lumi >> integrated_delivered_lumi >> integrated_recorded_lumi >> average_instantaneous_lumi >> npv >> timestamp >> ms_offset  >> cross_section;
+    input_stream >> tag >> run_number >> event_number >> lumi_block >> npv >> timestamp >> ms_offset;
 
    _run_number = run_number;
    _event_number = event_number;
    _lumi_block = lumi_block;
-   _valid_lumi = valid_lumi;
-   _integrated_delivered_lumi = integrated_delivered_lumi;
-   _integrated_recorded_lumi = integrated_recorded_lumi;
-   _average_instantaneous_lumi = average_instantaneous_lumi;
    _npv = npv;
    _timestamp = timestamp;
    _ms_offset = ms_offset;
-   _cross_section = cross_section;
-
 }
 
 MOD::Condition::Condition() {}
@@ -80,15 +74,14 @@ string MOD::Condition::make_string() const {
        << setw(16) << _npv
        << setw(16) << _timestamp
        << setw(16) << _ms_offset
-       << setw(16) << _cross_section
-       << endl;
+       << endl;   
 
    return ss.str();
 }
 
 string MOD::Condition::make_header_string() const {
    stringstream ss;
-   ss << "#   Cond          RunNum        EventNum       LumiBlock       validLumi     intgDelLumi     intgRecLumi     AvgInstLumi             NPV       timestamp        msOffset      crossSection" << endl;
+   ss << "#   Cond          RunNum        EventNum       LumiBlock       validLumi     intgDelLumi     intgRecLumi     AvgInstLumi             NPV       timestamp        msOffset" << endl;
    return ss.str();
 }
 
