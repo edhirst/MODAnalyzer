@@ -82,7 +82,7 @@ mpl.rcParams['text.latex.preamble'] = [r'\boldmath']
 plt.rc('font', family='serif', size=43)
 
 
-default_dir = "plots/Version 1/"
+default_dir = "plots/Version1/"
 
 
 logo_location = "/home/preksha/Documents/mengproject/MODAnalyzer/mod_logo.png"
@@ -122,8 +122,8 @@ def two_dim_plots(track=False):
     cmap2 = mpl.colors.LinearSegmentedColormap.from_list('purple', [startcolor, endcolor])
     cm.register_cmap(cmap=cmap2)
 
-    lower_boundaries = [85, 115, 150, 200, 85, 150, 250]
-    upper_boundaries = [115, 150, 200, 250, 100000., 100000., 100000.]
+    lower_boundaries = [70, 110, 130, 190, 220, 275, 350, 420, 85, 150, 250]
+    upper_boundaries = [110, 130, 190, 220, 275, 350, 420, 100000.0, 100000.0, 100000.0]
 
     lambda_value = 2.
     z_cut = 0.1
@@ -141,7 +141,7 @@ def two_dim_plots(track=False):
 
         print(filename)
 
-        with PdfPages("plots/Version 1/" + filename) as pdf:
+        with PdfPages("plots/Version1/" + filename) as pdf:
 
             if track:
                 var = ('track_zg_10', 'track_rg_10')
@@ -151,12 +151,6 @@ def two_dim_plots(track=False):
             for b in range(len(parsed_linear[a][var])):
 
                 lower, upper = lower_boundaries[b], upper_boundaries[b]
-
-                np_correction_boundary = lambda_value / (lower * z_cut)
-                # print np_correction_boundary
-
-                # print len(parsed_linear),
-                # print len(parsed_linear[a][('zg_10', 'rg_10')])
 
                 hist = parsed_linear[a][var][b].hist()
 
@@ -193,11 +187,10 @@ def two_dim_plots(track=False):
                 # cbar.ax.set_ylim(0, 24)
 
                 if upper != 100000.:
-                    # $p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$; AK5 \n $\left| \eta \\right| < 2.4$; $p_T^{\mathrm{jet}} \in [" + str(pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$
-                    label = "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$\n AK5; $\left| \eta \\right| < 2.4$ \n $p_T^{\mathrm{jet}} \in [" + str(
+                    label = "\n AK5; $\left| \eta \\right| < 2.4$ \n $p_T^{\mathrm{jet}} \in [" + str(
                         lower) + ", " + str(upper) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$"
                 else:
-                    label = "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$\n AK5; $\left| \eta \\right| < 2.4$ \n $p_T^{\mathrm{jet}} >" + \
+                    label = "\n AK5; $\left| \eta \\right| < 2.4$ \n $p_T^{\mathrm{jet}} >" + \
                         str(lower) + "~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$"
 
                 extra = Rectangle((0, 0), 1, 1, fc="w", fill=False, edgecolor='none', linewidth=0)
@@ -239,8 +232,7 @@ def two_dim_plots(track=False):
                 plt.xlim(0.0, 0.5)
                 plt.ylim(0.0, 1.0)
 
-                logo_offset_image = OffsetImage(read_png(get_sample_data(
-                    logo_location, asfileobj=False)), zoom=0.25, resample=1, dpi_cor=1)
+                logo_offset_image = OffsetImage(read_png(get_sample_data(logo_location, asfileobj=False)), zoom=0.25, resample=1, dpi_cor=1)
                 text_box = TextArea(logo_text, textprops=dict(color='#444444', fontsize=50, weight='bold'))
                 logo_and_text_box = HPacker(children=[logo_offset_image, text_box], align="center", pad=0, sep=25)
 
@@ -257,9 +249,6 @@ def two_dim_plots(track=False):
                 plt.gcf().set_snap(True)
                 plt.tight_layout(pad=1.08, h_pad=1.08, w_pad=1.08)
 
-                # rplt.hist2d(hist)
-
-                # plt.savefig("plots/Version 5/zg_against_theta_g/linear/" + source + "_zg_against_theta_g.png")
                 pdf.savefig()
                 plt.close()
 
@@ -293,7 +282,7 @@ def two_dim_log_plots(track=False):
         else:
             filename = "big5_zg_vs_rg_" + source + "_log.pdf"
 
-        with PdfPages("plots/Version 1/" + filename) as pdf:
+        with PdfPages("plots/Version1/" + filename) as pdf:
 
             if track:
                 var = ('track_zg_10', 'track_rg_10')
@@ -424,7 +413,7 @@ def two_dim_log_plots(track=False):
                 plt.yticks([0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0])
 
                 logo_offset_image = OffsetImage(read_png(get_sample_data(
-                    "/home/aashish/root/macros/MODAnalyzer/mod_logo.png", asfileobj=False)), zoom=0.25, resample=1, dpi_cor=1)
+                    logo_location, asfileobj=False)), zoom=0.25, resample=1, dpi_cor=1)
                 text_box = TextArea(logo_text, textprops=dict(color='#444444', fontsize=50, weight='bold'))
                 logo_and_text_box = HPacker(children=[logo_offset_image, text_box], align="center", pad=0, sep=25)
 
@@ -454,7 +443,7 @@ start = time.time()
 two_dim_plots(track=False)
 # two_dim_plots(track=True)
 
-# two_dim_log_plots(track=False)
+two_dim_log_plots(track=False)
 # two_dim_log_plots(track=True)
 
 end = time.time()
