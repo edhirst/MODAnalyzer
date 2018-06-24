@@ -16,7 +16,7 @@ def run_analyzer(input_path, output_file):
   to_analyze.sort()
 
   for f in to_analyze:
-    call(['./bin/analyze_triggers', input_path + f, output_file])
+    call(['./bin/analyze_pfc', input_path + f, output_file])
 
 
 start = time()
