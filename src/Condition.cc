@@ -9,15 +9,11 @@ MOD::Condition::Condition(istringstream & input_stream) {
    long timestamp, ms_offset;
    bool valid_lumi;
 
-   input_stream >> tag >> run_number >> event_number >> lumi_block >> valid_lumi >> integrated_delivered_lumi >> integrated_recorded_lumi >> average_instantaneous_lumi >> npv >> timestamp >> ms_offset;
+    input_stream >> tag >> run_number >> event_number >> lumi_block >> npv >> timestamp >> ms_offset;
 
    _run_number = run_number;
    _event_number = event_number;
    _lumi_block = lumi_block;
-   _valid_lumi = valid_lumi;
-   _integrated_delivered_lumi = integrated_delivered_lumi;
-   _integrated_recorded_lumi = integrated_recorded_lumi;
-   _average_instantaneous_lumi = average_instantaneous_lumi;
    _npv = npv;
    _timestamp = timestamp;
    _ms_offset = ms_offset;
