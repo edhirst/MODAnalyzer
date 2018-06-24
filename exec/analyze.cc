@@ -104,7 +104,7 @@ int main(int argc, char * argv[]) {
            int hash_value = run_number*1000+lumi_block;
         
           // If the event being read has the assigned trigger fired and event is good, analyze and write it out
-          if (event_being_read.assigned_trigger_fired() and (lumi_block_lumi_info.find(hash_value) != lumi_block_lumi_info.end())) {
+          if (event_being_read.assigned_trigger_fired() and event_being_read.is_trigger_jet_matched() and (lumi_block_lumi_info.find(hash_value) != lumi_block_lumi_info.end())) {
               analyze_event(event_being_read, output_file, event_serial_number_analyzed_2011, data_set_to_process);
               event_serial_number_analyzed_2011++;
           }
@@ -168,16 +168,20 @@ int main(int argc, char * argv[]) {
        string output_file_pfc_name = replace_string(output_file_name, ".dat", "_sim_pfc.dat");
        ofstream output_file_pfc(output_file_pfc_name, ios::out);
        ifstream data_file_pfc(argv[1]);
+       string type_of_data = "sim_pfc";
        
-       while( event_being_read.read_event(data_file_pfc, "sim_pfc") && ( event_serial_number_pfc <= number_of_events_to_process ) ) {
+       while( event_being_read.read_event(data_file_pfc, type_of_data) && ( event_serial_number_pfc <= number_of_events_to_process ) ) {
            
            if( (event_serial_number_pfc % 500) == 0 ){
                cout << "Processing event number " << event_serial_number_pfc << endl;
            }
            
-           analyze_event(event_being_read, output_file_pfc, event_serial_number_pfc, data_set_to_process);
+           if (event_being_read.assigned_trigger_fired() and event_being_read.is_trigger_jet_matched()){
+           analyze_event(event_being_read, output_file_pfc, event_serial_number_pfc, type_of_data);
+           }
            event_being_read = MOD::Event();
            event_serial_number_pfc++;
+
        }
        
        cout << event_serial_number_pfc << " " << event_serial_number_gen << " " << number_of_events_to_process << endl;
@@ -186,14 +190,15 @@ int main(int argc, char * argv[]) {
        string output_file_gen_name = replace_string(output_file_name, ".dat", "_sim_gen.dat");
        ofstream output_file_gen(output_file_gen_name, ios::out);
        ifstream data_file_gen(argv[1]);
+       type_of_data = "sim_gen";
 
-       while( event_being_read.read_event(data_file_gen, "sim_gen") && ( event_serial_number_gen <= number_of_events_to_process ) ) {
+       while( event_being_read.read_event(data_file_gen, type_of_data) && ( event_serial_number_gen <= number_of_events_to_process ) ) {
            
            if( (event_serial_number_gen % 500) == 0 ){
                cout << "Processing event number " << event_serial_number_gen << endl;
            }
            
-           analyze_event(event_being_read, output_file_gen, event_serial_number_gen, data_set_to_process);
+           analyze_event(event_being_read, output_file_gen, event_serial_number_gen, type_of_data);
            event_being_read = MOD::Event();
            event_serial_number_gen++;
        }
@@ -260,17 +265,16 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
    PseudoJet hardest_jet = uncorrected_hardest_jet_with_softkiller;
    
     
-   double beta = 1.5;
+   double beta = 0.0;
 
    SoftDrop soft_drop(beta, 0.1);
    PseudoJet soft_drop_jet = soft_drop(hardest_jet);
     
    vector<MOD::Property> properties;
     
-   double jec = 1.0;
+   double jec;
     
-   if ((event_being_read.data_source() == 3) || (event_being_read.data_source() == 0))
-        jec = event_being_read.get_hardest_jet_jec();
+   jec = event_being_read.get_hardest_jet_jec();
 
    
 
@@ -284,7 +288,6 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
    properties.push_back(MOD::Property("multiplicity", (int) event_being_read.particles().size()));
    properties.push_back( MOD::Property("mul_pre_SD", (int) hardest_jet_constituents.size()) );
 
-    
 
    properties.push_back(MOD::Property("events_being_read", event_being_read.weight()));
    properties.push_back(MOD::Property("hardest_pT", jec * event_being_read.hardest_jet().pt()));
@@ -292,6 +295,10 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
 
    properties.push_back(MOD::Property("jec", jec));
     
+    
+   properties.push_back(MOD::Property("jet_quality", event_being_read.get_hardest_jet_quality()));
+    
+   // cout << "quality_got" << endl;
 
 
    // properties.push_back( MOD::Property("softkill_pT_loss", (uncorrected_hardest_jet_no_softkiller.pt() - uncorrected_hardest_jet_with_softkiller.pt() ) / uncorrected_hardest_jet_no_softkiller.pt() ) );
@@ -300,9 +307,9 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
 
    properties.push_back(MOD::Property("crosssection", 1.0));
     
-   if (data_set_to_process == "2011"){   properties.push_back(MOD::Property("trigger_fired", event_being_read.assigned_trigger_name()));}
+   if (data_set_to_process == "2011" or data_set_to_process == "sim_pfc"){properties.push_back(MOD::Property("trigger_fired", event_being_read.assigned_trigger_name()));}
 
-   if (data_set_to_process == "sim"){   properties.push_back(MOD::Property("trigger_fired", "no_trigger"));}
+   if (data_set_to_process == "sim_gen"){   properties.push_back(MOD::Property("trigger_fired", "no_trigger"));}
 
    properties.push_back( MOD::Property("hardest_phi", event_being_read.hardest_jet().phi()) );
 
@@ -311,6 +318,9 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
       properties.push_back( MOD::Property("hardest_area", event_being_read.get_hardest_jet_area()) );
    else
       properties.push_back( MOD::Property("hardest_area", 0.0) );
+    
+   // cout << "hardest_area" << endl;
+
     
     /*
     
@@ -395,6 +405,9 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
 
    properties.push_back( MOD::Property("mass_pre_SD", hardest_jet.m()) );
    properties.push_back( MOD::Property("mass_post_SD", soft_drop(hardest_jet).m()) );
+    
+    //cout << "mass_post_SD" << endl;
+
 
 
    properties.push_back( MOD::Property("pT_D_pre_SD", pT_D(hardest_jet)) );
@@ -410,7 +423,8 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
    properties.push_back( MOD::Property("thrust_post_SD", angularity_lambda(soft_drop(hardest_jet), jet_radius, 1, 2)) );
 
 
-    
+    //cout << "thrust_post_SD" << endl;
+
     //----------------------------------------------------------
     // illustrate how this SubjetCounting contrib works    
 
@@ -454,7 +468,8 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
       }
 
       properties.push_back( MOD::Property("track_mul_pre_SD", (int) hardest_track_jet.constituents().size()) );
-       
+       //cout << "track_mul_pre_SD" << endl;
+
        
       properties.push_back( MOD::Property("track_mul_post_SD", (int) soft_drop(hardest_track_jet).constituents().size()) );
 
@@ -509,6 +524,9 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
 
 
    }
+    
+    //cout << "ALL_DONE" << endl;
+
     
    // Now that we've calculated all observables, write them out.
 
