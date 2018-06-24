@@ -70,6 +70,8 @@ namespace MOD {
             const fastjet::PseudoJet & trigger_jet() const;
 
             double get_hardest_jet_jec() const;
+            int get_hardest_jet_quality() const;
+
             double get_hardest_jet_area() const;
 
             bool trigger_jet_is_matched() const;
@@ -84,7 +86,7 @@ namespace MOD {
             void convert_to_one_jet();
 
             const bool trigger_exists(std::string trigger_name) const;  // You can give a trigger's full name or short name here.
-            bool read_event(std::istream & data_stream);
+            bool read_event(std::istream & data_stream, std::string type_of_data = "2011" );
 
             friend std::ostream& operator<< (std::ostream&, const Event&);
             
@@ -93,10 +95,12 @@ namespace MOD {
 
             
          private:
-            int _run_number, _event_number, _version;
+            int _run_number, _event_number, _version, _multiplicity;
             double _weight = 1.0;
 
             double _hardest_jet_jec = 1.0;
+          
+            int _hardest_jet_quality;
 
             std::pair<std::string, std::string> _data_type;
             Condition _condition;
@@ -135,6 +139,8 @@ namespace MOD {
             void set_data_type(std::string a, std::string b);
             void set_data_source(int data_source);
             void set_weight(double weight);
+            void set_multiplicity(int multiplicity);
+
 
             std::vector<fastjet::PseudoJet> apply_jet_energy_corrections(std::vector<fastjet::PseudoJet> jets);
 

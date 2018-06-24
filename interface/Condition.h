@@ -23,6 +23,8 @@ namespace MOD {
          const bool valid_lumi() const;
          const double integrated_delivered_lumi() const;
          const double integrated_recorded_lumi() const;
+         const double cross_section() const;
+
          const long time() const;
 
 
@@ -45,6 +47,9 @@ namespace MOD {
          bool _valid_lumi;
          double _integrated_delivered_lumi;
          double _integrated_recorded_lumi;
+       
+         double _cross_section;
+
          long _timestamp;
          long _ms_offset;
 
