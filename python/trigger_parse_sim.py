@@ -33,6 +33,8 @@ def parse_file(input_files, all_hists):
 
 	for input_file in input_files:
 
+                print(input_file)
+
                 mod_file_to_crosssection = mod_file_to_crosssection_sim("sim_pfc", input_files)
 
                 #print(mod_file_to_crosssection)
@@ -86,7 +88,7 @@ def parse_file(input_files, all_hists):
                                                 if abs(eta_of_this_event) > 2.4:
                                                         continue
                                                 
-                                                short_name = input_file.split('/')[-1]
+                                                short_name = input_file.split('/')[-1].replace('sim_pfc', 'sim_gen')
                                                 prescale_to_use = mod_file_to_crosssection[short_name]
 
 
@@ -111,7 +113,7 @@ def parse_file(input_files, all_hists):
 
 
                                                 if condition_satisfied:
-                                                        print(pythia_set, pT_of_this_event, prescale_to_use)
+                                                        #print(pythia_set, pT_of_this_event, prescale_to_use)
                                                         satisfied_sets[pythia_set] = 1
                                                         all_hists[pythia_set].hist().fill_array([pT_of_this_event], [prescale_to_use])
 
@@ -202,7 +204,7 @@ def trigger_luminosity_dictionary_2011(input_files):
     for input_file in input_files:
         input_files_short.append(input_file.split('/')[-1])
     print(input_files_short)
-    mod_file_with_trigger = [line.rstrip('\n') for line in open("/home/preksha/Documents/mengproject/MODAnalyzer/effective_luminosity_by_trigger.csv")]
+    mod_file_with_trigger = [line.rstrip('\n') for line in open("effective_luminosity_by_trigger.csv")]
     mod_trigger_luminosities = {}
     for mod_trigger_lumi in mod_file_with_trigger:
         if mod_trigger_lumi.replace(" ",""):
@@ -224,9 +226,11 @@ def trigger_luminosity_dictionary_2011(input_files):
 def mod_file_to_crosssection_sim(flag, input_files):
     input_files_short = []
     for input_file in input_files:
-        input_files_short.append(input_file.split('/')[-1])
+        input_files_short.append(input_file.split('/')[-1].replace('sim_pfc', 'sim_gen'))
     output_file_event_count = [line.rstrip('\n') for line in open("event_count_by_pythia_and_mod.csv")]
-    pythia_cross_sections = {'QCD_Pt-15to30_TuneZ2_7TeV_pythia6': 815912800.0, 
+    pythia_cross_sections = {'QCD_Pt-0to5_TuneZ2_7TeV_pythia6': 48444950000.0,
+                             'QCD_Pt-5to15_TuneZ2_7TeV_pythia6': 36745720000.0,
+                             'QCD_Pt-15to30_TuneZ2_7TeV_pythia6': 815912800.0, 
                              'QCD_Pt-30to50_TuneZ2_7TeV_pythia6': 53122370.0,
                              'QCD_Pt-50to80_TuneZ2_7TeV_pythia6': 6359119.0,
                              'QCD_Pt-80to120_TuneZ2_7TeV_pythia6': 784265.0,
@@ -237,7 +241,8 @@ def mod_file_to_crosssection_sim(flag, input_files):
                              'QCD_Pt-600to800_TuneZ2_7TeV_pythia6': 15.5537,
                              'QCD_Pt-800to1000_TuneZ2_7TeV_pythia6': 1.84369,
                              'QCD_Pt-1000to1400_TuneZ2_7TeV_pythia6': 0.332105,
-                             'QCD_Pt-1400to1800_TuneZ2_7TeV_pythia6': 0.0108721}
+                             'QCD_Pt-1400to1800_TuneZ2_7TeV_pythia6': 0.0108721,
+                             'QCD_Pt-1800_TuneZ2_7TeV_pythia6': 0.000357463000}
 
     #print(input_files_short)
     # Build dictionary of mod file, pythia_set and associated number of events

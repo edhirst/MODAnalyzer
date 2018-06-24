@@ -90,11 +90,11 @@ plt.rc('font', family='serif', size=43)
 
 
 
-default_dir = "plots/Version1/"
+default_dir = "plots2/Version1/"
 
 
 logo_location = "/home/preksha/Documents/mengproject/MODAnalyzer/mod_logo.png"
-logo_text = ""
+logo_text = "Preliminary (16\%)"
 
 
 
@@ -105,8 +105,8 @@ print(parsed_linear)
 
 def logo_box(x, y):
 	
-	logo_offset_image = OffsetImage(read_png(get_sample_data(logo_location, asfileobj=False)), zoom=0.25, resample=1, dpi_cor=1)
-	text_box = TextArea(logo_text, textprops=dict(color='#444444', fontsize=50, weight='bold'))
+	logo_offset_image = OffsetImage(read_png(get_sample_data(logo_location, asfileobj=False)), zoom=0.31, resample=1, dpi_cor=1)
+	text_box = TextArea(logo_text, textprops=dict(color='#444444', fontsize=73, weight='bold'))
 
 	logo_and_text_box = HPacker(children=[logo_offset_image, text_box], align="center", pad=0, sep=25)
 
@@ -130,9 +130,12 @@ def trigger_turn_on_curves():
 
 	mod_hists = parsed_linear[0]
 
-	colors = ['green', 'magenta', 'blue', 'red', 'orange', '#cecece', 'yellow', 'cyan', 'purple']
-	labels = ["HLT_Jet370", "HLT_Jet300", "HLT_Jet240", "HLT_Jet190", "HLT_Jet150", "HLT_Jet110", "HLT_Jet80", "HLT_Jet60", "HLT_Jet30"]
-	hist_labels = ["HLT_Jet370", "HLT_Jet300", "HLT_Jet240", "HLT_Jet190", "HLT_Jet150", "HLT_Jet110", "HLT_Jet80", "HLT_Jet60", "HLT_Jet30" ]
+	colors = ["#e41a1c", "#377eb8", "#4daf4a", "#984ea3", "#ff7f00", "#99cc00", "#a65628", "#f781bf","#999999" ]
+
+
+	hist_labels = ["HLT_Jet370", "HLT_Jet300", "HLT_Jet240", "HLT_Jet190", "HLT_Jet150", "HLT_Jet110", "HLT_Jet80", "HLT_Jet60", "HLT_Jet30"]
+	labels = ["HLT\_Jet370", "HLT\_Jet300", "HLT\_Jet240", "HLT\_Jet190",
+                       "HLT\_Jet150", "HLT\_Jet110", "HLT\_Jet80", "HLT\_Jet60", "HLT\_Jet30" ]
 	lower_pTs = [370, 300, 240, 190, 150, 110, 80, 60, 30]
 
 
@@ -173,7 +176,7 @@ def trigger_turn_on_curves():
 	plt.gca().set_xlabel("Trigger Jet $p_T$ [GeV]", fontsize=70, labelpad=50)
 	plt.gca().set_ylabel("Rescaled Events", fontsize=70, labelpad=25)
 
-	plt.gca().add_artist(logo_box(0.105, 0.99))
+	plt.gca().add_artist(logo_box(0.12, 0.99))
 
 	plt.gca().xaxis.set_minor_locator(MultipleLocator(10))
 	plt.gca().set_yscale('log')
@@ -192,7 +195,7 @@ def trigger_turn_on_curves():
 
 	plt.autoscale()
 	plt.gca().set_ylim(1e0, 1e10)
-	plt.gca().set_xlim(0, 600)
+	plt.gca().set_xlim(0, 800)
 
 	
 	plt.tick_params(which='major', width=5, length=25, labelsize=70)
@@ -213,20 +216,30 @@ def trigger_turn_on_curves():
 def trigger_efficiency_plot():
 	mod_hists = parsed_linear[0]
 
+	lower = 0
+	upper = 10
+
 	
-	colors = ['green', 'magenta', 'blue', 'red', 'orange', '#cecece', 'yellow', 'cyan', 'purple']
-	labels = ["Jet140U / 100U", "Jet100U / 70U", "Jet70U / 50U", "Jet50U / 30U", "Jet30U / 15U\_HNF", "" ]
-	labels = ["HLT\_Jet370 / HLT\_Jet300", "HLT\_Jet300 / HLT\_Jet240", "HLT\_Jet240 / HLT\_Jet190",
-                  "HLT\_Jet190 / HLT\_Jet150", "HLT\_Jet150 / HLT\_Jet110", "HLT\_Jet110 / HLT\_Jet80",
-                  "HLT\_Jet80 / HLT\_Jet60", "HLT\_Jet60 / HLT\_Jet30"]
-	hist_labels = [("HLT_Jet370", "HLT_Jet300"),("HLT_Jet300", "HLT_Jet240"), ("HLT_Jet240", "HLT_Jet190"), ("HLT_Jet190", "HLT_Jet150"), ("HLT_Jet150", "HLT_Jet110"), ("HLT_Jet110", "HLT_Jet80"), ("HLT_Jet80", "HLT_Jet60"), ("HLT_Jet60", "HLT_Jet30") ]
-	lower_pTs = [370, 300, 240, 190, 150, 110, 80, 60, 30]
+	colors = ["#e41a1c", "#377eb8", "#4daf4a", "#984ea3", "#ff7f00", "#99cc00", "#a65628", "#f781bf","#999999" ]
+	labels = ["Jet370 / Jet300", "Jet300 / Jet240", "Jet240 / Jet190",
+                  "Jet190 / Jet150", "Jet150 / Jet110", "Jet110 / Jet80",
+                  "Jet80 / Jet60", "Jet60 / Jet30"]
+	hist_labels = [("HLT_Jet370", "HLT_Jet300"),("HLT_Jet300", "HLT_Jet240"),
+                       ("HLT_Jet240", "HLT_Jet190"), ("HLT_Jet190", "HLT_Jet150"),
+                       ("HLT_Jet150", "HLT_Jet110"), ("HLT_Jet110", "HLT_Jet80"),
+                       ("HLT_Jet80", "HLT_Jet60"), ("HLT_Jet60", "HLT_Jet30") ]
+	#lower_pTs = [370, 300, 240, 190, 150, 110, 80, 60, 30]
+	lower_pTs = [390, 310, 270, 210, 150, 110, 90, 0, 0]
+	#lower_pTs = [0]*9
+	#lower_pTs = [0 , 420 - 20 , 350-20, 275- 20, 220 -20, 190-20, 130-20, 110-20, 70-20]
+        upper_pTs = [1000000, 480, 390, 310, 270, 210, 150, 110, 90]
+       # upper_pTs = [10000000]*9
+
 
 	# rplt.hist(mod_hists[0].hist())
 
-
 	plots = []
-	for i in range(8 ):
+	for i in range(len(hist_labels)):
 		
 		first_hist, second_hist = mod_hists[hist_labels[i][0]], mod_hists[hist_labels[i][1]]
 
@@ -253,7 +266,8 @@ def trigger_efficiency_plot():
 
 	    filtered_x, filtered_y, filtered_x_err, filtered_y_err = [], [], [], []
 	    for x, y, xerr, yerr in zip(data_points_x, data_points_y, data_x_errors, data_y_errors):
-	      if x > lower_pTs[i]:
+	      if x > lower_pTs[i] and x < upper_pTs[i]:
+                print(lower_pTs[i], upper_pTs[i])
 	        filtered_x.append(x)
 	        filtered_y.append(y)
 	        filtered_x_err.append(xerr)
@@ -266,44 +280,76 @@ def trigger_efficiency_plot():
 
 	plt.autoscale()
 	#plt.gca().set_ylim(1e-3, 7e4)
-	plt.gca().set_xlim(0, 600)
+	plt.gca().set_xlim(0, 800)
 
 
 
-	cms_turn_on_pTs = [420, 350, 275, 220, 190, 130, 110, 70]
-	for i in range(0, len(hist_labels)):
+
+	cms_turn_on_pTs = [480, 390, 310, 270, 210, 150, 110, 90]
+	for i in range(len(cms_turn_on_pTs)):
 
 		if cms_turn_on_pTs[i] != 0:
 			source = "MOD"
 			#plt.gca().annotate(str(cms_turn_on_pTs[i]) + " GeV", xy=(cms_turn_on_pTs[i], 1.), xycoords='data', xytext=(-100, 350),  textcoords='offset points', color=colors[i], size=50, va="center", ha="center", arrowprops=dict(arrowstyle="simple", facecolor=colors[i], zorder=99, connectionstyle="angle3,angleA=0,angleB=90") )
+                if i == 7:
+                        plt.plot([ cms_turn_on_pTs[i], cms_turn_on_pTs[i] ], [ 1e0, 1.09 ], lw=10, ls="dashed", color=colors[i])
+                elif i == 6:
+                        plt.plot([ cms_turn_on_pTs[i], cms_turn_on_pTs[i] ], [ 1e0, 1.11 ], lw=10, ls="dashed", color=colors[i])
+                elif i == 5:
+                        plt.plot([ cms_turn_on_pTs[i], cms_turn_on_pTs[i] ], [ 1e0, 1.13], lw=10, ls="dashed", color=colors[i])
+                elif i == 4:
+                        plt.plot([ cms_turn_on_pTs[i], cms_turn_on_pTs[i] ], [ 1e0, 1.15], lw=10, ls="dashed", color=colors[i])
+                elif i == 3:
+                        plt.plot([ cms_turn_on_pTs[i], cms_turn_on_pTs[i] ], [ 1e0, 1.17 ], lw=10, ls="dashed", color=colors[i])
+                elif i == 2:
+                        plt.plot([ cms_turn_on_pTs[i], cms_turn_on_pTs[i] ], [ 1e0, 1.19 ], lw=10, ls="dashed", color=colors[i])
+                elif i == 1:
+                        plt.plot([ cms_turn_on_pTs[i], cms_turn_on_pTs[i] ], [ 1e0, 1.21], lw=10, ls="dashed", color=colors[i])
+                elif i == 0:
+                        plt.plot([ cms_turn_on_pTs[i], cms_turn_on_pTs[i] ], [ 1e0, 1.23], lw=10, ls="dashed", color=colors[i])
+                size_val = 60
 
-		plt.plot([ cms_turn_on_pTs[i], cms_turn_on_pTs[i] ], [ 1e0, 5 ], lw=10, ls="dashed", color=colors[i])
-
-		plt.gca().text((cms_turn_on_pTs[i]), 5.2, str(cms_turn_on_pTs[i]) + " GeV", color=colors[i], horizontalalignment='center', size =25)
+                if i == 7:
+                    plt.gca().text((cms_turn_on_pTs[i] ), 1.09 + 0.007, str(cms_turn_on_pTs[i]) , color=colors[i], horizontalalignment='center', size = size_val)
+                elif i == 6:
+                    plt.gca().text((cms_turn_on_pTs[i] ), 1.11 + 0.007, str(cms_turn_on_pTs[i]), color=colors[i], horizontalalignment='center', size = size_val)
+                elif i == 5:
+                    plt.gca().text((cms_turn_on_pTs[i]),  1.13 + 0.007, str(cms_turn_on_pTs[i]) , color=colors[i], horizontalalignment='center', size = size_val)
+                elif i == 4:
+                    plt.gca().text((cms_turn_on_pTs[i] ),  1.15 + 0.007, str(cms_turn_on_pTs[i]), color=colors[i], horizontalalignment='center', size = size_val)
+                elif i == 3:
+                    plt.gca().text((cms_turn_on_pTs[i]), 1.17 + 0.007, str(cms_turn_on_pTs[i]) , color=colors[i], horizontalalignment='center', size = size_val)
+                elif i == 2:
+                    plt.gca().text((cms_turn_on_pTs[i] ),  1.19 + 0.007, str(cms_turn_on_pTs[i]) , color=colors[i], horizontalalignment='center', size = size_val)
+                elif i == 1:
+                    plt.gca().text((cms_turn_on_pTs[i]),  1.21 + 0.007, str(cms_turn_on_pTs[i]) , color=colors[i], horizontalalignment='center', size = size_val)
+                elif i == 0:
+                    plt.gca().text((cms_turn_on_pTs[i]), 1.23 + 0.007, str(cms_turn_on_pTs[i]) , color=colors[i], horizontalalignment='center', size = size_val)
 
         
 	# Horizontal Line.
-	plt.plot([0] + list(mod_hists[hist_labels[i][0]].hist().x()), [1] * (1 + len(list(mod_hists[hist_labels[i][0]].hist().x()))), color="black", linewidth=5, linestyle="dashed")
-
-
-
+	plt.plot([0] + list(mod_hists[hist_labels[len(hist_labels)-1][0]].hist().x()), [1] * (1 + len(list(mod_hists[hist_labels[len(hist_labels)-1][0]].hist().x()))), color="black", linewidth=5, linestyle="dashed")
 
 
 	# Info about R, pT_cut, etc.
 	
 	handles = [extra]
 	labels = ["AK5; $\left| \eta \\right| < 2.4$"]
-	info_legend = plt.gca().legend(handles, labels, loc=7, frameon=0, borderpad=0.1, fontsize=60, bbox_to_anchor=[0.28, 0.92])
+	info_legend = plt.gca().legend(handles, labels, loc=7, frameon=0, borderpad=0.1, fontsize=60, bbox_to_anchor=[0.35, 0.92])
 	plt.gca().add_artist(info_legend)
 
 
 	plt.gca().set_xlabel("Trigger Jet $p_T$ [GeV]", fontsize=70, labelpad=50)
-	plt.gca().set_ylabel("Ratio", fontsize=70, labelpad=50)
+	plt.gca().set_ylabel("Cross Section Ratio", fontsize=70, labelpad=50)
 
-	plt.gca().add_artist(logo_box(0.114, 0.98))
+	plt.gca().add_artist(logo_box(0.1, 0.98))
 
 	plt.gca().xaxis.set_minor_locator(MultipleLocator(10))
 	plt.gca().set_yscale('linear')
+	plt.gca().set_ylim(0.7, 1.3)
+	plt.gca().set_xlim(0.0, 800)
+
+
 
 	handles, labels = plt.gca().get_legend_handles_labels()
 	print(labels[::-1])
@@ -320,7 +366,7 @@ def trigger_efficiency_plot():
 
 	plt.tight_layout()
 
-	plt.gcf().set_size_inches(30, 24, forward=1)
+	plt.gcf().set_size_inches(27, 27, forward=1)
 	plt.savefig(default_dir + "trigger_efficiency.pdf")
 
 	plt.clf()
@@ -345,7 +391,7 @@ def trigger_prescales():
 	hist_labels = ["Jet140U", "Jet100U", "Jet70U", "Jet50U", "Jet30U" ][::-1]
 
 	
-        colors = ['green', 'magenta', 'blue', 'red', 'orange', '#cecece', 'yellow', 'cyan', 'purple'][::-1]
+        colors = ['green', 'magenta', 'blue', 'red', 'orange', '#cecece', '#800000', '#008B8B', 'purple'][::-1]
 	legend_labels = ["Jet370", "Jet300", "Jet240", "Jet190", "Jet150", "Jet110", "Jet80", "Jet60", "Jet30"][::-1]
 	hist_labels = ["Jet370", "Jet300", "Jet240", "Jet190", "Jet150", "Jet110", "Jet80", "Jet60", "Jet30" ][::-1]
 	
@@ -412,11 +458,11 @@ def trigger_prescales():
 
 
 	plt.tick_params(which='major', width=5, length=25, labelsize=70, pad=10)
-	plt.tick_params(which='minor', width=3, length=15)
+	plt.tick_params(which='minor', width=10, length=15)
 
 	# plt.tight_layout()
 
-	plt.gcf().set_size_inches(30, 24, forward=1)
+	plt.gcf().set_size_inches(32, 32, forward=1)
 	plt.savefig(default_dir + "trigger_prescales.pdf")
 
 	plt.clf()

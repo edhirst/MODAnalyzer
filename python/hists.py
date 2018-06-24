@@ -151,7 +151,7 @@ def multi_page_log_plot_hist_templates():
 
     pT_boundaries = [85, 115, 150, 200, 250]
     # eta_boundaries = [(0.0, 1.9), (0.0, 2.4), (1.9, 2.4)]
-    eta_boundaries = [(0.0, 2.4)]
+    eta_boundaries = [(-2.4, 2.4)]
 
     all_hists['frac_pT_loss'] = []
     all_hists['softkill_pT_loss'] = []
@@ -197,967 +197,23 @@ def multi_page_log_plot_hist_templates():
         default_250_conditions = [('hardest_eta', eta_boundaries[j]),
                                   ('hardest_pT', (250, None))]
 
-    
-
-        for i in xrange(len(pT_boundaries) - 1):
-
-            default_conditions = [('hardest_eta', eta_boundaries[j]),
-                                  ('hardest_pT', (pT_boundaries[i], pT_boundaries[i + 1]))]
-
-            # Create a label for the eta boundaries.
-            eta_boundary_label = ""
-
-            if (abs(eta_boundaries[j][0] - 0.0) < 1e-5):
-                eta_boundary_label = "\left| \eta \\right| < " + \
-                    str(eta_boundaries[j][1])
-            else:
-                eta_boundary_label = "\left| \eta \\right| \in [" + str(eta_boundaries[j][
-                    0]) + ", " + str(eta_boundaries[j][1]) + "]"
-
-            additional_text = [([(0.97, 0.97), (0.97, 0.97), (0.97, 0.97), (0.97, 0.97)][i], 'upper right', "$p_T^{\mathrm{PFC}} > 1.0 \; \mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-            all_hists['frac_pT_loss'].append(MODHist(copy.deepcopy(frac_pT_loss_hist), conditions=default_conditions, x_scale='log', use_prescale=False,
-                                                     x_label="Fractional $p_T$ Loss", y_label="A.U.", y_range=(0., 1.0), additional_text=additional_text, legend_location=('upper left', (0.0, 1.0))))
-            
-            additional_text = [([(-0.08, 0.60), (-0.08, 0.60), (-0.08, 0.60), (-0.08, 0.60)][i], 'upper left',
-                                "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$")]
-            all_hists['pT_D_pre_SD'].append(MODHist(copy.deepcopy(pT_D_hist), conditions=default_conditions, x_scale='log', use_prescale=False, x_label="$p_T^D$", y_label="Probability Density", y_range=[
-                                            (0., 4.0), (0., 1.9), (0., 1.9), (0., 1.8)][i], additional_text=additional_text, legend_location=('upper left', (0.0, 1.0))))
-
-            additional_text = [([(-0.08, 0.60), (-0.08, 0.60), (-0.08, 0.60), (-0.08, 0.60)][i], 'upper left',
-                                "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$")]
-            all_hists['track_pT_D_pre_SD'].append(MODHist(copy.deepcopy(pT_D_hist), conditions=default_conditions, x_scale='log', use_prescale=False, x_label="Track $p_T^D$", y_label="Probability Density", y_range=[
-                                                  (0., 1.8), (0., 1.7), (0., 1.7), (0., 1.7)][i], additional_text=additional_text, legend_location=('upper left', (0.0, 1.0))))
-
-            additional_text = [([(0.97, 0.97), (0.97, 0.97), (0.97, 0.97), (0.97, 0.97)][i], 'upper right', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 1.5}: z_{\mathrm{cut}} = 0.1$")]
-            all_hists['pT_D_post_SD'].append(MODHist(copy.deepcopy(pT_D_hist), conditions=default_conditions, y_range=[(0.0, 4.0), (0.0, 2.6), (0.0, 2.55), (0.0, 2.4)][
-                                             i], x_scale='log', use_prescale=False, x_label="$p_T^D$", y_label="Probability Density", additional_text=additional_text, legend_location=('upper left', (0.0, 1.0))))
-
-            additional_text = [([(0.97, 0.97), (0.97, 0.97), (0.97, 0.97), (0.97, 0.97)][i], 'upper right', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 1.5}: z_{\mathrm{cut}} = 0.1$")]
-            all_hists['track_pT_D_post_SD'].append(MODHist(copy.deepcopy(pT_D_hist), conditions=default_conditions, y_range=[(0.0, 2.5), (0.0, 2.4), (0.0, 2.3), (0.0, 2.3)][
-                                                   i], x_scale='log', use_prescale=False, x_label="Track $p_T^D$", y_label="Probability Density", additional_text=additional_text, legend_location=('upper left', (0.0, 1.0))))
-
-            additional_text = [([(0.85, 0.97), (0.87, 0.97), (0.87, 0.97), (0.87, 0.97)][i], 'upper right',
-                                "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$")]
-            all_hists['LHA_pre_SD'].append(MODHist(copy.deepcopy(lha_hist), conditions=default_conditions, x_scale='log', use_prescale=False, y_range=[(
-                0.0, 1.8), (0.0, 1.6), (0.0, 1.5), (0.0, 1.8)][i], x_label="LHA", y_label="Probability Density", additional_text=additional_text, legend_location=('upper left', (0.0, 1.0))))
-
-            additional_text = [([(0.85, 0.97), (0.87, 0.97), (0.87, 0.97), (0.87, 0.97)][i], 'upper right',
-                                "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$")]
-            all_hists['track_LHA_pre_SD'].append(MODHist(copy.deepcopy(lha_hist), conditions=default_conditions, x_scale='log', y_range=[(0.0, 1.8), (0.0, 1.5), (0.0, 1.4), (0.0, 1.5)][
-                                                 i], use_prescale=False, x_label="Track LHA", y_label="Probability Density", additional_text=additional_text, legend_location=('upper left', (0.0, 1.0))))
-
-            additional_text = [([(0.97, 0.97), (0.97, 0.97), (0.97, 0.97), (0.97, 0.97)][i], 'upper right', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-            all_hists['LHA_post_SD'].append(MODHist(copy.deepcopy(lha_hist), conditions=default_conditions, x_scale='log', y_range=[(0.0, 2.3), (0.0, 2.0), (0.0, 1.8), (0.0, 1.7)][
-                                            i], use_prescale=False, x_label="LHA", y_label="Probability Density", additional_text=additional_text, legend_location=('upper left', (0.0, 1.0))))
-
-            additional_text = [([(0.97, 0.97), (0.97, 0.97), (0.97, 0.97), (0.97, 0.97)][i], 'upper right', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-            all_hists['track_LHA_post_SD'].append(MODHist(copy.deepcopy(lha_hist), conditions=default_conditions, x_scale='log', y_range=[(0.0, 2.1), (0.0, 1.8), (0.0, 1.6), (0.0, 1.5)][
-                                                  i], use_prescale=False, x_label="Track LHA", y_label="Probability Density", additional_text=additional_text, legend_location=('upper left', (0.0, 1.0))))
-
-            additional_text = [([(-0.075, 0.60), (-0.075, 0.60), (-0.075, 0.60), (-0.075, 0.60)][i], 'upper left',
-                                "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$")]
-            all_hists['width_pre_SD'].append(MODHist(copy.deepcopy(width_hist), conditions=default_conditions, x_scale='log', use_prescale=False, y_range=[(
-                0.0, 0.9), (0.0, 0.85), (0.0, 1.0), (0.0, 1.0)][i], x_label="Width", y_label="Probability Density", additional_text=additional_text, legend_location=('upper left', (0.0, 1.0))))
-
-            additional_text = [([(-0.075, 0.60), (-0.075, 0.60), (-0.075, 0.60), (-0.075, 0.60)][i], 'upper left',
-                                "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$")]
-            all_hists['track_width_pre_SD'].append(MODHist(copy.deepcopy(width_hist), conditions=default_conditions, x_scale='log', use_prescale=False, y_range=[(
-                0.0, 0.8), (0.0, 0.7), (0.0, 0.85), (0.0, 1.0)][i], x_label="Track Width", y_label="Probability Density", additional_text=additional_text, legend_location=('upper left', (0.0, 1.0))))
-
-            additional_text = [([(0.97, 0.97), (0.97, 0.97), (0.97, 0.97), (0.97, 0.97)][i], 'upper right', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-            all_hists['width_post_SD'].append(MODHist(copy.deepcopy(width_hist), conditions=default_conditions, x_scale='log', y_range=[(0.0, 1.35), (0.0, 1.15), (0.0, 1.05), (0.0, 0.95)][
-                                              i], use_prescale=False, x_label="Width", y_label="Probability Density", additional_text=additional_text, legend_location=('upper left', (0.0, 1.0))))
-
-            additional_text = [([(0.97, 0.97), (0.97, 0.97), (0.97, 0.97), (0.97, 0.97)][i], 'upper right', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-            all_hists['track_width_post_SD'].append(MODHist(copy.deepcopy(width_hist), conditions=default_conditions, x_scale='log', use_prescale=False, y_range=[(
-                0.0, 1.2), (0.0, 1.1), (0.0, 1.0), (0.0, 0.9)][i], x_label="Track Width", y_label="Probability Density", additional_text=additional_text, legend_location=('upper left', (0.0, 1.0))))
-
-            additional_text = [([(0.85, 0.97), (0.87, 0.97), (0.87, 0.97), (0.87, 0.97)][i], 'upper right',
-                                "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$")]
-            all_hists['thrust_pre_SD'].append(MODHist(copy.deepcopy(thrust_hist), conditions=default_conditions, x_scale='log', use_prescale=False, y_range=[(                0.0, 0.8), (0.0, 0.75), (0.0, 0.65), (0.0, 0.6)][i], x_label="Thrust", y_label="Probability Density", additional_text=additional_text, legend_location=('upper left', (0.0, 1.0))))
-
-            additional_text = [([(0.85, 0.97), (0.87, 0.97), (0.87, 0.97), (0.87, 0.97)][i], 'upper right',
-                                "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$")]
-            all_hists['track_thrust_pre_SD'].append(MODHist(copy.deepcopy(thrust_hist), conditions=default_conditions, x_scale='log', use_prescale=False, y_range=[(
-                0.0, 0.70), (0.0, 0.65), (0.0, 0.6), (0.0, 0.55)][i], x_label="Track Thrust", y_label="Probability Density", additional_text=additional_text, legend_location=('upper left', (0.0, 1.0))))
-
-            additional_text = [([(0.97, 0.97), (0.97, 0.97), (0.97, 0.97), (0.97, 0.97)][i], 'upper right', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-            all_hists['thrust_post_SD'].append(MODHist(copy.deepcopy(thrust_hist), conditions=default_conditions, x_scale='log', y_range=[(0.0, 0.95), (0.0, 0.90), (0.0, 0.85), (0.0, 0.8)][
-                                               i], use_prescale=False, x_label="Thrust", y_label="Probability Density", additional_text=additional_text, legend_location=('upper left', (0.0, 1.0))))
-
-            additional_text = [([(0.97, 0.97), (0.97, 0.97), (0.97, 0.97), (0.97, 0.97)][i], 'upper right', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-            all_hists['track_thrust_post_SD'].append(MODHist(copy.deepcopy(thrust_hist), conditions=default_conditions, x_scale='log', y_range=[(0.0, 0.90), (0.0, 0.80), (0.0, 0.75), (0.0, 0.70)][
-                                                     i], use_prescale=False, x_label="Track Thrust", y_label="Probability Density", additional_text=additional_text, legend_location=('upper left', (0.0, 1.0))))
-
-
-            additional_text = [((0.95, 0.97), 'upper right', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-            all_hists['zg_10'].append(MODHist(copy.deepcopy(zg_10_hist), conditions=default_conditions, x_scale='log', use_prescale=False, x_label="$z_g$",
-                                              y_label="$ \\frac{z_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} z_g}$", x_range=(0.01, 1.0), y_range=(0, 1.7), additional_text=additional_text, legend_location=('upper left', (0.0, 1.0))))
-
-            additional_text = [((0.95, 0.97), 'upper right', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-            all_hists['rg_10'].append(MODHist(copy.deepcopy(rg_10_hist), conditions=default_conditions, x_scale='log', use_prescale=False, x_label="$\\theta_g$",
-                                              y_label="$ \\frac{\\theta_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} \\theta_g}$", x_range=(0.01, 1.0), y_range=(0., 1.0), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-            additional_text = [((0.95, 0.97), 'upper right', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-            all_hists['e1_10'].append(MODHist(copy.deepcopy(e1_10_hist), conditions=default_conditions, x_scale='log', use_prescale=False, x_label="$e_g^{(1)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", y_range=[
-                                      (0.0, 0.8), (0.0, 0.65), (0.0, 0.6), (0.0, 0.6)][i], x_range=(0.001, 1.0), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-            additional_text = [((0.95, 0.97), 'upper right', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-            all_hists['e2_10'].append(MODHist(copy.deepcopy(e2_10_hist), conditions=default_conditions, x_scale='log', use_prescale=False, x_label="$e_g^{(2)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", y_range=(
-                0.0, 0.45), x_range=(0.0001, 1.0), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-            additional_text = [((0.95, 0.97), 'upper right', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-            all_hists['e05_10'].append(MODHist(copy.deepcopy(e05_10_hist), conditions=default_conditions, x_scale='log', use_prescale=False, x_label="$e_g^{(0.5)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g }$", y_range=[
-                                       (0, 1.2), (0, 1.2), (0, 1.1), (0, 1.0)][i], x_range=(0.01, 1.0), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-            additional_text = [((0.95, 0.97), 'upper right', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-            all_hists['track_zg_10'].append(MODHist(copy.deepcopy(zg_10_hist), conditions=default_conditions, x_scale='log', use_prescale=False, x_label="Track $z_g$",
-                                                    y_label="$ \\frac{z_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} z_g}$", x_range=(0.01, 1.0), y_range=(0, 1.7), additional_text=additional_text, legend_location=('upper left', (0.0, 1.0))))
-
-            additional_text = [((0.95, 0.97), 'upper right', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-            all_hists['track_rg_10'].append(MODHist(copy.deepcopy(rg_10_hist), conditions=default_conditions, x_scale='log', use_prescale=False, x_label="Track $\\theta_g$",
-                                                    y_label="$ \\frac{\\theta_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} \\theta_g}$", x_range=(0.01, 1.0), y_range=(0., 1.0), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-            additional_text = [((0.95, 0.97), 'upper right', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-            all_hists['track_e1_10'].append(MODHist(copy.deepcopy(e1_10_hist), conditions=default_conditions, x_scale='log', use_prescale=False, x_label="Track $e_g^{(1)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", x_range=(
-                0.001, 1.0), y_range=[(0.0, 0.75), (0.0, 0.65), (0.0, 0.6), (0.0, 0.6)][i], legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-            additional_text = [((0.95, 0.97), 'upper right', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-            all_hists['track_e2_10'].append(MODHist(copy.deepcopy(e2_10_hist), conditions=default_conditions, x_scale='log', use_prescale=False, x_label="Track $e_g^{(2)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", x_range=(
-                0.0001, 1.0), y_range=(0, 0.45), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-            additional_text = [((0.95, 0.97), 'upper right', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-            all_hists['track_e05_10'].append(MODHist(copy.deepcopy(e05_10_hist), conditions=default_conditions, x_scale='log', use_prescale=False, x_label="Track $e_g^{(0.5)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", x_range=(
-                0.01, 1.0), y_range=[(0, 1.2), (0, 1.2), (0, 1.1), (0, 1.0)][i], legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-            additional_text = [((-0.075, 0.97), 'upper left', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-            all_hists['zg_05'].append(MODHist(copy.deepcopy(zg_05_hist), conditions=default_conditions, x_scale='log', use_prescale=False, x_label="$z_g$",
-                                              y_label="$ \\frac{z_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} z_g}$", x_range=(0.01, 1.), y_range=[(0, 1.4), (0, 1.5), (0, 1.5), (0, 1.5)][i], additional_text=additional_text))
-
-            additional_text = [((0.97, 0.97), 'upper right', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-            all_hists['rg_05'].append(MODHist(copy.deepcopy(rg_05_hist), conditions=default_conditions, x_scale='log', use_prescale=False, x_label="$\\theta_g$", y_label="$ \\frac{\\theta_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} \\theta_g}$", x_range=(
-                0.01, 1.0), y_range=[(0., 1.7), (0., 1.3), (0., 1.2), (0., 1.1)][i], legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-            additional_text = [((0.97, 0.97), 'upper right', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-            all_hists['e1_05'].append(MODHist(copy.deepcopy(e1_05_hist), conditions=default_conditions, x_scale='log', use_prescale=False, x_label="$e_g^{(1)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", x_range=(
-                0.001, 1.0), y_range=[(0., 0.95), (0., 0.85), (0., 0.75), (0., 0.65)][i], legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-            additional_text = [((0.97, 0.97), 'upper right', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-            all_hists['e2_05'].append(MODHist(copy.deepcopy(e2_05_hist), conditions=default_conditions, x_scale='log', use_prescale=False, x_label="$e_g^{(2)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", y_range=[
-                                      (0., 0.6), (0., 0.55), (0., 0.45), (0., 0.4)][i], x_range=(0.0001, 1.0), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-            additional_text = [((0.97, 0.97), 'upper right', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-            all_hists['e05_05'].append(MODHist(copy.deepcopy(e05_05_hist), conditions=default_conditions, x_scale='log', use_prescale=False, x_label="$e_g^{(0.5)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g }$", y_range=[
-                                       (0., 1.35), (0., 1.35), (0., 1.3), (0., 1.25)][i], x_range=(0.01, 1.0), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-            additional_text = [((-0.075, 0.97), 'upper left', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-            all_hists['track_zg_05'].append(MODHist(copy.deepcopy(zg_05_hist), conditions=default_conditions, x_scale='log', use_prescale=False, x_label="Track $z_g$",
-                                                    y_label="$ \\frac{z_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} z_g}$", x_range=(0.01, 1.0), y_range=[(0, 1.4), (0, 1.5), (0, 1.5), (0, 1.5)][i], additional_text=additional_text))
-
-            additional_text = [((0.97, 0.97), 'upper right', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-            all_hists['track_rg_05'].append(MODHist(copy.deepcopy(rg_05_hist), conditions=default_conditions, x_scale='log', use_prescale=False, x_label="Track $\\theta_g$", y_label="$ \\frac{\\theta_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} \\theta_g}$", x_range=(
-                0.01, 1.0), legend_location=('upper left', (0., 1.0)), y_range=[(0., 1.7), (0., 1.4), (0., 1.2), (0., 1.1)][i], additional_text=additional_text))
-
-            additional_text = [((0.97, 0.97), 'upper right', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-            all_hists['track_e1_05'].append(MODHist(copy.deepcopy(e1_05_hist), conditions=default_conditions, x_scale='log', use_prescale=False, x_label="Track $e_g^{(1)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", x_range=(
-                0.001, 1.0), y_range=[(0., 0.9), (0., 0.8), (0., 0.7), (0., 0.65)][i], legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-            additional_text = [((0.97, 0.97), 'upper right', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-            all_hists['track_e2_05'].append(MODHist(copy.deepcopy(e2_05_hist), conditions=default_conditions, x_scale='log', use_prescale=False, x_label="Track $e_g^{(2)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", y_range=[
-                                            (0., 0.6), (0., 0.55), (0., 0.45), (0., 0.4)][i], x_range=(0.0001, 1.0), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-            additional_text = [((0.97, 0.97), 'upper right', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-            all_hists['track_e05_05'].append(MODHist(copy.deepcopy(e05_05_hist), conditions=default_conditions, x_scale='log', use_prescale=False, x_label="Track $e_g^{(0.5)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", y_range=[
-                                             (0., 1.35), (0., 1.35), (0., 1.3), (0., 1.25)][i], x_range=(0.01, 1.0), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-            additional_text = [((0.95, 0.97), 'upper right', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-            all_hists['zg_20'].append(MODHist(copy.deepcopy(zg_20_hist), conditions=default_conditions, x_scale='log', use_prescale=False, x_label="$z_g$",
-                                              y_label="$ \\frac{z_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} z_g}$", x_range=(0.1, 1.0), y_range=(0, 2.4), additional_text=additional_text, legend_location=('upper left', (0.0, 1.0))))
-
-            additional_text = [((0.95, 0.97), 'upper right', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-            all_hists['rg_20'].append(MODHist(copy.deepcopy(rg_20_hist), conditions=default_conditions, x_scale='log', use_prescale=False, x_label="$\\theta_g$",
-                                              y_label="$ \\frac{\\theta_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} \\theta_g}$", x_range=(0.01, 1.0), y_range=(0., 0.8), additional_text=additional_text, legend_location=('upper left', (0.0, 1.0))))
-
-            additional_text = [((0.95, 0.97), 'upper right', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-            all_hists['e1_20'].append(MODHist(copy.deepcopy(e1_20_hist), conditions=default_conditions, x_scale='log', use_prescale=False, x_label="$e_g^{(1)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", y_range=(
-                0., 0.8), x_range=(0.001, 1.0), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-            additional_text = [((0.95, 0.97), 'upper right', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-            all_hists['e2_20'].append(MODHist(copy.deepcopy(e2_20_hist), conditions=default_conditions, x_scale='log', use_prescale=False, x_label="$e_g^{(2)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", y_range=(
-                0., 0.45), x_range=(0.0001, 1.0), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-            additional_text = [((0.95, 0.97), 'upper right', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-            all_hists['e05_20'].append(MODHist(copy.deepcopy(e05_20_hist), conditions=default_conditions, x_scale='log', use_prescale=False, x_label="$e_g^{(0.5)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g }$", y_range=(
-                0., 1.4), x_range=(0.01, 1.0), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-            additional_text = [((0.95, 0.97), 'upper right', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-            all_hists['track_zg_20'].append(MODHist(copy.deepcopy(zg_20_hist), conditions=default_conditions, x_scale='log', use_prescale=False, x_label="Track $z_g$",
-                                                    y_label="$ \\frac{z_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} z_g}$", x_range=(0.1, 1.0), y_range=(0, 2.4), additional_text=additional_text, legend_location=('upper left', (0.0, 1.0))))
-
-            additional_text = [((0.95, 0.97), 'upper right', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-            all_hists['track_rg_20'].append(MODHist(copy.deepcopy(rg_20_hist), conditions=default_conditions, x_scale='log', use_prescale=False, x_label="Track $\\theta_g$",
-                                                    y_label="$ \\frac{\\theta_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} \\theta_g}$", x_range=(0.01, 1.0), y_range=(0., 0.8), additional_text=additional_text, legend_location=('upper left', (0.0, 1.0))))
-
-            additional_text = [((0.95, 0.97), 'upper right', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-            all_hists['track_e1_20'].append(MODHist(copy.deepcopy(e1_20_hist), conditions=default_conditions, x_scale='log', use_prescale=False, x_label="Track $e_g^{(1)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", x_range=(
-                0.001, 1.0), y_range=(0, 0.8), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-            additional_text = [((0.95, 0.97), 'upper right', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-            all_hists['track_e2_20'].append(MODHist(copy.deepcopy(e2_20_hist), conditions=default_conditions, x_scale='log', use_prescale=False, x_label="Track $e_g^{(2)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", x_range=(
-                0.0001, 1.0), y_range=(0, 0.45), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-            additional_text = [((0.95, 0.97), 'upper right', "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(
-                pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-            all_hists['track_e05_20'].append(MODHist(copy.deepcopy(e05_20_hist), conditions=default_conditions, x_scale='log', use_prescale=False, x_label="Track $e_g^{(0.5)}$", y_label="$ \\frac{1}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g} $", x_range=(
-                0.01, 1.0), y_range=(0, 1.5), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-            
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0 \; \mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['frac_pT_loss'].append(MODHist(copy.deepcopy(frac_pT_loss_hist), conditions=default_85_conditions, use_prescale=True, x_scale='log',
-                                                 x_label="Fractional $p_T$ Loss", y_label="A.U.", y_range=(0., 0.98), additional_text=additional_text, legend_location=('upper left', (0.0, 1.0))))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0 \; \mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['frac_pT_loss'].append(MODHist(copy.deepcopy(frac_pT_loss_hist), conditions=default_150_conditions, use_prescale=True, x_scale='log',
-                                                 x_label="Fractional $p_T$ Loss", y_label="A.U.", y_range=(0., 0.95), additional_text=additional_text, legend_location=('upper left', (0.0, 1.0))))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0 \; \mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['frac_pT_loss'].append(MODHist(copy.deepcopy(frac_pT_loss_hist), conditions=default_250_conditions, use_prescale=True, x_scale='log',
-                                                 x_label="Fractional $p_T$ Loss", y_label="A.U.", y_range=(0., 1.0), additional_text=additional_text, legend_location=('upper left', (0.0, 1.0))))
-
-        additional_text = [((-0.08, 0.60), 'upper left',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$\nAK5; $" + eta_boundary_label + "$\n$p_T^{\mathrm{jet}} >85~\mathrm{GeV}$")]
-        all_hists['pT_D_pre_SD'].append(MODHist(copy.deepcopy(pT_D_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, x_label="$p_T^D$",
-                                                y_label="Probability Density", y_range=(0., 1.95), legend_location=('upper left', (0., 1.)), additional_text=additional_text))
-
-        additional_text = [((-0.08, 0.60), 'upper left',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$\nAK5; $" + eta_boundary_label + "$\n$p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$")]
-        all_hists['pT_D_pre_SD'].append(MODHist(copy.deepcopy(pT_D_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, x_label="$p_T^D$",
-                                                y_label="Probability Density", y_range=(0., 1.9), legend_location=('upper left', (0., 1.)), additional_text=additional_text))
-
-        additional_text = [((-0.08, 0.60), 'upper left',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$\nAK5; $" + eta_boundary_label + "$\n$p_T^{\mathrm{jet}} >250~\mathrm{GeV}$")]
-        all_hists['pT_D_pre_SD'].append(MODHist(copy.deepcopy(pT_D_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, x_label="$p_T^D$",
-                                                y_label="Probability Density", y_range=(0., 1.8), legend_location=('upper left', (0., 1.)), additional_text=additional_text))
-
-        additional_text = [((-0.08, 0.60), 'upper left',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$\n$p_T^{\mathrm{jet}} >85~\mathrm{GeV}$")]
-        all_hists['track_pT_D_pre_SD'].append(MODHist(copy.deepcopy(pT_D_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True,
-                                                      x_label="Track $p_T^D$", y_label="Probability Density", y_range=(0., 1.7), legend_location=('upper left', (0., 1.)), additional_text=additional_text))
-
-        additional_text = [((-0.08, 0.60), 'upper left',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$\n$p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$")]
-        all_hists['track_pT_D_pre_SD'].append(MODHist(copy.deepcopy(pT_D_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True,
-                                                      x_label="Track $p_T^D$", y_label="Probability Density", y_range=(0., 1.7), legend_location=('upper left', (0., 1.)), additional_text=additional_text))
-
-        additional_text = [((-0.08, 0.60), 'upper left',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$\n$p_T^{\mathrm{jet}} >250~\mathrm{GeV}$")]
-        all_hists['track_pT_D_pre_SD'].append(MODHist(copy.deepcopy(pT_D_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True,
-                                                      x_label="Track $p_T^D$", y_label="Probability Density", y_range=(0., 1.6), legend_location=('upper left', (0., 1.)), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} >85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['pT_D_post_SD'].append(MODHist(copy.deepcopy(pT_D_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, y_range=(
-            0., 2.7), x_label="$p_T^D$", y_label="Probability Density", legend_location=('upper left', (0., 1.)), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} >150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['pT_D_post_SD'].append(MODHist(copy.deepcopy(pT_D_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, y_range=(
-            0., 2.4), x_label="$p_T^D$", y_label="Probability Density", legend_location=('upper left', (0., 1.)), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} >250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['pT_D_post_SD'].append(MODHist(copy.deepcopy(pT_D_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, y_range=(
-            0., 2.2), x_label="$p_T^D$", y_label="Probability Density", legend_location=('upper left', (0., 1.)), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} >85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['track_pT_D_post_SD'].append(MODHist(copy.deepcopy(pT_D_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, y_range=(
-            0., 2.5), x_label="Track $p_T^D$", y_label="Probability Density", legend_location=('upper left', (0., 1.)), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} >150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['track_pT_D_post_SD'].append(MODHist(copy.deepcopy(pT_D_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, y_range=(
-            0., 2.4), x_label="Track $p_T^D$", y_label="Probability Density", legend_location=('upper left', (0., 1.)), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} >250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['track_pT_D_post_SD'].append(MODHist(copy.deepcopy(pT_D_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, y_range=(
-            0., 2.1), x_label="Track $p_T^D$", y_label="Probability Density", legend_location=('upper left', (0., 1.)), additional_text=additional_text))
-
-        additional_text = [((0.80, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$")]
-        all_hists['LHA_pre_SD'].append(MODHist(copy.deepcopy(lha_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, x_label="LHA", y_range=(
-            0.0, 1.5), y_label="Probability Density", legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.80, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$")]
-        all_hists['LHA_pre_SD'].append(MODHist(copy.deepcopy(lha_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, x_label="LHA", y_range=(
-            0.0, 1.6), y_label="Probability Density", legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.80, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$")]
-        all_hists['LHA_pre_SD'].append(MODHist(copy.deepcopy(lha_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, x_label="LHA", y_range=(
-            0.0, 1.6), y_label="Probability Density", legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.80, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$")]
-        all_hists['track_LHA_pre_SD'].append(MODHist(copy.deepcopy(lha_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, x_label="Track LHA", y_range=(
-            0.0, 1.5), y_label="Probability Density", legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.80, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$")]
-        all_hists['track_LHA_pre_SD'].append(MODHist(copy.deepcopy(lha_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, x_label="Track LHA", y_range=(
-            0.0, 1.4), y_label="Probability Density", legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.80, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$")]
-        all_hists['track_LHA_pre_SD'].append(MODHist(copy.deepcopy(lha_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, x_label="Track LHA", y_range=(
-            0.0, 1.5), y_label="Probability Density", legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['LHA_post_SD'].append(MODHist(copy.deepcopy(lha_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, y_range=(
-            0.0, 2.1), x_label="LHA", y_label="Probability Density", legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['LHA_post_SD'].append(MODHist(copy.deepcopy(lha_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, y_range=(
-            0.0, 1.8), x_label="LHA", y_label="Probability Density", legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['LHA_post_SD'].append(MODHist(copy.deepcopy(lha_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, y_range=(
-            0.0, 1.6), x_label="LHA", y_label="Probability Density", legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['track_LHA_post_SD'].append(MODHist(copy.deepcopy(lha_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, y_range=(
-            0., 2.0), x_label="Track LHA", y_label="Probability Density", legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['track_LHA_post_SD'].append(MODHist(copy.deepcopy(lha_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, y_range=(
-            0.0, 1.7), x_label="Track LHA", y_label="Probability Density", legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['track_LHA_post_SD'].append(MODHist(copy.deepcopy(lha_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, y_range=(
-            0., 1.4), x_label="Track LHA", y_label="Probability Density", legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((-0.075, 0.60), 'upper left',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$")]
-        all_hists['width_pre_SD'].append(MODHist(copy.deepcopy(width_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, x_label="Width", y_range=(
-            0.0, 0.85), y_label="Probability Density", legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((-0.075, 0.60), 'upper left',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$")]
-        all_hists['width_pre_SD'].append(MODHist(copy.deepcopy(width_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, x_label="Width", y_range=(
-            0.0, 0.70), y_label="Probability Density", legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((-0.075, 0.60), 'upper left',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$")]
-        all_hists['width_pre_SD'].append(MODHist(copy.deepcopy(width_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, x_label="Width", y_range=(
-            0.0, 0.95), y_label="Probability Density", legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((-0.075, 0.60), 'upper left',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$")]
-        all_hists['track_width_pre_SD'].append(MODHist(copy.deepcopy(width_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, y_range=(
-            0.0, 0.75), x_label="Track Width", y_label="Probability Density", legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((-0.075, 0.60), 'upper left',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$")]
-        all_hists['track_width_pre_SD'].append(MODHist(copy.deepcopy(width_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, y_range=(
-            0.0, 0.65), x_label="Track Width", y_label="Probability Density", legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((-0.075, 0.60), 'upper left',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$")]
-        all_hists['track_width_pre_SD'].append(MODHist(copy.deepcopy(width_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, y_range=(
-            0.0, 0.9), x_label="Track Width", y_label="Probability Density", legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['width_post_SD'].append(MODHist(copy.deepcopy(width_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, y_range=(
-            0., 1.25), x_label="Width", y_label="Probability Density", legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['width_post_SD'].append(MODHist(copy.deepcopy(width_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, y_range=(
-            0.0, 1.1), x_label="Width", y_label="Probability Density", legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['width_post_SD'].append(MODHist(copy.deepcopy(width_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, x_label="Width",  y_range=(
-            0., 0.9), y_label="Probability Density", legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['track_width_post_SD'].append(MODHist(copy.deepcopy(width_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, y_range=(
-            0., 1.1), x_label="Track Width", y_label="Probability Density", legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['track_width_post_SD'].append(MODHist(copy.deepcopy(width_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, y_range=(
-            0.0, 1.0), x_label="Track Width", y_label="Probability Density", legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['track_width_post_SD'].append(MODHist(copy.deepcopy(width_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, y_range=(
-            0., 0.8), x_label="Track Width", y_label="Probability Density", legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.80, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$")]
-        all_hists['thrust_pre_SD'].append(MODHist(copy.deepcopy(thrust_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, y_range=(
-            0.0, 0.8), x_label="Thrust", y_label="Probability Density", legend_location=('upper left', (0.0, 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.80, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$")]
-        all_hists['thrust_pre_SD'].append(MODHist(copy.deepcopy(thrust_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, y_range=(
-            0.0, 0.6), x_label="Thrust", y_label="Probability Density", legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.80, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$")]
-        all_hists['thrust_pre_SD'].append(MODHist(copy.deepcopy(thrust_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, y_range=(
-            0.0, 0.6), x_label="Thrust", y_label="Probability Density", legend_location=('upper left', (0.0, 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.80, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$")]
-        all_hists['track_thrust_pre_SD'].append(MODHist(copy.deepcopy(thrust_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, y_range=(
-            0.0, 0.6), x_label="Track Thrust", y_label="Probability Density", legend_location=('upper left', (0.0, 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.80, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$")]
-        all_hists['track_thrust_pre_SD'].append(MODHist(copy.deepcopy(thrust_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, y_range=(
-            0.0, 0.5), x_label="Track Thrust", y_label="Probability Density", legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.80, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$")]
-        all_hists['track_thrust_pre_SD'].append(MODHist(copy.deepcopy(thrust_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, y_range=(
-            0.0, 0.6), x_label="Track Thrust", y_label="Probability Density", legend_location=('upper left', (0.0, 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['thrust_post_SD'].append(MODHist(copy.deepcopy(thrust_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, y_range=(
-            0.0, 0.95), x_label="Thrust", y_label="Probability Density", legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['thrust_post_SD'].append(MODHist(copy.deepcopy(thrust_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, y_range=(
-            0.0, 0.8), x_label="Thrust", y_label="Probability Density", legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['thrust_post_SD'].append(MODHist(copy.deepcopy(thrust_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, y_range=(
-            0.0, 0.75), x_label="Thrust", y_label="Probability Density", legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['track_thrust_post_SD'].append(MODHist(copy.deepcopy(thrust_hist), conditions=default_85_conditions, x_scale='log', y_range=(
-            0., 0.8), use_prescale=True, x_label="Track Thrust", y_label="Probability Density", legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['track_thrust_post_SD'].append(MODHist(copy.deepcopy(thrust_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, y_range=(
-            0.0, 0.7), x_label="Track Thrust", y_label="Probability Density", legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['track_thrust_post_SD'].append(MODHist(copy.deepcopy(thrust_hist), conditions=default_250_conditions, x_scale='log', y_range=(
-            0., 0.65), use_prescale=True, x_label="Track Thrust", y_label="Probability Density", legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['zg_10'].append(MODHist(copy.deepcopy(zg_10_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, x_label="$z_g$",
-                                          y_label="$ \\frac{z_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} z_g}$", x_range=(0.01, 1.0), y_range=(0, 1.7), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['rg_10'].append(MODHist(copy.deepcopy(rg_10_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, x_label="$\\theta_g$",
-                                          y_label="$ \\frac{\\theta_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} \\theta_g}$", x_range=(0.01, 1.0), y_range=(0., 1.0), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['e1_10'].append(MODHist(copy.deepcopy(e1_10_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, x_label="$e_g^{(1)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", y_range=(
-            0.0, 0.75), x_range=(0.001, 1.0), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['e2_10'].append(MODHist(copy.deepcopy(e2_10_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, x_label="$e_g^{(2)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", y_range=(
-            0.0, 0.45), x_range=(0.0001, 1.0), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['e05_10'].append(MODHist(copy.deepcopy(e05_10_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, x_label="$e_g^{(0.5)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g }$", y_range=(
-            0.0, 1.1), x_range=(0.01, 1.0), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['track_zg_10'].append(MODHist(copy.deepcopy(zg_10_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, x_label="Track $z_g$",
-                                                y_label="$ \\frac{z_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} z_g}$", x_range=(0.01, 1.0), y_range=(0, 1.7), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['track_rg_10'].append(MODHist(copy.deepcopy(rg_10_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, x_label="Track $\\theta_g$",
-                                                y_label="$ \\frac{\\theta_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} \\theta_g}$", x_range=(0.01, 1.0), y_range=(0., 1.0), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['track_e1_10'].append(MODHist(copy.deepcopy(e1_10_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, x_label="Track $e_g^{(1)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", x_range=(
-            0.001, 1.0), y_range=(0, 0.75), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['track_e2_10'].append(MODHist(copy.deepcopy(e2_10_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, x_label="Track $e_g^{(2)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", x_range=(
-            0.0001, 1.0), y_range=(0, 0.45), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['track_e05_10'].append(MODHist(copy.deepcopy(e05_10_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True,
-                                                 x_label="Track $e_g^{(0.5)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", x_range=(0.01, 1.0), y_range=(0, 1.1), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((-0.075, 0.97), 'upper left',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-        all_hists['zg_05'].append(MODHist(copy.deepcopy(zg_05_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, x_label="$z_g$",
-                                          y_label="$ \\frac{z_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} z_g}$", x_range=(0.01, 1.0), y_range=(0, 1.4), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-        all_hists['rg_05'].append(MODHist(copy.deepcopy(rg_05_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, x_label="$\\theta_g$",
-                                          y_label="$ \\frac{\\theta_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} \\theta_g}$", legend_location=('upper left', (0., 1.0)), x_range=(0.01, 1.0), y_range=(0., 1.5), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-        all_hists['e1_05'].append(MODHist(copy.deepcopy(e1_05_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, x_label="$e_g^{(1)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", x_range=(
-            0.001, 1.0), legend_location=('upper left', (0., 1.0)), y_range=(0., 0.9), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-        all_hists['e2_05'].append(MODHist(copy.deepcopy(e2_05_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, x_label="$e_g^{(2)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", y_range=(
-            0., 0.6), legend_location=('upper left', (0., 1.0)), x_range=(0.0001, 1.0), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-        all_hists['e05_05'].append(MODHist(copy.deepcopy(e05_05_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, x_label="$e_g^{(0.5)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g }$", y_range=(
-            0., 1.35), legend_location=('upper left', (0., 1.0)), x_range=(0.01, 1.0), additional_text=additional_text))
-
-        additional_text = [((-0.075, 0.97), 'upper left',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-        all_hists['track_zg_05'].append(MODHist(copy.deepcopy(zg_05_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, x_label="Track $z_g$",
-                                                y_label="$ \\frac{z_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} z_g}$", x_range=(0.01, 1.0), y_range=(0, 1.4), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-        all_hists['track_rg_05'].append(MODHist(copy.deepcopy(rg_05_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, x_label="Track $\\theta_g$",
-                                                y_label="$ \\frac{\\theta_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} \\theta_g}$", legend_location=('upper left', (0., 1.0)), x_range=(0.01, 1.0), y_range=(0., 1.5), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-        all_hists['track_e1_05'].append(MODHist(copy.deepcopy(e1_05_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True,
-                                                x_label="Track $e_g^{(1)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", legend_location=('upper left', (0., 1.0)), x_range=(0.001, 1.0), y_range=(0., 0.85), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-        all_hists['track_e2_05'].append(MODHist(copy.deepcopy(e2_05_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, x_label="Track $e_g^{(2)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", y_range=(
-            0., 0.6), legend_location=('upper left', (0., 1.0)), x_range=(0.0001, 1.0), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-        all_hists['track_e05_05'].append(MODHist(copy.deepcopy(e05_05_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, x_label="Track $e_g^{(0.5)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", y_range=(
-            0., 1.35), legend_location=('upper left', (0., 1.0)), x_range=(0.01, 1.0), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-        all_hists['zg_20'].append(MODHist(copy.deepcopy(zg_20_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, x_label="$z_g$",
-                                          y_label="$ \\frac{z_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} z_g}$", x_range=(0.1, 1.0), y_range=(0, 2.4), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-        all_hists['rg_20'].append(MODHist(copy.deepcopy(rg_20_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, x_label="$\\theta_g$",
-                                          y_label="$ \\frac{\\theta_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} \\theta_g}$", x_range=(0.01, 1.0), y_range=(0., 0.8), additional_text=additional_text, legend_location=('upper left', (0.0, 1.0))))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-        all_hists['e1_20'].append(MODHist(copy.deepcopy(e1_20_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, x_label="$e_g^{(1)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", y_range=(
-            0., 0.8), x_range=(0.001, 1.0), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-        all_hists['e2_20'].append(MODHist(copy.deepcopy(e2_20_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, x_label="$e_g^{(2)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", y_range=(
-            0., 0.45), x_range=(0.0001, 1.0), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-        all_hists['e05_20'].append(MODHist(copy.deepcopy(e05_20_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, x_label="$e_g^{(0.5)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g }$", y_range=(
-            0., 1.4), x_range=(0.01, 1.0), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-        all_hists['track_zg_20'].append(MODHist(copy.deepcopy(zg_20_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, x_label="Track $z_g$",
-                                                y_label="$ \\frac{z_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} z_g}$", x_range=(0.1, 1.0), y_range=(0, 2.4), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-        all_hists['track_rg_20'].append(MODHist(copy.deepcopy(rg_20_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, x_label="Track $\\theta_g$",
-                                                y_label="$ \\frac{\\theta_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} \\theta_g}$", x_range=(0.01, 1.0), y_range=(0., 0.8), additional_text=additional_text, legend_location=('upper left', (0.0, 1.0))))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-        all_hists['track_e1_20'].append(MODHist(copy.deepcopy(e1_20_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, x_label="Track $e_g^{(1)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", x_range=(
-            0.001, 1.0), y_range=(0, 0.8), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-        all_hists['track_e2_20'].append(MODHist(copy.deepcopy(e2_20_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True, x_label="Track $e_g^{(2)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", x_range=(
-            0.0001, 1.0), y_range=(0, 0.45), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-        all_hists['track_e05_20'].append(MODHist(copy.deepcopy(e05_20_hist), conditions=default_85_conditions, x_scale='log', use_prescale=True,
-                                                 x_label="Track $e_g^{(0.5)}$", y_label="$ \\frac{1}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g }$", x_range=(0.01, 1.0), y_range=(0, 1.5), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        # big_5_upper_right = {'85': (0.97, 0.97), '150': (0.97, 0.97), '250':
-        # (0.94, 0.97)}
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['zg_10'].append(MODHist(copy.deepcopy(zg_10_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, x_label="$z_g$",
-                                          y_label="$ \\frac{z_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} z_g}$", x_range=(0.01, 1.0), y_range=(0, 1.2), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['rg_10'].append(MODHist(copy.deepcopy(rg_10_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, x_label="$\\theta_g$",
-                                          y_label="$ \\frac{\\theta_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} \\theta_g}$", x_range=(0.01, 1.0), y_range=(0., 0.65), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['e1_10'].append(MODHist(copy.deepcopy(e1_10_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, x_label="$e_g^{(1)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", y_range=(
-            0.0, 0.65), x_range=(0.001, 1.0), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['e2_10'].append(MODHist(copy.deepcopy(e2_10_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, x_label="$e_g^{(2)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", y_range=(
-            0.0, 0.45), x_range=(0.0001, 1.0), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['e05_10'].append(MODHist(copy.deepcopy(e05_10_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, x_label="$e_g^{(0.5)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g }$", y_range=(
-            0.0, 1.0), x_range=(0.01, 1.0), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['track_zg_10'].append(MODHist(copy.deepcopy(zg_10_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, x_label="Track $z_g$",
-                                                y_label="$ \\frac{z_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} z_g}$", x_range=(0.01, 1.0), y_range=(0, 1.2), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['track_rg_10'].append(MODHist(copy.deepcopy(rg_10_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, x_label="Track $\\theta_g$",
-                                                y_label="$ \\frac{\\theta_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} \\theta_g}$", x_range=(0.01, 1.0), y_range=(0., 0.65), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['track_e1_10'].append(MODHist(copy.deepcopy(e1_10_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, x_label="Track $e_g^{(1)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", x_range=(
-            0.001, 1.0), y_range=(0, 0.60), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['track_e2_10'].append(MODHist(copy.deepcopy(e2_10_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, x_label="Track $e_g^{(2)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", x_range=(
-            0.0001, 1.0), y_range=(0, 0.40), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['track_e05_10'].append(MODHist(copy.deepcopy(e05_10_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True,
-                                                 x_label="Track $e_g^{(0.5)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", x_range=(0.01, 1.0), y_range=(0, 1.0), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((-0.075, 0.97), 'upper left',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-        all_hists['zg_05'].append(MODHist(copy.deepcopy(zg_05_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, x_label="$z_g$",
-                                          y_label="$ \\frac{z_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} z_g}$", x_range=(0.01, 1.0), y_range=(0, 1.5), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-        all_hists['rg_05'].append(MODHist(copy.deepcopy(rg_05_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, x_label="$\\theta_g$",
-                                          y_label="$ \\frac{\\theta_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} \\theta_g}$", legend_location=('upper left', (0., 1.0)), x_range=(0.01, 1.0), y_range=(0., 1.1), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-        all_hists['e1_05'].append(MODHist(copy.deepcopy(e1_05_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True,
-                                          x_label="$e_g^{(1)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", legend_location=('upper left', (0., 1.0)), x_range=(0.001, 1.0), y_range=(0., 0.70), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-        all_hists['e2_05'].append(MODHist(copy.deepcopy(e2_05_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, x_label="$e_g^{(2)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", y_range=(
-            0., 0.5), x_range=(0.0001, 1.0), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-        all_hists['e05_05'].append(MODHist(copy.deepcopy(e05_05_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, x_label="$e_g^{(0.5)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g }$", y_range=(
-            0., 1.3), x_range=(0.01, 1.0), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((-0.075, 0.97), 'upper left',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-        all_hists['track_zg_05'].append(MODHist(copy.deepcopy(zg_05_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, x_label="Track $z_g$",
-                                                y_label="$ \\frac{z_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} z_g}$", x_range=(0.01, 1.0), y_range=(0, 1.5), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-        all_hists['track_rg_05'].append(MODHist(copy.deepcopy(rg_05_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, x_label="Track $\\theta_g$",
-                                                y_label="$ \\frac{\\theta_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} \\theta_g}$", legend_location=('upper left', (0., 1.0)), x_range=(0.01, 1.0), y_range=(0., 1.1), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-        all_hists['track_e1_05'].append(MODHist(copy.deepcopy(e1_05_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True,
-                                                x_label="Track $e_g^{(1)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", legend_location=('upper left', (0., 1.0)), x_range=(0.001, 1.0), y_range=(0., 0.65), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-        all_hists['track_e2_05'].append(MODHist(copy.deepcopy(e2_05_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, x_label="Track $e_g^{(2)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", x_range=(
-            0.0001, 1.0), y_range=(0., 0.5), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-        all_hists['track_e05_05'].append(MODHist(copy.deepcopy(e05_05_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True,
-                                                 x_label="Track $e_g^{(0.5)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", x_range=(0.01, 1.0), y_range=(0., 1.3), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-        all_hists['zg_20'].append(MODHist(copy.deepcopy(zg_20_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, x_label="$z_g$",
-                                          y_label="$ \\frac{z_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} z_g}$", x_range=(0.1, 1.0), y_range=(0, 2.4), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-        all_hists['rg_20'].append(MODHist(copy.deepcopy(rg_20_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, x_label="$\\theta_g$",
-                                          y_label="$ \\frac{\\theta_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} \\theta_g}$", x_range=(0.01, 1.0), y_range=(0., 0.8), additional_text=additional_text, legend_location=('upper left', (0.0, 1.0))))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-        all_hists['e1_20'].append(MODHist(copy.deepcopy(e1_20_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, x_label="$e_g^{(1)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", y_range=(
-            0., 0.8), x_range=(0.001, 1.0), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-        all_hists['e2_20'].append(MODHist(copy.deepcopy(e2_20_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, x_label="$e_g^{(2)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", y_range=(
-            0., 0.45), x_range=(0.0001, 1.0), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-        all_hists['e05_20'].append(MODHist(copy.deepcopy(e05_20_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, x_label="$e_g^{(0.5)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g }$", y_range=(
-            0., 1.4), x_range=(0.01, 1.0), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-        all_hists['track_zg_20'].append(MODHist(copy.deepcopy(zg_20_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, x_label="Track $z_g$",
-                                                y_label="$ \\frac{z_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} z_g}$", x_range=(0.1, 1.0), y_range=(0, 2.4), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-        all_hists['track_rg_20'].append(MODHist(copy.deepcopy(rg_20_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, x_label="Track $\\theta_g$",
-                                                y_label="$ \\frac{\\theta_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} \\theta_g}$", x_range=(0.01, 1.0), y_range=(0., 0.8), additional_text=additional_text, legend_location=('upper left', (0.0, 1.0))))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-        all_hists['track_e1_20'].append(MODHist(copy.deepcopy(e1_20_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, x_label="Track $e_g^{(1)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", x_range=(
-            0.001, 1.0), y_range=(0, 0.8), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-        all_hists['track_e2_20'].append(MODHist(copy.deepcopy(e2_20_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True, x_label="Track $e_g^{(2)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", x_range=(
-            0.0001, 1.0), y_range=(0, 0.45), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-        all_hists['track_e05_20'].append(MODHist(copy.deepcopy(e05_20_hist), conditions=default_150_conditions, x_scale='log', use_prescale=True,
-                                                 x_label="Track $e_g^{(0.5)}$", y_label="$ \\frac{1}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g} $", x_range=(0.01, 1.0), y_range=(0, 1.5), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['zg_10'].append(MODHist(copy.deepcopy(zg_10_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, x_label="$z_g$",
-                                          y_label="$ \\frac{z_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} z_g}$", x_range=(0.01, 1.0), y_range=(0, 1.7), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['rg_10'].append(MODHist(copy.deepcopy(rg_10_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, x_label="$\\theta_g$",
-                                          y_label="$ \\frac{\\theta_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} \\theta_g}$", x_range=(0.01, 1.0), y_range=(0., 0.8), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['e1_10'].append(MODHist(copy.deepcopy(e1_10_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, x_label="$e_g^{(1)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", y_range=(
-            0.0, 0.7), x_range=(0.001, 1.0), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['e2_10'].append(MODHist(copy.deepcopy(e2_10_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, x_label="$e_g^{(2)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", y_range=(
-            0.0, 0.45), x_range=(0.0001, 1.0), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['e05_10'].append(MODHist(copy.deepcopy(e05_10_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, x_label="$e_g^{(0.5)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g }$", y_range=(
-            0.0, 1.2), x_range=(0.01, 1.0), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['track_zg_10'].append(MODHist(copy.deepcopy(zg_10_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, x_label="Track $z_g$",
-                                                y_label="$ \\frac{z_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} z_g}$", x_range=(0.01, 1.0), y_range=(0, 1.7), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['track_rg_10'].append(MODHist(copy.deepcopy(rg_10_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, x_label="Track $\\theta_g$",
-                                                y_label="$ \\frac{\\theta_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} \\theta_g}$", x_range=(0.01, 1.0), y_range=(0., 0.8), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['track_e1_10'].append(MODHist(copy.deepcopy(e1_10_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, x_label="Track $e_g^{(1)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", x_range=(
-            0.001, 1.0), y_range=(0, 0.6), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['track_e2_10'].append(MODHist(copy.deepcopy(e2_10_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, x_label="Track $e_g^{(2)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", x_range=(
-            0.0001, 1.0), y_range=(0, 0.45), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-        all_hists['track_e05_10'].append(MODHist(copy.deepcopy(e05_10_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True,
-                                                 x_label="Track $e_g^{(0.5)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", x_range=(0.01, 1.0), y_range=(0, 1.2), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((-0.075, 0.97), 'upper left',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-        all_hists['zg_05'].append(MODHist(copy.deepcopy(zg_05_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, x_label="$z_g$",
-                                          y_label="$ \\frac{z_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} z_g}$", x_range=(0.01, 1.), y_range=(0, 1.5), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-        all_hists['rg_05'].append(MODHist(copy.deepcopy(rg_05_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, x_label="$\\theta_g$",
-                                          y_label="$ \\frac{\\theta_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} \\theta_g}$", legend_location=('upper left', (0., 1.0)), x_range=(0.01, 1.0), y_range=(0., 1.05), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-        all_hists['e1_05'].append(MODHist(copy.deepcopy(e1_05_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, x_label="$e_g^{(1)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", x_range=(
-            0.001, 1.0), legend_location=('upper left', (0., 1.0)), y_range=(0., 0.7), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-        all_hists['e2_05'].append(MODHist(copy.deepcopy(e2_05_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, x_label="$e_g^{(2)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", y_range=(
-            0., 0.45), x_range=(0.0001, 1.0), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-        all_hists['e05_05'].append(MODHist(copy.deepcopy(e05_05_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, x_label="$e_g^{(0.5)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g }$", y_range=(
-            0., 1.15), x_range=(0.01, 1.0), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((-0.075, 0.97), 'upper left',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-        all_hists['track_zg_05'].append(MODHist(copy.deepcopy(zg_05_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, x_label="Track $z_g$",
-                                                y_label="$ \\frac{z_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} z_g}$", x_range=(0.01, 1.), y_range=(0, 1.5), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-        all_hists['track_rg_05'].append(MODHist(copy.deepcopy(rg_05_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, x_label="Track $\\theta_g$",
-                                                y_label="$ \\frac{\\theta_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} \\theta_g}$", legend_location=('upper left', (0., 1.0)), x_range=(0.01, 1.0), y_range=(0., 1.05), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-        all_hists['track_e1_05'].append(MODHist(copy.deepcopy(e1_05_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True,
-                                                x_label="Track $e_g^{(1)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", legend_location=('upper left', (0., 1.0)), y_range=(0., 0.7), x_range=(0.001, 1.0), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-        all_hists['track_e2_05'].append(MODHist(copy.deepcopy(e2_05_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, x_label="Track $e_g^{(2)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", x_range=(
-            0.0001, 1.0), y_range=(0., 0.45), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.97, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.05$")]
-        all_hists['track_e05_05'].append(MODHist(copy.deepcopy(e05_05_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, x_label="Track $e_g^{(0.5)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", x_range=(
-            0.01, 1.0), y_range=(0., 1.15), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-        all_hists['zg_20'].append(MODHist(copy.deepcopy(zg_20_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, x_label="$z_g$",
-                                          y_label="$ \\frac{z_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} z_g}$", x_range=(0.1, 1.0), y_range=(0, 2.4), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-        all_hists['rg_20'].append(MODHist(copy.deepcopy(rg_20_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, x_label="$\\theta_g$",
-                                          y_label="$ \\frac{\\theta_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} \\theta_g}$", x_range=(0.01, 1.0), y_range=(0., 0.8), additional_text=additional_text, legend_location=('upper left', (0.0, 1.0))))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-        all_hists['e1_20'].append(MODHist(copy.deepcopy(e1_20_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, x_label="$e_g^{(1)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", y_range=(
-            0., 0.8), x_range=(0.001, 1.0), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-        all_hists['e2_20'].append(MODHist(copy.deepcopy(e2_20_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, x_label="$e_g^{(2)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", y_range=(
-            0., 0.45), x_range=(0.0001, 1.0), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-        all_hists['e05_20'].append(MODHist(copy.deepcopy(e05_20_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, x_label="$e_g^{(0.5)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g }$", y_range=(
-            0., 1.1), x_range=(0.01, 1.0), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-        all_hists['track_zg_20'].append(MODHist(copy.deepcopy(zg_20_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, x_label="Track $z_g$",
-                                                y_label="$ \\frac{z_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} z_g}$", x_range=(0.1, 1.0), y_range=(0, 2.4), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-        all_hists['track_rg_20'].append(MODHist(copy.deepcopy(rg_20_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, x_label="Track $\\theta_g$",
-                                                y_label="$ \\frac{\\theta_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} \\theta_g}$", x_range=(0.01, 1.0), y_range=(0., 0.8), additional_text=additional_text, legend_location=('upper left', (0.0, 1.0))))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-        all_hists['track_e1_20'].append(MODHist(copy.deepcopy(e1_20_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, x_label="Track $e_g^{(1)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", x_range=(
-            0.001, 1.0), y_range=(0, 0.8), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-        all_hists['track_e2_20'].append(MODHist(copy.deepcopy(e2_20_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True, x_label="Track $e_g^{(2)}$", y_label="$ \\frac{e_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g}$", x_range=(
-            0.0001, 1.0), y_range=(0, 0.45), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
-
-        additional_text = [((0.95, 0.97), 'upper right',
-                            "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.2$")]
-        all_hists['track_e05_20'].append(MODHist(copy.deepcopy(e05_20_hist), conditions=default_250_conditions, x_scale='log', use_prescale=True,
-                                                 x_label="Track $e_g^{(0.5)}$", y_label="$ \\frac{1}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} e_g} $", x_range=(0.01, 1.0), y_range=(0, 1.1), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
+        default_270_conditions = [('hardest_eta', eta_boundaries[j]),
+                                  ('hardest_pT', (270, None))]
+
+        eta_boundary_label = ""
+
+        if (abs(eta_boundaries[j][0] - 0.0) < 1e-5):
+             eta_boundary_label = r"\left| \eta \right| < " + \
+                 str(eta_boundaries[j][1])
+        else:
+             eta_boundary_label = r"\left| \eta \right| < " + \
+                 str(eta_boundaries[j][1])
+
+
+        additional_text = [((0.9, 1.05), 'upper right',
+                           "\n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 270~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
+        all_hists['rg_10'].append(MODHist(copy.deepcopy(rg_10_hist), conditions=default_270_conditions, x_scale='log', use_prescale=True, x_label="$\\theta_g$",
+                                          y_label="$ \\frac{\\theta_g}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} \\theta_g}$", x_range=(0.01, 1.0), y_range=(0., 0.6), legend_location=('upper left', (0., 1.0)), additional_text=additional_text))
         
     return all_hists
 
@@ -1167,7 +223,7 @@ def multi_page_plot_hist_templates():
     all_hists = {}
 
     hardest_pT_hist = Hist(230, 0, 2300, title="pT")
-    hardest_phi_hist = Hist(25, 0.0, 2 * np.pi, title="phi")
+    hardest_phi_hist = Hist(50, 0.0, 2 * np.pi, title="phi")
     hardest_eta_hist = Hist(50, -5, 5, title="eta")
     constituent_mul_hist, track_constituent_mul_hist = Hist(
         101, -0.5, 100.5, title="mul"), Hist(101, -0.5, 100.5, title="mul")
@@ -1190,7 +246,7 @@ def multi_page_plot_hist_templates():
 
     pT_boundaries = [85, 115, 150, 200, 250]
     # eta_boundaries = [(0.0, 1.9), (0.0, 2.4), (1.9, 2.4)]
-    eta_boundaries = [(0.0, 2.4)]
+    eta_boundaries = [(-2.4, 2.4)]
 
     all_hists['hardest_pT'] = []
     all_hists['uncor_hardest_pT'] = []
@@ -1235,8 +291,10 @@ def multi_page_plot_hist_templates():
 
     for j in xrange(len(eta_boundaries)):
 
-        default_70_conditions = [('hardest_eta', eta_boundaries[j]),
-                                 ('hardest_pT', (70, None))]
+        default_90_conditions = [('hardest_eta', eta_boundaries[j]),
+                                 ('hardest_pT', (90, None))]
+        default_270_conditions = [('hardest_eta', eta_boundaries[j]),
+                                 ('hardest_pT', (270, None))]
         default_150_conditions = [('hardest_eta', eta_boundaries[j]),
                                   ('hardest_pT', (150, None))]
         default_250_conditions = [('hardest_eta', eta_boundaries[j]),
@@ -1248,46 +306,57 @@ def multi_page_plot_hist_templates():
              eta_boundary_label = r"\left| \eta \right| < " + \
                  str(eta_boundaries[j][1])
         else:
-             eta_boundary_label = "\left| \eta \\right| \in [" + str(eta_boundaries[j][
-                  0]) + ", " + str(eta_boundaries[j][1]) + "]"
+             eta_boundary_label = r"\left| \eta \right| < " + \
+                 str(eta_boundaries[j][1])
 
-        additional_text = [((0.6, 0.7), 'upper right',
-                            "AK5; $" + eta_boundary_label  + "$ \n $p_T^{\mathrm{jet}} > 70~\mathrm{GeV}$")]
+        additional_text = [((0.70, 0.70), 'upper right',
+                            "AK5; $" + eta_boundary_label  + "$ \n $p_T^{\mathrm{jet}} > 90~\mathrm{GeV}$")]
         all_hists['hardest_pT'].append(MODHist(copy.deepcopy(hardest_pT_hist), conditions=[('hardest_eta', eta_boundaries[j]),
-                                 ('hardest_pT', (70, None))], use_prescale=True, x_label="$p_T$ [GeV]",
-                                               y_label="Differential Cross Section ", y_scale='log', x_range=(0, 2300), y_range=(1e-8, 1e12), mark_regions=[(150, 1e0, 'right', 0.04, 25)], additional_text=additional_text))
+                                 ('hardest_pT', (90, None))], use_prescale=True, x_label="$p_T$ [GeV]",
+                                               y_label="Diff. Cross Section [pb/GeV]", y_scale='log', x_range=(0, 1800), y_range=(1e-8, 1e6), mark_regions=[(270, 1e0, 'right', 500000.0, 40)], additional_text=additional_text))
     
-        additional_text = [((0.6, 0.8), 'upper right',
-                            "AK5; " + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 70~\mathrm{GeV}$")]
-        all_hists['hardest_phi'].append(MODHist(copy.deepcopy(hardest_phi_hist), conditions=default_70_conditions, use_prescale=True, x_label="$\phi$", x_range=(
-            0, 2 * np.pi), y_label="Differential Cross Section ", y_range=(1e-15, 1e6),  mark_regions=[(150, 1e4, 'right', 0.04, 25)], additional_text=additional_text, axes_label_pi=True, legend_location=('upper left', (0., 1.0))))
+        additional_text = [((0.7, 0.95), 'upper right',
+                            "AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 270~\mathrm{GeV}$")]
+        all_hists['hardest_phi'].append(MODHist(copy.deepcopy(hardest_phi_hist), conditions=default_270_conditions, use_prescale=True, x_label="$\phi$", x_range=(
+            0, 2 * np.pi), y_label="Diff. Cross Section [nb] ", y_range=(0, 1.0),  mark_regions=[(150, 1e4, 'right', 0.04, 25)], additional_text=additional_text, axes_label_pi=True, legend_location=('upper left', (0., 1.0))))
 
 
-        additional_text = [((0.70, 0.90), 'upper right',
-                            "AK5 \n $p_T^{\mathrm{jet}} > 70~\mathrm{GeV}$")]
-        all_hists['hardest_eta'].append(MODHist(copy.deepcopy(hardest_eta_hist), conditions=[('hardest_pT', (70, None))], use_prescale=True, x_label="$\eta$", x_range=(
-            -5., 5.), y_label="Differential Cross Section", y_scale='linear',  y_range=(1e0, 1500000), mark_regions=[(-2.4, 1e6, 'right', 0.25, 0.3), (2.4, 1e6, 'left', 0.25, -0.3)], additional_text=additional_text, legend_location=('upper left', (0., 1.0))))
+        additional_text = [((0.70, 0.95), 'upper right',
+                            "AK5 \n $p_T^{\mathrm{jet}} > 270~\mathrm{GeV}$")]
+        all_hists['hardest_eta'].append(MODHist(copy.deepcopy(hardest_eta_hist), conditions=[('hardest_pT', (270, None))], use_prescale=True, x_label="$\eta$", x_range=(
+            -4., 4.), y_label="Diff. Cross Section [nb] ", y_scale='linear',  y_range=(0, 1.8), mark_regions=[(-2.4, 1.0, 'right', 0.8, 0.3), (2.4, 1.0, 'left', 0.8, -0.3)], additional_text=additional_text, legend_location=('upper left', (0., 1.0))))
 
 
         additional_text = [((0.70, 0.7), 'upper right',
-                             eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$")]
-        all_hists['mass_pre_SD'].append(MODHist(copy.deepcopy(mass_hist), conditions=default_150_conditions, use_prescale=True, x_label="Mass [GeV]",
-                                                y_label="Differential Cross Section", x_range=(0.0, 60.0), y_scale='linear',  y_range=(0.0, 3500.0), additional_text=additional_text))
+                             "AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 270~\mathrm{GeV}$")]
+        all_hists['mass_pre_SD'].append(MODHist(copy.deepcopy(mass_hist), conditions=default_270_conditions, use_prescale=True, x_label="Mass [GeV]",
+                                                y_label="Diff. Cross Section [pb/GeV]", x_range=(0.0, 90.0), y_scale='linear',  y_range=(0.0, 160.0), additional_text=additional_text))
 
 
-        additional_text = [((0.70, 0.7), 'upper right', eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$")]
-        all_hists['mul_pre_SD'].append(MODHist(copy.deepcopy(constituent_mul_hist), conditions=default_150_conditions, use_prescale=True, x_label="Constituent Multiplicity", x_range=(
-            0, 75.0), y_scale='linear', y_range=(0.0, 3000.0), y_label="Differential Cross Section", additional_text=additional_text, legend_location=('upper right', (1.0, 1.0))))
+        additional_text = [((0.70, 0.7), 'upper right', "AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 270~\mathrm{GeV}$")]
+        all_hists['mul_pre_SD'].append(MODHist(copy.deepcopy(constituent_mul_hist), conditions=default_270_conditions, use_prescale=True, x_label="Constituent Multiplicity", x_range=(
+            0, 90.0), y_scale='linear', y_range=(0.0, 140.0), y_label="Diff. Cross Section [pb]", additional_text=additional_text, legend_location=('upper right', (1.0, 1.0))))
 
-        additional_text = [((0.70, 0.70), 'upper right', eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$")]
-        all_hists['track_mass_pre_SD'].append(MODHist(copy.deepcopy(track_mass_hist), conditions=default_150_conditions, use_prescale=True, x_label="Track Mass [GeV]",
-                                                y_label="Differential Cross Section", x_range=(0.0, 50.0), y_scale='linear',  y_range=(0.0, 3500.0), additional_text=additional_text))
+        additional_text = [((0.70, 0.70), 'upper right', "AK5; $" + eta_boundary_label + "$\n $p_T^{\mathrm{jet}} > 270~\mathrm{GeV}$")]
+        all_hists['track_mass_pre_SD'].append(MODHist(copy.deepcopy(track_mass_hist), conditions=default_270_conditions, use_prescale=True, x_label="Track Mass [GeV]",
+                                                y_label="Diff. Cross Section [pb/GeV]", x_range=(0.0, 60.0), y_scale='linear',  y_range=(0.0, 200.0), additional_text=additional_text))
 
 
-        additional_text = [((0.7, 0.7), 'upper right',eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$")]
-        all_hists['track_mul_pre_SD'].append(MODHist(copy.deepcopy(track_constituent_mul_hist), conditions=default_150_conditions, use_prescale=True, x_label="Track Constituent Multiplicity", x_range=(
-            0.0, 50.0), y_scale='linear', y_range=(0.0, 4000.0), y_label="Differential Cross section", additional_text=additional_text, legend_location=('upper right', (1.0, 1.0))))
+        additional_text = [((0.7, 0.7), 'upper right',"AK5; $" + eta_boundary_label + "$\n $p_T^{\mathrm{jet}} > 270~\mathrm{GeV}$")]
+        all_hists['track_mul_pre_SD'].append(MODHist(copy.deepcopy(track_constituent_mul_hist), conditions=default_270_conditions, use_prescale=True, x_label="Track Constituent Multiplicity", x_range=(
+            0.0, 60.0), y_scale='linear', y_range=(0.0, 200.0), y_label="Diff. Cross Section [pb]", additional_text=additional_text, legend_location=('upper right', (1.0, 1.0))))
 
+
+        additional_text = [((0.85, 0.75), 'upper right',
+                            "\n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 270~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
+        all_hists['zg_10'].append(MODHist(copy.deepcopy(zg_hist), conditions=default_270_conditions, use_prescale=True, x_label="$z_g$",
+                                          y_label="$ \\frac{1}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} z_g}$", x_range=(0.0, 0.6), y_range=(0, 9), additional_text=additional_text))
+
+    
+        additional_text = [((0.85, 0.75), 'upper right',
+                            "\n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 270 ~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
+        all_hists['rg_10'].append(MODHist(copy.deepcopy(rg_hist), conditions=default_270_conditions, use_prescale=True, x_label="$r_g$",
+                                          y_label="$ \\frac{1}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} r_g}$", x_range=(0.0, 1.0), y_range=(0, 7), additional_text=additional_text))
 
 
     return all_hists
@@ -1304,45 +373,56 @@ def trigger_hists():
 
     jet_trigger_names = ["HLT_Jet370", "HLT_Jet300", "HLT_Jet240", "HLT_Jet190", "HLT_Jet150", "HLT_Jet110", "HLT_Jet80", "HLT_Jet60", "HLT_Jet30" ]
 
-    qcd_names = ['QCD_Pt-800to1000_TuneZ2_7TeV_pythia6',
-                     'QCD_Pt-1400to1800_TuneZ2_7TeV_pythia6',
-                     'QCD_Pt-470to600_TuneZ2_7TeV_pythia6',
-                     'QCD_Pt-50to80_TuneZ2_7TeV_pythia6',
-                     'QCD_Pt-80to120_TuneZ2_7TeV_pythia6',
-                     'QCD_Pt-1000to1400_TuneZ2_7TeV_pythia6',
-                     'QCD_Pt-170to300_TuneZ2_7TeV_pythia6',
-                     'QCD_Pt-15to30_TuneZ2_7TeV_pythia6',
-                     'QCD_Pt-300to470_TuneZ2_7TeV_pythia6',
-                     'QCD_Pt-30to50_TuneZ2_7TeV_pythia6',
-                     'QCD_Pt-120to170_TuneZ2_7TeV_pythia6',
-                     'QCD_Pt-600to800_TuneZ2_7TeV_pythia6']
+    qcd_names = ['QCD_Pt-15to30_TuneZ2_7TeV_pythia6',
+                       'QCD_Pt-30to50_TuneZ2_7TeV_pythia6',
+                       'QCD_Pt-50to80_TuneZ2_7TeV_pythia6',
+                       'QCD_Pt-80to120_TuneZ2_7TeV_pythia6',
+                       'QCD_Pt-120to170_TuneZ2_7TeV_pythia6',
+                       'QCD_Pt-170to300_TuneZ2_7TeV_pythia6',
+                       'QCD_Pt-300to470_TuneZ2_7TeV_pythia6',
+                       'QCD_Pt-470to600_TuneZ2_7TeV_pythia6',
+                       'QCD_Pt-600to800_TuneZ2_7TeV_pythia6',
+                       'QCD_Pt-800to1000_TuneZ2_7TeV_pythia6',
+                       'QCD_Pt-1000to1400_TuneZ2_7TeV_pythia6',
+                       'QCD_Pt-1400to1800_TuneZ2_7TeV_pythia6',
+                       'QCD_Pt-1800_TuneZ2_7TeV_pythia6']
 
     trigger_names = qcd_names + jet_trigger_names
 
-
-    for trigger_name in trigger_names:
+    for trigger_name in qcd_names[:7]:
         additional_text = [
             (upper_left, 'upper left', "AK5; " + eta_boundary_label)]
-        all_hists[trigger_name] = MODHist(Hist(100, 0, 1000), conditions=[],
-                                          use_prescale=True, x_scale='log', x_label="Fractional $p_T$ Loss", y_label="A.U.", y_range=(0., 1.2), additional_text=additional_text)
+        all_hists[trigger_name] = MODHist(Hist(500, 0, 3000), conditions=[],
+                                          use_prescale=True, x_scale='log', additional_text=additional_text)
+
+
+    for trigger_name in qcd_names[7:]:
+        additional_text = [
+            (upper_left, 'upper left', "AK5; " + eta_boundary_label)]
+        all_hists[trigger_name] = MODHist(Hist(500, 0, 3000), conditions=[],
+                                          use_prescale=True, x_scale='log', additional_text=additional_text)
         # all_hists[trigger_name] =  MODHist(Hist(50, 0, 300),
         # conditions=[(['trig_jet_matched', 1], lambda x, y: y == x)],
         # use_prescale=True, x_scale='log', x_label="Fractional $p_T$ Loss",
         # y_label="A.U.", y_range=(0., 1.2), additional_text=additional_text )
+        
 
-        """
+    for trigger_name in jet_trigger_names:
+
         additional_text = [
-            (upper_left, 'upper left', "AK5; " + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$")]
-        all_hists[trigger_name + "_prescale"] = MODHist(Hist(np.logspace(math.log(float(1e0), math.e), math.log(1e4, math.e), (100 + 1), base=np.e)), conditions=[(['jet_quality', 1], lambda x, y: y >= x), ([
-                                                        'trig_jet_matched', 1], lambda x, y: y == x)], use_prescale=False, x_scale='log', y_scale='log', x_label="Trigger Prescale", y_label="A.U.", y_range=(0., 1.2), additional_text=additional_text
+            (upper_left, 'upper left', "AK5; " + eta_boundary_label)]
+        all_hists[trigger_name] = MODHist(Hist(200, 0, 2000),  conditions=[(['jet_quality', 1], lambda x, y: y >= x), ([
+                                                        'trig_jet_matched', 1], lambda x, y: y == x)],
+                                          use_prescale=True, x_scale='log', x_label="Fractional $p_T$ Loss", y_label="A.U.", y_range=(0., 1.2), additional_text=additional_text)
 
-        """
+
         #  all_hists[trigger_name + "_prescale"] =
         # MODHist(Hist(np.logspace(math.log(float(1e0), math.e), math.log(1e4,
         # math.e), (100 + 1), base=np.e)), conditions=[(['trig_jet_matched',
         # 1], lambda x, y: y == x)], use_prescale=False, x_scale='log',
         # y_scale='log', x_label="Trigger Prescale", y_label="A.U.",
         # y_range=(0., 1.2), additional_text=additional_text )
+        
 
     return all_hists
 
@@ -1358,191 +438,27 @@ def get_pfc_hists():
 
     # Charged PFCs
 
-    for i in xrange(len(pT_boundaries) - 1):
-
-        additional_text = [([(0.85, 0.6), (0.87, 0.6), (0.87, 0.6), (0.87, 0.6)][i], 'upper right',
-                            "Charged PFCs \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$")]
-        pfc_hists['pfc_pT'].append(MODHist(Hist(50, 0, 5), conditions=[('pfc_pdgId', ("in", 11, -11, 13, -13, 15, -15, 211, -211, 321, -321)), ('jet_eta', (-2.4, 2.4)), ('hardest_pT', (pT_boundaries[
-                                   i], pT_boundaries[i + 1]))], mark_regions=[(1.0, 0.45, 'right', 0.1, 0.5)], use_prescale=False, x_label="Charged PFC $p_T$ [GeV]", y_label="A.U.", x_range=(0, 5), additional_text=additional_text))
-
-        # PFC eta with eta bounds on the jet eta.
-        additional_text = [([(0.85, 0.6), (0.87, 0.6), (0.87, 0.6), (0.87, 0.6)][i], 'upper right',
-                            "Charged PFCs \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$")]
-        pfc_hists['pfc_eta'].append(MODHist(Hist(50, -5, 5), conditions=[('pfc_pdgId', ("in", 11, -11, 13, -13, 15, -15, 211, -211, 321, -321)), ('pfc_pT', (1., None)), ('jet_eta', (-2.4, 2.4)), ('hardest_pT', (pT_boundaries[
-            i], pT_boundaries[i + 1]))], mark_regions=[(-2.4, 0.20, 'right', 0.17, 0.30), (2.4, 0.20, 'left', 0.17, -0.30)], use_prescale=False, x_label="Charged PFC $\eta$", y_label="A.U.", x_range=(-5.0, 5.0), additional_text=additional_text))
-
-        # PFC eta WITHOUT eta bounds on the jet eta.
-        additional_text = [([(0.85, 0.6), (0.87, 0.6), (0.87, 0.6), (0.87, 0.6)][i], 'upper right',
-                            "Charged PFCs \n AK5 \n $p_T^{\mathrm{jet}} \in [" + str(pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$")]
-        pfc_hists['pfc_eta'].append(MODHist(Hist(50, -5, 5), conditions=[('pfc_pdgId', ("in", 11, -11, 13, -13, 15, -15, 211, -211, 321, -321)), ('pfc_pT', (1., None)), ('hardest_pT', (pT_boundaries[
-            i], pT_boundaries[i + 1]))], mark_regions=[(-2.4, 0.20, 'right', 0.17, 0.30), (2.4, 0.20, 'left', 0.17, -0.30)], use_prescale=False, x_label="Charged PFC $\eta$", y_label="A.U.", x_range=(-5.0, 5.0), additional_text=additional_text))
-
-    additional_text = [((0.76, 0.6), 'upper right',
-                        "Charged PFCs \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$")]
-    pfc_hists['pfc_pT'].append(MODHist(Hist(50, 0, 5), conditions=[('pfc_pdgId', ("in", 11, -11, 13, -13, 15, -15, 211, -211, 321, -321)), ('jet_eta', (-2.4, 2.4)), ('hardest_pT', (85, None))],
-                                       mark_regions=[(1.0, 0.45, 'right', 0.1, 0.5)], use_prescale=True, x_label="Charged PFC $p_T$ [GeV]", y_label="A.U.", x_range=(0, 5), additional_text=additional_text))
 
     additional_text = [((0.78, 0.6), 'upper right',
-                        "Charged PFCs \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$")]
-    pfc_hists['pfc_pT'].append(MODHist(Hist(50, 0, 5), conditions=[('pfc_pdgId', ("in", 11, -11, 13, -13, 15, -15, 211, -211, 321, -321)), ('jet_eta', (-2.4, 2.4)), ('hardest_pT', (150, None))],
-                                       mark_regions=[(1.0, 0.45, 'right', 0.1, 0.5)], use_prescale=True, x_label="Charged PFC $p_T$ [GeV]", y_label="A.U.", x_range=(0, 5), additional_text=additional_text))
+                        "Charged PFCs \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 220~\mathrm{GeV}$")]
+    pfc_hists['pfc_pT'].append(MODHist(Hist(50, 0, 10), conditions=[('pfc_pdgId', ("in", 11, -11, 13,
+                                                                                  -13, 15, -15, 211, -211, 321, -321,
+                                                                                  2212, -2212, 3222, -3222, 3312, -3312, 3334, -3334)),
+                                                                   ('jet_eta', (-2.4, 2.4)), ('hardest_pT', (220, None))],
+                                       mark_regions=[(1.0, 0.45, 'right', 0.1, 0.5)], use_prescale=True,
+                                       x_label="Charged PFC $p_T$ [GeV]", y_label="A.U.",
+                                       x_range=(0, 10),  y_scale='linear', y_range=(0, 120000), additional_text=additional_text))
+
 
     additional_text = [((0.78, 0.6), 'upper right',
-                        "Charged PFCs \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$")]
-    pfc_hists['pfc_pT'].append(MODHist(Hist(50, 0, 5), conditions=[('pfc_pdgId', ("in", 11, -11, 13, -13, 15, -15, 211, -211, 321, -321)), ('jet_eta', (-2.4, 2.4)), ('hardest_pT', (250, None))],
-                                       mark_regions=[(1.0, 0.45, 'right', 0.1, 0.5)], use_prescale=True, x_label="Charged PFC $p_T$ [GeV]", y_label="A.U.", x_range=(0, 5), additional_text=additional_text))
-
-    # PFC eta.
-
-    # First, with eta boundds on the jet eta.
-
-    additional_text = [((0.76, 0.6), 'upper right',
-                        "Charged PFCs \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$")]
-    pfc_hists['pfc_eta'].append(MODHist(Hist(50, -5, 5), conditions=[('pfc_pdgId', ("in", 11, -11, 13, -13, 15, -15, 211, -211, 321, -321)), ('pfc_pT', (1., None)), ('jet_eta', (-2.4, 2.4)), ('hardest_pT', (85, None))],
-                                        mark_regions=[(-2.4, 0.20, 'right', 0.17, 0.30), (2.4, 0.20, 'left', 0.17, -0.30)], use_prescale=True, x_label="Charged PFC $\eta$", y_label="A.U.", x_range=(-5, 5), additional_text=additional_text))
-
-    additional_text = [((0.78, 0.6), 'upper right',
-                        "Charged PFCs \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$")]
-    pfc_hists['pfc_eta'].append(MODHist(Hist(50, -5, 5), conditions=[('pfc_pdgId', ("in", 11, -11, 13, -13, 15, -15, 211, -211, 321, -321)), ('pfc_pT', (1., None)), ('jet_eta', (-2.4, 2.4)), ('hardest_pT', (150, None))],
-                                        mark_regions=[(-2.4, 0.20, 'right', 0.17, 0.30), (2.4, 0.20, 'left', 0.17, -0.30)], use_prescale=True, x_label="Charged PFC $\eta$", y_label="A.U.", x_range=(-5, 5), additional_text=additional_text))
-
-    additional_text = [((0.78, 0.6), 'upper right',
-                        "Charged PFCs \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$")]
-    pfc_hists['pfc_eta'].append(MODHist(Hist(50, -5, 5), conditions=[('pfc_pdgId', ("in", 11, -11, 13, -13, 15, -15, 211, -211, 321, -321)), ('pfc_pT', (1., None)), ('jet_eta', (-2.4, 2.4)), ('hardest_pT', (250, None))],
-                                        mark_regions=[(-2.4, 0.20, 'right', 0.17, 0.30), (2.4, 0.20, 'left', 0.17, -0.30)], use_prescale=True, x_label="Charged PFC $\eta$", y_label="A.U.", x_range=(-5, 5), additional_text=additional_text))
-
-    # Now, WITHOUT eta boundds on the jet eta.
-
-    additional_text = [((0.76, 0.6), 'upper right',
-                        "Charged PFCs \n AK5 \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$")]
-    pfc_hists['pfc_eta'].append(MODHist(Hist(50, -5, 5), conditions=[('pfc_pdgId', ("in", 11, -11, 13, -13, 15, -15, 211, -211, 321, -321)), ('pfc_pT', (1., None)), ('hardest_pT', (85, None))],
-                                        mark_regions=[(-2.4, 0.20, 'right', 0.17, 0.30), (2.4, 0.20, 'left', 0.17, -0.30)], use_prescale=True, x_label="Charged PFC $\eta$", y_label="A.U.", x_range=(-5, 5), additional_text=additional_text))
-
-    additional_text = [((0.78, 0.6), 'upper right',
-                        "Charged PFCs \n AK5 \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$")]
-    pfc_hists['pfc_eta'].append(MODHist(Hist(50, -5, 5), conditions=[('pfc_pdgId', ("in", 11, -11, 13, -13, 15, -15, 211, -211, 321, -321)), ('pfc_pT', (1., None)), ('hardest_pT', (150, None))],
-                                        mark_regions=[(-2.4, 0.20, 'right', 0.17, 0.30), (2.4, 0.20, 'left', 0.17, -0.30)], use_prescale=True, x_label="Charged PFC $\eta$", y_label="A.U.", x_range=(-5, 5), additional_text=additional_text))
-
-    additional_text = [((0.78, 0.6), 'upper right',
-                        "Charged PFCs \n AK5 \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$")]
-    pfc_hists['pfc_eta'].append(MODHist(Hist(50, -5, 5), conditions=[('pfc_pdgId', ("in", 11, -11, 13, -13, 15, -15, 211, -211, 321, -321)), ('pfc_pT', (1., None)), ('hardest_pT', (250, None))],
-                                        mark_regions=[(-2.4, 0.20, 'right', 0.17, 0.30), (2.4, 0.20, 'left', 0.17, -0.30)], use_prescale=True, x_label="Charged PFC $\eta$", y_label="A.U.", x_range=(-5, 5), additional_text=additional_text))
-
-    for i in xrange(len(pT_boundaries) - 1):
-
-        additional_text = [([(0.85, 0.6), (0.87, 0.6), (0.87, 0.6), (0.87, 0.6)][i], 'upper right',
-                            "Charged PFCs \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$")]
-        pfc_hists['pfc_pT'].append(MODHist(Hist(50, 0, 100), y_range=[(1e-6, 1e0), (1e-5, 1e0), (1e-5, 1e0), (1e-5, 1e0)][i], conditions=[('pfc_pdgId', ("in", 11, -11, 13, -13, 15, -15, 211, -211, 321, -321)), ('jet_eta',
-                                                                                                                                                                                                                   (-2.4, 2.4)), ('hardest_pT', (pT_boundaries[i], pT_boundaries[i + 1]))], use_prescale=False, y_scale='log', x_label="Charged PFC $p_T$ [GeV]", y_label="A.U.", x_range=(0, 100), additional_text=additional_text))
-
-    additional_text = [((0.76, 0.6), 'upper right',
-                        "Charged PFCs \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$")]
-    pfc_hists['pfc_pT'].append(MODHist(Hist(50, 0, 100), conditions=[('pfc_pdgId', ("in", 11, -11, 13, -13, 15, -15, 211, -211, 321, -321)), ('jet_eta', (-2.4, 2.4)),
-                                                                     ('hardest_pT', (85, None))], use_prescale=True, y_scale='log', x_label="Charged PFC $p_T$ [GeV]", y_label="A.U.", x_range=(0, 100), additional_text=additional_text))
-
-    additional_text = [((0.78, 0.6), 'upper right',
-                        "Charged PFCs \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$")]
-    pfc_hists['pfc_pT'].append(MODHist(Hist(50, 0, 100), conditions=[('pfc_pdgId', ("in", 11, -11, 13, -13, 15, -15, 211, -211, 321, -321)), ('jet_eta', (-2.4, 2.4)),
-                                                                     ('hardest_pT', (150, None))], use_prescale=True, y_scale='log', x_label="Charged PFC $p_T$ [GeV]", y_label="A.U.", x_range=(0, 100), additional_text=additional_text))
-
-    additional_text = [((0.78, 0.6), 'upper right',
-                        "Charged PFCs \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$")]
-    pfc_hists['pfc_pT'].append(MODHist(Hist(50, 0, 100), conditions=[('pfc_pdgId', ("in", 11, -11, 13, -13, 15, -15, 211, -211, 321, -321)), ('jet_eta', (-2.4, 2.4)),
-                                                                     ('hardest_pT', (250, None))], use_prescale=True, y_scale='log', x_label="Charged PFC $p_T$ [GeV]", y_label="A.U.", x_range=(0, 100), additional_text=additional_text))
-
-    #  Neutral PFCs
-
-    for i in xrange(len(pT_boundaries) - 1):
-
-        additional_text = [([(0.85, 0.6), (0.87, 0.6), (0.87, 0.6), (0.87, 0.6)][i], 'upper right',
-                            "Neutral PFCs \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$")]
-        pfc_hists['pfc_pT'].append(MODHist(Hist(50, 0, 5), conditions=[('pfc_pdgId', ("not in", 11, -11, 13, -13, 15, -15, 211, -211, 321, -321)), ('jet_eta', (-2.4, 2.4)), ('hardest_pT', (pT_boundaries[
-                                   i], pT_boundaries[i + 1]))], mark_regions=[(1.0, 0.6, 'right', 0.1, 0.5)], use_prescale=False, x_label="Neutral PFC $p_T$ [GeV]", y_label="A.U.", x_range=(0, 5), additional_text=additional_text))
-
-        # PFC eta with eta bounds on the jet eta.
-        additional_text = [([(0.85, 0.6), (0.87, 0.6), (0.87, 0.6), (0.87, 0.6)][i], 'upper right',
-                            "Neutral PFCs \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$")]
-        pfc_hists['pfc_eta'].append(MODHist(Hist(50, -5, 5), conditions=[('pfc_pdgId', ("not in", 11, -11, 13, -13, 15, -15, 211, -211, 321, -321)), ('pfc_pT', (1., None)), ('jet_eta', (-2.4, 2.4)), ('hardest_pT', (pT_boundaries[
-            i], pT_boundaries[i + 1]))], mark_regions=[(-2.4, 0.20, 'right', 0.17, 0.30), (2.4, 0.20, 'left', 0.17, -0.30)], use_prescale=False, x_label="Neutral PFC $\eta$", y_label="A.U.", x_range=(-5.0, 5.0), additional_text=additional_text))
-
-        # PFC eta WITHOUT eta bounds on the jet eta.
-        additional_text = [([(0.85, 0.6), (0.87, 0.6), (0.87, 0.6), (0.87, 0.6)][i], 'upper right',
-                            "Neutral PFCs \n AK5 \n $p_T^{\mathrm{jet}} \in [" + str(pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$")]
-        pfc_hists['pfc_eta'].append(MODHist(Hist(50, -5, 5), conditions=[('pfc_pdgId', ("not in", 11, -11, 13, -13, 15, -15, 211, -211, 321, -321)), ('pfc_pT', (1., None)), ('hardest_pT', (pT_boundaries[
-            i], pT_boundaries[i + 1]))], mark_regions=[(-2.4, 0.20, 'right', 0.17, 0.30), (2.4, 0.20, 'left', 0.17, -0.30)], use_prescale=False, x_label="Neutral PFC $\eta$", y_label="A.U.", x_range=(-5.0, 5.0), additional_text=additional_text))
-
-    additional_text = [((0.76, 0.6), 'upper right',
-                        "Neutral PFCs \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$")]
-    pfc_hists['pfc_pT'].append(MODHist(Hist(50, 0, 5), conditions=[('pfc_pdgId', ("not in", 11, -11, 13, -13, 15, -15, 211, -211, 321, -321)), ('jet_eta', (-2.4, 2.4)), ('hardest_pT', (85, None))],
-                                       mark_regions=[(1.0, 0.6, 'right', 0.1, 0.5)], use_prescale=True, x_label="Neutral PFC $p_T$ [GeV]", y_label="A.U.", x_range=(0, 5), additional_text=additional_text))
-
-    additional_text = [((0.78, 0.6), 'upper right',
-                        "Neutral PFCs \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$")]
-    pfc_hists['pfc_pT'].append(MODHist(Hist(50, 0, 5), conditions=[('pfc_pdgId', ("not in", 11, -11, 13, -13, 15, -15, 211, -211, 321, -321)), ('jet_eta', (-2.4, 2.4)), ('hardest_pT', (150, None))],
-                                       mark_regions=[(1.0, 0.6, 'right', 0.1, 0.5)], use_prescale=True, x_label="Neutral PFC $p_T$ [GeV]", y_label="A.U.", x_range=(0, 5), additional_text=additional_text))
-
-    additional_text = [((0.78, 0.6), 'upper right',
-                        "Neutral PFCs \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$")]
-    pfc_hists['pfc_pT'].append(MODHist(Hist(50, 0, 5), conditions=[('pfc_pdgId', ("not in", 11, -11, 13, -13, 15, -15, 211, -211, 321, -321)), ('jet_eta', (-2.4, 2.4)), ('hardest_pT', (250, None))],
-                                       mark_regions=[(1.0, 0.6, 'right', 0.1, 0.5)], use_prescale=True, x_label="Neutral PFC $p_T$ [GeV]", y_label="A.U.", x_range=(0, 5), additional_text=additional_text))
-
-    # PFC eta.
-
-    # First, with eta boundds on the jet eta.
-
-    additional_text = [((0.76, 0.6), 'upper right',
-                        "Netural PFCs \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$")]
-    pfc_hists['pfc_eta'].append(MODHist(Hist(50, -5, 5), conditions=[('pfc_pdgId', ("not in", 11, -11, 13, -13, 15, -15, 211, -211, 321, -321)), ('pfc_pT', (1., None)), ('jet_eta', (-2.4, 2.4)), ('hardest_pT', (85, None))],
-                                        mark_regions=[(-2.4, 0.20, 'right', 0.17, 0.30), (2.4, 0.20, 'left', 0.17, -0.30)], use_prescale=True, x_label="Netural PFC $\eta$", y_label="A.U.", x_range=(-5, 5), additional_text=additional_text))
-
-    additional_text = [((0.78, 0.6), 'upper right',
-                        "Netural PFCs \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$")]
-    pfc_hists['pfc_eta'].append(MODHist(Hist(50, -5, 5), conditions=[('pfc_pdgId', ("not in", 11, -11, 13, -13, 15, -15, 211, -211, 321, -321)), ('pfc_pT', (1., None)), ('jet_eta', (-2.4, 2.4)), ('hardest_pT', (150, None))],
-                                        mark_regions=[(-2.4, 0.20, 'right', 0.17, 0.30), (2.4, 0.20, 'left', 0.17, -0.30)], use_prescale=True, x_label="Netural PFC $\eta$", y_label="A.U.", x_range=(-5, 5), additional_text=additional_text))
-
-    additional_text = [((0.78, 0.6), 'upper right',
-                        "Netural PFCs \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$")]
-    pfc_hists['pfc_eta'].append(MODHist(Hist(50, -5, 5), conditions=[('pfc_pdgId', ("not in", 11, -11, 13, -13, 15, -15, 211, -211, 321, -321)), ('pfc_pT', (1., None)), ('jet_eta', (-2.4, 2.4)), ('hardest_pT', (250, None))],
-                                        mark_regions=[(-2.4, 0.20, 'right', 0.17, 0.30), (2.4, 0.20, 'left', 0.17, -0.30)], use_prescale=True, x_label="Netural PFC $\eta$", y_label="A.U.", x_range=(-5, 5), additional_text=additional_text))
-
-    # Now, WITHOUT eta boundds on the jet eta.
-
-    additional_text = [((0.76, 0.6), 'upper right',
-                        "Netural PFCs \n AK5 \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$")]
-    pfc_hists['pfc_eta'].append(MODHist(Hist(50, -5, 5), conditions=[('pfc_pdgId', ("not in", 11, -11, 13, -13, 15, -15, 211, -211, 321, -321)), ('pfc_pT', (1., None)), ('hardest_pT', (85, None))],
-                                        mark_regions=[(-2.4, 0.20, 'right', 0.17, 0.30), (2.4, 0.20, 'left', 0.17, -0.30)], use_prescale=True, x_label="Netural PFC $\eta$", y_label="A.U.", x_range=(-5, 5), additional_text=additional_text))
-
-    additional_text = [((0.78, 0.6), 'upper right',
-                        "Netural PFCs \n AK5 \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$")]
-    pfc_hists['pfc_eta'].append(MODHist(Hist(50, -5, 5), conditions=[('pfc_pdgId', ("not in", 11, -11, 13, -13, 15, -15, 211, -211, 321, -321)), ('pfc_pT', (1., None)), ('hardest_pT', (150, None))],
-                                        mark_regions=[(-2.4, 0.20, 'right', 0.17, 0.30), (2.4, 0.20, 'left', 0.17, -0.30)], use_prescale=True, x_label="Netural PFC $\eta$", y_label="A.U.", x_range=(-5, 5), additional_text=additional_text))
-
-    additional_text = [((0.78, 0.6), 'upper right',
-                        "Netural PFCs \n AK5 \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$")]
-    pfc_hists['pfc_eta'].append(MODHist(Hist(50, -5, 5), conditions=[('pfc_pdgId', ("not in", 11, -11, 13, -13, 15, -15, 211, -211, 321, -321)), ('pfc_pT', (1., None)), ('hardest_pT', (250, None))],
-                                        mark_regions=[(-2.4, 0.20, 'right', 0.17, 0.30), (2.4, 0.20, 'left', 0.17, -0.30)], use_prescale=True, x_label="Netural PFC $\eta$", y_label="A.U.", x_range=(-5, 5), additional_text=additional_text))
-
-    for i in xrange(len(pT_boundaries) - 1):
-
-        additional_text = [([(0.85, 0.6), (0.87, 0.6), (0.87, 0.6), (0.87, 0.6)][i], 'upper right',
-                            "Neutral PFCs \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} \in [" + str(pT_boundaries[i]) + ", " + str(pT_boundaries[i + 1]) + "]~\mathrm{GeV}$")]
-        pfc_hists['pfc_pT'].append(MODHist(Hist(50, 0, 100), y_range=[(1e-7, 1e1), (1e-6, 1e1), (1e-5, 1e1), (1e-5, 1e1)][i], conditions=[('pfc_pdgId', ("not in", 11, -11, 13, -13, 15, -15, 211, -211, 321, -321)), ('jet_eta',
-                                                                                                                                                                                                                       (-2.4, 2.4)), ('hardest_pT', (pT_boundaries[i], pT_boundaries[i + 1]))], use_prescale=False, y_scale='log', x_label="Neutral PFC $p_T$ [GeV]", y_label="A.U.", x_range=(0, 100), additional_text=additional_text))
-
-    additional_text = [((0.76, 0.6), 'upper right',
-                        "Neutral PFCs \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$")]
-    pfc_hists['pfc_pT'].append(MODHist(Hist(50, 0, 100), conditions=[('pfc_pdgId', ("not in", 11, -11, 13, -13, 15, -15, 211, -211, 321, -321)), ('jet_eta', (-2.4, 2.4)),
-                                                                     ('hardest_pT', (85, None))], use_prescale=True, y_scale='log', x_label="Neutral PFC $p_T$ [GeV]", y_label="A.U.", x_range=(0, 100), additional_text=additional_text))
-
-    additional_text = [((0.78, 0.6), 'upper right',
-                        "Neutral PFCs \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 150~\mathrm{GeV}$")]
-    pfc_hists['pfc_pT'].append(MODHist(Hist(50, 0, 100), conditions=[('pfc_pdgId', ("not in", 11, -11, 13, -13, 15, -15, 211, -211, 321, -321)), ('jet_eta', (-2.4, 2.4)),
-                                                                     ('hardest_pT', (150, None))], use_prescale=True, y_scale='log', x_label="Neutral PFC $p_T$ [GeV]", y_label="A.U.", x_range=(0, 100), additional_text=additional_text))
-
-    additional_text = [((0.78, 0.6), 'upper right',
-                        "Neutral PFCs \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 250~\mathrm{GeV}$")]
-    pfc_hists['pfc_pT'].append(MODHist(Hist(50, 0, 100), conditions=[('pfc_pdgId', ("not in", 11, -11, 13, -13, 15, -15, 211, -211, 321, -321)), ('jet_eta', (-2.4, 2.4)),
-                                                                     ('hardest_pT', (250, None))], use_prescale=True, y_scale='log', x_label="Neutral PFC $p_T$ [GeV]", y_label="A.U.", x_range=(0, 100), additional_text=additional_text))
+                        "Neutral PFCs \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 220~\mathrm{GeV}$")]
+    pfc_hists['pfc_pT'].append(MODHist(Hist(50, 0, 10), conditions=[('pfc_pdgId', ("not in", 11, -11, 13,
+                                                                                  -13, 15, -15, 211, -211, 321, -321,
+                                                                                  2212, -2212, 3222, -3222, 3312, -3312, 3334, -3334)),
+                                                                     ('jet_eta', (-2.4, 2.4)),
+                                                                     ('hardest_pT', (220, None))],
+                                       use_prescale=True, y_scale='linear', x_label="Neutral PFC $p_T$ [GeV]",
+                                       y_label="A.U.", x_range=(0, 10), y_range=(0, 120000), additional_text=additional_text))
 
     return pfc_hists
 
@@ -1623,10 +539,10 @@ def two_dim_log_hists():
     zg_hist = Hist2D(np.logspace(math.log(float(0.1), math.e), math.log(0.5, math.e), (25 + 1), base=np.e),
                      np.logspace(math.log(float(0.01), math.e), math.log(1.0, math.e), (25 + 1), base=np.e))
 
-    pT_boundaries = [85, 115, 150, 200, 250]
+    pT_boundaries = [70, 110, 130, 190, 220, 275, 350, 420]
 
-    default_85_conditions = [('hardest_eta', (-2.4, 2.4)),
-                             ('hardest_pT', (85, None))]
+    default_70_conditions = [('hardest_eta', (-2.4, 2.4)),
+                             ('hardest_pT', (70, None))]
     default_150_conditions = [('hardest_eta', (-2.4, 2.4)),
                               ('hardest_pT', (150, None))]
     default_250_conditions = [('hardest_eta', (-2.4, 2.4)),
@@ -1653,8 +569,8 @@ def two_dim_log_hists():
                                                                  y_label="$ \\frac{1}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} z_g}$", x_range=(0.0, 0.6), additional_text=additional_text))
 
     additional_text = [((1.0, 0.62), 'upper right',
-                        "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-    all_hists[('zg_10', 'rg_10')].append(MODHist(copy.deepcopy(zg_hist), conditions=default_85_conditions, use_prescale=True, x_label="$z_g$",
+                        "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 70~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
+    all_hists[('zg_10', 'rg_10')].append(MODHist(copy.deepcopy(zg_hist), conditions=default_70_conditions, use_prescale=True, x_label="$z_g$",
                                                  y_label="$ \\frac{1}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} z_g}$", x_range=(0.0, 0.6), additional_text=additional_text))
 
     additional_text = [((1.0, 0.62), 'upper right',
@@ -1668,8 +584,8 @@ def two_dim_log_hists():
                                                  y_label="$ \\frac{1}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} z_g}$", x_range=(0.0, 0.6), additional_text=additional_text))
 
     additional_text = [((1.0, 0.62), 'upper right',
-                        "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 85~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
-    all_hists[('track_zg_10', 'track_rg_10')].append(MODHist(copy.deepcopy(zg_hist), conditions=default_85_conditions, use_prescale=True,
+                        "$p_T^{\mathrm{PFC}} > 1.0~\mathrm{GeV}$ \n AK5; $" + eta_boundary_label + "$ \n $p_T^{\mathrm{jet}} > 70~\mathrm{GeV}$ \n mMDT / SD_{\\beta = 0}: z_{\mathrm{cut}} = 0.1$")]
+    all_hists[('track_zg_10', 'track_rg_10')].append(MODHist(copy.deepcopy(zg_hist), conditions=default_70_conditions, use_prescale=True,
                                                              x_label="$z_g$", y_label="$ \\frac{1}{\sigma} \\frac{ \mathrm{d} \sigma}{ \mathrm{d} z_g}$", x_range=(0.0, 0.6), additional_text=additional_text))
 
     additional_text = [((1.0, 0.62), 'upper right',

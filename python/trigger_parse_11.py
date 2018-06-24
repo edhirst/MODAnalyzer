@@ -30,18 +30,19 @@ def parse_file(input_files, all_hists):
 	keywords_set = False
 
 	print(input_files)
+	trigger_luminosity_dictionary = trigger_luminosity_dictionary_2011(input_files)
+	print(trigger_luminosity_dictionary)
+	i = 1
 
 	for input_file in input_files:
 
-                #print(input_file)
-                trigger_luminosity_dictionary = trigger_luminosity_dictionary_2011()
-                print(trigger_luminosity_dictionary)
+                print(i, input_file)
+                i = i+1
 
                 with open(input_file) as infile:
                         
                         line_number = 0
 
-                        current_line_trig_name = ""
 
                         for line in infile:
 
@@ -68,25 +69,32 @@ def parse_file(input_files, all_hists):
 
                                         elif len(numbers) > 0 and numbers[0] == "Entry":
 
-                                                #print(line)
-
 
                                                 pT_index = keywords.index("corr_hardest_pT") + 1
+                                                not_corrected_index = keywords.index("hardest_pT") + 1
                                                 trig_name_index = keywords.index("trigger_name") + 1
                                                 eta_index = keywords.index("hardest_eta") + 1
 
-                                                #print(pT_index)
+                                                jet_quality_index = keywords.index("jet_quality") + 1
+
+
                                                 pT_of_this_event = float(numbers[pT_index])
                                                 eta_of_this_event = float(numbers[eta_index])
-                                                if 'NoJetID' in numbers[trig_name_index]:
-                                                        print('continuing')
-                                                        continue
-                                                current_line_trig_name = '_'.join(numbers[trig_name_index].split('_')[0:2])
+                                                jet_quality = int(numbers[jet_quality_index])
+
+
+
+                                                trigger_name = numbers[trig_name_index]
+                                                index_of_version = trigger_name.find('_v')
+                                                trigger_name_short = trigger_name[:index_of_version]
+
+                                                
+
                                                 #trigger = numbers[keywords_index_dictionary['trigger_fired']]
 
                                                 #print(current_line_trig_name)
 
-                                                if abs(eta_of_this_event) > 2.4:
+                                                if abs(eta_of_this_event) > 2.4 or jet_quality < 1:
                                                         # print "oops, pseudorapidity too large.", eta_of_this_event
                                                         continue
 
@@ -100,10 +108,13 @@ def parse_file(input_files, all_hists):
 
                                                 #print(trigger_luminosity_dictionary)
 
-                                                prescale = 1000000.0/trigger_luminosity_dictionary[current_line_trig_name]
-                                                #print(current_line_trig_name, prescale)
+                                                if trigger_name_short not in trigger_luminosity_dictionary:
+                                                        #print('continuing', trigger_name_short)
+                                                        continue
 
-                                                mod_hist = all_hists[current_line_trig_name]
+                                                prescale = 1000000.0/trigger_luminosity_dictionary[trigger_name_short]
+
+                                                mod_hist = all_hists[trigger_name_short]
                                                 hist = mod_hist.hist()
 
 
@@ -122,7 +133,7 @@ def parse_file(input_files, all_hists):
 
 
                                                 if condition_satisfied:
-                                                        all_hists[current_line_trig_name].hist().fill_array([pT_of_this_event], [prescale])
+                                                        all_hists[trigger_name_short].hist().fill_array([pT_of_this_event], [prescale])
 
                                                 """
 
@@ -274,14 +285,21 @@ def load_root_files_to_hist(log=False):
 	return  [ root_file_to_hist(output_directory + filename, hist_templates) for filename in filenames ] 
 
 
-def trigger_luminosity_dictionary_2011():
-    mod_file_with_trigger = [line.rstrip('\n') for line in open("/home/preksha/Documents/mengproject/MODAnalyzer/effective_luminosity_by_trigger.csv")]
+def trigger_luminosity_dictionary_2011(input_files):
+    input_files_short = []
+    for input_file in input_files:
+        input_files_short.append(input_file.split('/')[-1])
+    print(input_files_short)
+    mod_file_with_trigger = [line.rstrip('\n') for line in open("effective_luminosity_by_trigger.csv")]
     mod_trigger_luminosities = {}
     for mod_trigger_lumi in mod_file_with_trigger:
-        mod_trigger_lumi.replace(" ","")
-        if not mod_trigger_lumi == "":
+        if mod_trigger_lumi.replace(" ",""):
             #print(mod_trigger_lumi)
-            mod_trigger_luminosities[(mod_trigger_lumi.split(',')[0], mod_trigger_lumi.split(',')[1])] = mod_trigger_lumi.split(',')[2]
+            mod_file = mod_trigger_lumi.split(',')[0].replace('.mod', '.dat')
+            trigger = mod_trigger_lumi.split(',')[1]
+            lumi = mod_trigger_lumi.split(',')[2]
+            if mod_file in input_files_short:
+                mod_trigger_luminosities[(mod_file, trigger)] = lumi
     trigger_luminosity_total = {}
     for mod_trigger in mod_trigger_luminosities:
         if mod_trigger[1] in trigger_luminosity_total:
@@ -290,8 +308,6 @@ def trigger_luminosity_dictionary_2011():
         else:
             trigger_luminosity_total[mod_trigger[1]] = float(mod_trigger_luminosities[mod_trigger])
     return trigger_luminosity_total
-
-
 
 if __name__ == "__main__":
 
