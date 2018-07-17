@@ -409,7 +409,7 @@ def trigger_luminosity_dictionary_2011(input_files):
     for input_file in input_files:
         input_files_short.append(input_file.split('/')[-1])
     print(input_files_short)
-    mod_file_with_trigger = [line.rstrip('\n') for line in open("/home/preksha/Documents/mengproject/MODAnalyzer/effective_luminosity_by_trigger.csv")]
+    mod_file_with_trigger = [line.rstrip('\n') for line in open("effective_luminosity_by_trigger.csv")]
     mod_trigger_luminosities = {}
     for mod_trigger_lumi in mod_file_with_trigger:
         if mod_trigger_lumi.replace(" ",""):
