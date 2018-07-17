@@ -48,7 +48,7 @@ def compile_hists(var, parsed_hists, x_scale='linear'):
 
     return compilation
 
-default_dir = sys.argv[1] + "Version1/"
+default_dir = sys.argv[1]
 
 start = time.time()
 
