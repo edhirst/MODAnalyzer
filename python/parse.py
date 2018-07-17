@@ -364,6 +364,9 @@ def parse_to_root_files():
     hist_templates = hists.multi_page_plot_hist_templates()
 
     log_hist_templates = hists.multi_page_log_plot_hist_templates()
+	
+    # This is where sim and 2011 data are getting parsed to root file. If you are missing 
+    # some of the data, comment out the below lines appropriately. 
  
     parse_to_root_file(input_files=data_files_2011, output_filename=(output_directory + "data_2011.root",
                                                                   output_directory + "data_2011_log.root"), data_type = "2011", hist_templates=(hist_templates,
