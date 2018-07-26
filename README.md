@@ -1,63 +1,77 @@
 # MIT Open Data Analyzer
 
-This repository has code to analyze MOD (MIT Open Data) files produced using [MODProducer](https://github.com/tripatheea/MODProducer "MODProducer").
+This repository has code to analyze MOD (MIT Open Data) files produced using [MODProducer](https://github.com/rmastand/MODProducer "MODProducer" for latest version).
 
 ## Workflow
 
 We adopt the following workflow for extracting MOD files out of the given AOD files.
 
-1.  Download all the ROOT files and arrange them in the same directory structure as they live on the CMS server.
+1. Download all the ROOT files and arrange them in the same directory structure as they live on the CMS server.
 
 2. Create a registry that maps each event and run number to a certain ROOT file. This is done so that things can be done one file at a time as we're dealing with multiple TeraBytes of data here and it's a pain to have to do everything at once. 
 
 3. Run the Producer on those AOD files. This reads the download directory and processes only the files in there. This produces N MOD files. 
 
-4. Filter those N MOD files to get only those files for which the correct trigger fired. This process is called Skimming in this workflow. This will produce M <= N MOD files. For a certain AOD file, if none of the events in there have the correct trigger fired, a corresponding skimmed MOD file will not be written. That's why M might be less than N.
+4. Read in the output files one by one and perform calculation to produce the relevant dat files corresponding to each input file. In the case of 2011 data, the number of output files is 1. In the the case of simulated data, the number of output files is 2, corresponding to reconstructed and truth data.  
 
-5. Read in those "skimmed" M <= N output files one by one and calculate stuff to produce a single DAT file. 
+5. Produce plots using the dat files produced in step (4)
 
-6. Produce plots using the DAT file produced in step (5).
-
-This repository is concerned with steps (4) to (6) only. Steps (1) to (3) are carried out by the [MODProducer](https://github.com/tripatheea/MODProducer/ "MODProducer") package.
+This repository is concerned with steps (4) to (5) only. Steps (1) to (3) are carried out by the [MODProducer](https://github.com/rmastand/MODProducer/ "MODProducer") package.
 
 ## Usage Instruction
 
 ### Preparation
 
- - Install [FastJet](http://www.fastjet.fr/ "FastJet"). Note the path to FastJet config. 
+ - Install [FastJet](http://www.fastjet.fr/ "FastJet") (in addition to fastjet-contrib). Note the path to FastJet config. 
  
- - Open `./Makefile` and paste the path to FastJet config to the **PATH\_TO\_FASTJET** variable on line 5.
+ - Open `./Makefile` and paste the path to FastJet config to the **PATH\_TO\_FASTJET** variable on line 5. You will likely end up with a path ending with 'fastjet-install/bin/fastjet-config'
  
- -  Note the path to the directory that contains the MOD files you've produced from the [MODProducer](https://github.com/tripatheea/MODProducer/ "MODProducer") package.
+ -  Note the path to the directory that contains the MOD files you've produced from the [MODProducer](https://github.com/rmastand/MODProducer/ "MODProducer") package.
  
  - Compile everything with `make`.
 
 ### Workflow Instructions
- 
- - First, we run the skimmer to filter those N MOD files you produced to get only those files for which the correct trigger fired. This is accomplished by the Python script `utilities/skim.py`. This script takes two arguments- a path to the directory that contains all the MOD files and another path to the directory where you'd like to store the skimmed files.
+
+ - First, we run the analyzer. We use the Python script `utilities/analyze.py` for general data analysis.  This script will run the executable `bin/analyze` M times for M MOD files. This script has three required arguments and two optional arguments. 
+
+   1. [required] If running 2011 data, a path to the directory of where all the MOD files. If running simulated data, a path to the directory where the QCD data sets are(e.g. 'All_QCD_data_sets' which contains 'QCD_Pt-15to30_TuneZ2_7TeV_pythia6', 'QCD_Pt-30to50_TuneZ2_7TeV_pythia6', etc.). Make sure the directory label corresponds to the pythia set. The files can be nested within the directory somewhere(e.g. 'QCD_Pt-30to50_TuneZ2_7TeV_pythia6 --> MODFILE --> SIMFiles --> x.mod') but make sure the top directory is labeled correctly.
+   2. [required] Folder path to output the dat files into. 
+   3. [required] '2011' if running 2011 data and 'sim' if running simulated data
+   4. [optional] To limit number of arguments, use flag '-number_events'. By default, the analysis is run on all the events in the file. 
+   5. [optional] If your 2011lumibyls.csv file (which is necessary to get luminosity information for 2011 data) lives somewhere else besides the directory you are running the command from, use flag '-2011_lumi_file' to specify its location. 
    
    ```
-   python ./utilities/skim.py /media/aashish/opendata/MIT_CMS/eos/opendata/cms/Run2010B/Jet/MOD/Apr21ReReco-v1/0000/ /media/aashish/opendata/MIT_CMS/eos/opendata/cms/Run2010B/Jet/SKIM/Apr21ReReco-v1/0000/
+   python ./utilities/analyze.py /home/opendata/eos/opendata/cms/eos/opendata/cms/Run2011A/Jet/MOD/12Oct2013-v1/20000/ /home/prekshan/Documents/opendata_output/ 2011 -number_events 1000 -2011_lumi_file /home/prekshan/Downloads/2011lumibyls.csv
    ```
+   The file skips analysis of anything that is already in the output directory even if partially downloaded so make sure to    delete those. For the simulated data, take care to delete both the sim_pfc version and the sim_gen versions of the file. 
+   
+- The output of running this script will be the following files:
+   
+   1. N or 2N files depending on whether you ran 2011 or simulated data
+   2. If running 2011 data, you will get a 'effective_luminosity_by_jet.csv' file that will be used in the plotting. 
+   3. If running simulated data, you will get a 'event_count_by_pythia_and_mod.csv' that will be used in the plotting. 
+     
+ - Finally, we are ready to produce plots. Note that the plotting framework makes use of [matplotlib](http://matplotlib.org/ "matplotlib") and [rootpy](http://rootpy.org/ "rootpy") so please make sure these are installed. 
  
-    This step maintains the same directory structure as the input directory except MOD replaced with SKIM. That's why you do not need to enter an output directory. It will also output an error log in the same directory.
-
-
- - Next, we run the analyzer. We use the Python script `utilities/analyze.py` for data analysis. This script will run the executable `bin/analyze` M times for M "skimmed" MOD files. This script takes two arguments:
+To run the plotting, first run the Python script `python/parse.py`. This script takes two arguments:
  
-   1. path to the directory that holds the skimmed files.
-   2. path to a filename to write the analyzed data into. 
+   1. path to where all your dat files are located.
+   2. path to an output directory where your plots will be produced 
+   
+  Make sure the csv files produced in the analysis from the previous step are in the same directory as where you are running your command from. 
 
      ```
-     python ./utilities/analyze.py /media/aashish/opendata/MIT_CMS/eos/opendata/cms/Run2010B/Jet/SKIM/Apr21ReReco-v1/0000/ ~/analyzed_data.dat
+     python ./python/parse.py /home/preksha/Documents/cms-opendata-dat/ /home/preksha/Documents/MODAnalyzer/plots/
+    
      ```
-
- - Finally, we use the output file to produce plots using the Python script `python/plots.py`. This script uses [matplotlib](http://matplotlib.org/ "matplotlib") to produce the plots but feel free to explore the output file and use any plotting routine you want. If you run `python/plots.py`, it will produce plots as PDFs in a directory `plots`. It takes one argument- path to the directory when analyzed_data.dat is located. 
-
- ```
- python ./python/plots.py /home/Documents/mengproject/
- ```
-
+   Next, to produce the actual plots, run the script `python/plots.py` using the path where you want your plots produced.  
+   
+     ```
+     python ./python/plots.py /home/preksha/Documents/mengproject/MODAnalyzer/plots/
+    
+     ```
+   
+ Furthermore, to generate plots for additional variables, you can modify or add in create_multi_page_plot commands to `python/plots.py`. See `python/plots.py` for examples of linear, log, and PFC plot outputs. Plots currently get output into the plots/version 1 subdirectory. Change the default_dir in `python/plots.py` if you would like to modify this, making sure the directory exists. For whatever variable you are plotting, make sure in hists.py, the functions multi_page_log_hist_templates or multi_page_hist_templates contain an histogram for that variable. 
 
 ## TODO
 - [ ] Fix plot formatting.
