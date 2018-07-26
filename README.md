@@ -24,8 +24,12 @@ This repository is concerned with steps (4) to (5) only. Steps (1) to (3) are ca
 
  - Install [FastJet](http://www.fastjet.fr/ "FastJet") (in addition to fastjet-contrib). Note the path to FastJet config. 
  
- - Open `./Makefile` and paste the path to FastJet config to the **PATH\_TO\_FASTJET** variable on line 5. You will likely end up with a path ending with 'fastjet-install/bin/fastjet-config'
+ - Open `./Makefile` and paste the path to FastJet config to the **PATH\_TO\_FASTJET** variable on line 1. You will likely end up with a path ending with 'fastjet-install/bin/fastjet-config'
  
+ - Install [Pythia](http://home.thep.lu.se/~torbjorn/pythia81html/Welcome.html "Pythia 8") Note the path to the pythia config. 
+ 
+ - Open `./Makefile` and paste the path to Pythia config to the **PATH\_TO\_PYTHIA** variable on line 3. You will likely end up with a path ending with 'pythia8235/bin/pythia8-config'
+
  -  Note the path to the directory that contains the MOD files you've produced from the [MODProducer](https://github.com/rmastand/MODProducer/ "MODProducer") package.
  
  - Compile everything with `make`.
