@@ -165,7 +165,7 @@ class MODPlot:
                     bin_width = (self._hists[i].hist().upperbound() - self._hists[i].hist().lowerbound()) / self._hists[i].hist().nbins()
                 
                 if self._hists[i].hist().GetSumOfWeights() != 0.0:
-                    self._hists[i].hist().Scale(1.0 / (bin_width ))
+                    self._hists[i].hist().Scale(1.0 / (self._hists[i].hist().GetSumOfWeights()*bin_width))
 
     def set_formatting(self):
 
@@ -834,7 +834,7 @@ class MODPlot:
 
         for position, anchor_location, text in additional_text:
             texts = text.split("\n")
-            additional_info = ax0.legend( [extra] * len(texts), texts, frameon=0, borderpad=0, fontsize=50, bbox_to_anchor=position, loc=anchor_location)
+            additional_info = ax0.legend( [extra] * len(texts), texts, frameon=0, borderpad=0, fontsize=50, bbox_to_anchor=(position[0], position[1] + 0.1), loc=anchor_location)
 
             if position[0] > 0.30:
                 for t in additional_info.get_texts():
@@ -867,7 +867,7 @@ class MODPlot:
 
         self._plt.sca(ax0)
 
-        self._plt.tick_params(which='major', width=5, length=25, labelsize=70)
+        self._plt.tick_params(which='major', width=5, length=25, labelsize=50)
         self._plt.tick_params(which='minor', width=3, length=15)
 
         if self._ratio_plot:
@@ -1040,6 +1040,7 @@ class MODPlot:
 
 
         # Any possible markers.
+        """
         for marker in self._mark_regions:
 
             # print marker
@@ -1091,6 +1092,7 @@ class MODPlot:
         
         # gs.tight_layout(self._plt.gcf(), h_pad=0., w_pad=0.)
         # , wspace=1.08, hspace=0., bottom=0.12, left=0.18
+        """
 
         
 
@@ -1118,7 +1120,9 @@ plot_colors = {"theory": "red", "pythia": "blue", "herwig": "green", "sherpa": "
 
 global_plot_types = ['error', 'error', 'hist', 'error', 'error']
 global_colors = [ 'black', 'orange', 'blue', 'purple', 'yellow']
-global_labels = ['CMS 2011 Open Data', 'Pythia 6 Tune Z2 (Simulated)','Pythia 6 Tune Z2 (Truth)' ]
+global_colors = [ 'blue', 'red', 'blue', 'purple', 'yellow']
+global_labels = ['CMS 2011 Sim Data - GEN $(2.8 < \Delta R < 3.0)$ ', 'CMS 2011 Sim Data - GEN $ (3.4 < \Delta R) $','Pythia 6 Tune Z2 (Truth)' ]
+#global_labels = ['CMS 2011 Open Data', 'CMS 2011 Sim Data - PFC', 'CMS 2011 Sim Data - GEN']
 global_line_styles = [ [], [], [21,7], [], [] ]
 
 def create_multi_page_plot(filename, hists, theory=False, x_scale='linear', text_outside_the_frame=False):
@@ -1156,7 +1160,7 @@ def create_multi_page_plot(filename, hists, theory=False, x_scale='linear', text
 
                 plot = MODPlot(mod_hists, plot_types=types, plot_colors=colors, plot_labels=labels,
                                line_styles=line_styles, x_scale=mod_hists[-1].x_scale(),
-                               y_scale=mod_hists[-1].y_scale(), ratio_plot=True,
+                               y_scale=mod_hists[-1].y_scale(), ratio_plot=False,
                                ratio_to_index=ratio_to_index, ratio_label=ratio_to_label,
                                mark_regions=mod_hists[-1].mark_regions(), x_label=mod_hists[-1].x_label(),
                                legend_location=mod_hists[-1].legend_location(), y_label=mod_hists[-1].y_label(),
@@ -1165,4 +1169,3 @@ def create_multi_page_plot(filename, hists, theory=False, x_scale='linear', text
             
                 pdf.savefig()
                 plot.get_plt().close()
-

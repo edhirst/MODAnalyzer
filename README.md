@@ -1,12 +1,12 @@
 # MIT Open Data Analyzer
 
-This repository has code to analyze MOD (MIT Open Data) files produced using [MODProducer](https://github.com/rmastand/MODProducer "MODProducer" for latest version).
+This repository has code to analyze MOD (MIT Open Data) files produced using [MODProducer](https://github.com/tripatheea/MODProducer "MODProducer").
 
 ## Workflow
 
 We adopt the following workflow for extracting MOD files out of the given AOD files.
 
-1. Download all the ROOT files and arrange them in the same directory structure as they live on the CMS server.
+1.  Download all the ROOT files and arrange them in the same directory structure as they live on the CMS server.
 
 2. Create a registry that maps each event and run number to a certain ROOT file. This is done so that things can be done one file at a time as we're dealing with multiple TeraBytes of data here and it's a pain to have to do everything at once. 
 
@@ -18,17 +18,17 @@ We adopt the following workflow for extracting MOD files out of the given AOD fi
 
 6. Produce plots using the DAT file produced in step (5).
 
-This repository is concerned with steps (4) to (6) only. Steps (1) to (3) are carried out by the [MODProducer](https://github.com/rmastand/MODProducer/ "MODProducer") package.
+This repository is concerned with steps (4) to (6) only. Steps (1) to (3) are carried out by the [MODProducer](https://github.com/tripatheea/MODProducer/ "MODProducer") package.
 
 ## Usage Instruction
 
 ### Preparation
 
- - Install [FastJet](http://www.fastjet.fr/ "FastJet") (in addition to fastjet-contrib). Note the path to FastJet config. 
+ - Install [FastJet](http://www.fastjet.fr/ "FastJet"). Note the path to FastJet config. 
  
- - Open `./Makefile` and paste the path to FastJet config to the **PATH\_TO\_FASTJET** variable on line 5. You will likely end up with a path ending with 'fastjet-install/bin/fastjet-config'
+ - Open `./Makefile` and paste the path to FastJet config to the **PATH\_TO\_FASTJET** variable on line 5.
  
- -  Note the path to the directory that contains the MOD files you've produced from the [MODProducer](https://github.com/rmastand/MODProducer/ "MODProducer") package.
+ -  Note the path to the directory that contains the MOD files you've produced from the [MODProducer](https://github.com/tripatheea/MODProducer/ "MODProducer") package.
  
  - Compile everything with `make`.
 
@@ -37,42 +37,27 @@ This repository is concerned with steps (4) to (6) only. Steps (1) to (3) are ca
  - First, we run the skimmer to filter those N MOD files you produced to get only those files for which the correct trigger fired. This is accomplished by the Python script `utilities/skim.py`. This script takes two arguments- a path to the directory that contains all the MOD files and another path to the directory where you'd like to store the skimmed files.
    
    ```
-   python ./utilities/skim.py /home/opendata/eos/opendata/cms/Run2010B/Jet/MOD/Apr21ReReco-v1/0000/ /home/opendata/eos/opendata/cms/Run2010B/Jet/SKIM/Apr21ReReco-v1/0000/
+   python ./utilities/skim.py /media/aashish/opendata/MIT_CMS/eos/opendata/cms/Run2010B/Jet/MOD/Apr21ReReco-v1/0000/ /media/aashish/opendata/MIT_CMS/eos/opendata/cms/Run2010B/Jet/SKIM/Apr21ReReco-v1/0000/
    ```
  
     This step maintains the same directory structure as the input directory except MOD replaced with SKIM. That's why you do not need to enter an output directory. It will also output an error log in the same directory.
 
- - Next, we run the analyzer. We use the Python script `utilities/analyze.py` for general data analysis.  This script will run the executable `bin/analyze` M times for M "skimmed" MOD files. This script takes two arguments:
+
+ - Next, we run the analyzer. We use the Python script `utilities/analyze.py` for data analysis. This script will run the executable `bin/analyze` M times for M "skimmed" MOD files. This script takes two arguments:
  
    1. path to the directory that holds the skimmed files.
    2. path to a filename to write the analyzed data into. 
 
      ```
-     python ./utilities/analyze.py /home/opendata/eos/opendata/cms/Run2010B/Jet/SKIM/Apr21ReReco-v1/0000/ /home/Documents/analyzed_data.dat
-    
+     python ./utilities/analyze.py /media/aashish/opendata/MIT_CMS/eos/opendata/cms/Run2010B/Jet/SKIM/Apr21ReReco-v1/0000/ ~/analyzed_data.dat
      ```
-     If you would like to analyze particle flow candidates, use the script `utilities/analyze_pfc.py` with the same two  arguments. 
-     
-     
- - Finally, we are ready to produce plots. Note that the plotting framework makes use of [matplotlib](http://matplotlib.org/ "matplotlib") and [rootpy](http://rootpy.org/ "rootpy") so please make sure these are installed. 
- 
-    To run the plotting, first run the Python script `python/parse.py`. This will produce a data.root and data_log.root files with the histogram templates. This script takes two arguments:
- 
-   1. path to the directory to hold the data.root and data_log.root.
-   2. path to a filename to read the analyzed_data from. 
 
-     ```
-     python ./python/parse.py /home/Documents/cms-opendata-plots/ /home/Documents/analyzed_data.dat
-    
-     ```
-   Next, to produce the actual plots, run the script `python/plots.py` using the same arguments as for `python/parse.py`. 
-   
-     ```
-     python ./python/parse.py /home/Documents/cms-opendata-plots/ /home/Documents/analyzed_data.dat
-    
-     ```
-     
-   If you would like to perform plotting for PFCs, run the Python script `python/pfc_parse.py` and then run `python/plots.py` with the same arguments as before. Make sure to uncomment the lines in plots.py producing the parsed_pfc_hists if you would like to plot the PFC observables. Furthermore, to generate plots for additional variables, you can modify or add in create_multi_page_plot commands to `python/plots.py`. See `python/plots.py` for examples of linear, log, and PFC plot outputs. Plots currently get output into the plots/version 1 subdirectory. Change the default_dir in `python/plots.py` if you would like to modify this, making sure the directory exists. 
+ - Finally, we use the output file to produce plots using the Python script `python/plots.py`. This script uses [matplotlib](http://matplotlib.org/ "matplotlib") to produce the plots but feel free to explore the output file and use any plotting routine you want. If you run `python/plots.py`, it will produce plots as PDFs in a directory `plots`. It takes one argument- path to the directory when analyzed_data.dat is located. 
+
+ ```
+ python ./python/plots.py /home/Documents/mengproject/
+ ```
+
 
 ## TODO
 - [ ] Fix plot formatting.

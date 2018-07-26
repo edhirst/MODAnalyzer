@@ -1,8 +1,9 @@
 #include "Event.h"
 
-
 using namespace std;
 using namespace fastjet;
+using namespace Pythia8;
+
 
 MOD::Event::Event(int run_number, int event_number, int lumi_block, double inst_lumi) : _run_number(run_number), _event_number(event_number) {}
 
@@ -56,16 +57,72 @@ const vector<PseudoJet> & MOD::Event::jets() const {
 void MOD::Event::add_particle(istringstream & input_stream) {
    string tag;
    double px, py, pz, energy;
-   int pdgId;
+   int pdgId, PV;
 
-   input_stream >> tag >> px >> py >> pz >> energy >> pdgId;
+   input_stream >> tag >> px >> py >> pz >> energy >> pdgId >> PV;
 
-  //cout << "reached here" << endl;
    PseudoJet new_particle = PseudoJet(px, py, pz, energy);
-   new_particle.set_user_info(new InfoPFC(pdgId, tag));
-    
+   new_particle.set_user_info(new InfoPFC(pdgId, tag, PV));
 
-   _particles.push_back(new_particle);
+  if (PV == 0 or PV == -1) {
+      _particles.push_back(new_particle);
+  }
+
+    
+}
+
+void MOD::Event::decay_particles(MOD::Event old_object, Pythia8::Pythia *pythia) {
+
+  //Pythia pythia;
+  //pythia->readString("ProcessLevel:all = off");
+  //pythia->readString("HadronLevel:Decay = on");
+  //pythia->readString("Print:quiet = on");
+  //pythia->readString("ParticleDecays:limitTau0 = on");
+  //pythia->readString("ParticleDecays:tau0Max = 1000");
+  //pythia->init();
+
+
+  // Attempt to decay the particles
+  vector<PseudoJet> gen_particles = old_object.particles();
+  double px, py, pz, e;
+  int pdgId;
+  pythia->event.append(90, -11, 0, 0, 0., 0., 0., 7000., 7000.);
+
+ for (unsigned i = 0; i < gen_particles.size(); i++) {
+   pdgId = gen_particles[i].user_info<MOD::InfoPFC>().pdgId();
+   px = gen_particles[i].px();
+   py = gen_particles[i].py();
+   pz = gen_particles[i].pz();
+  double mass = pythia->particleData.m0(pdgId);
+  e = sqrt(mass*mass + px*px + py*py + pz*pz);
+   pythia->event.append( pdgId, 91, 0, 0, px, py, pz, e, mass);
+  }
+  pythia->next();
+
+
+// now iterate through the particles and add them to event_being_read.particles()
+   for (int i = 0; i < pythia->event.size(); ++i){
+         if (pythia->event[i].isFinal()){
+               string trial_line = string("Gen")+" "+to_string(pythia->event[i].px())+" "+to_string(pythia->event[i].py())+" "+to_string(pythia->event[i].pz())+" "+to_string(pythia->event[i].e())+" "+to_string(pythia->event[i].id());
+               //cout << to_string(pythia->event[i].id()) << endl;
+               std::istringstream ss;
+                 ss.str (trial_line);
+
+
+                 add_particle(ss);
+                     }
+                }
+
+
+
+     set_version(6);
+     set_data_type("CMS_2011", "Sim");
+     set_data_source(1);
+     set_multiplicity(pythia->event.size());
+     establish_properties();
+      pythia->event.reset();
+
+
 }
 
 void MOD::Event::add_cms_jet(istringstream & input_stream) {
@@ -76,12 +133,12 @@ void MOD::Event::add_cms_jet(istringstream & input_stream) {
    int number_of_constituents, charged_multiplicity;
 
    input_stream >> tag >> px >> py >> pz >> energy >> JEC >> area >> number_of_constituents >> charged_multiplicity >> neutral_hadron_fraction >> neutral_em_fraction >> charged_hadron_fraction >> charged_em_fraction;
-   
+
    PseudoJet new_jet = PseudoJet(px, py, pz, energy);
    double eta = new_jet.eta();
 
    new_jet.set_user_info(new InfoCalibratedJet(tag, JEC, area, number_of_constituents, charged_multiplicity, neutral_hadron_fraction, neutral_em_fraction, charged_hadron_fraction, charged_em_fraction, eta));
-
+    
    // We never read other jets directly so the jets that reach here will always be cms jets.
    _cms_jets.push_back(new_jet);
 }
@@ -111,7 +168,7 @@ const MOD::Trigger MOD::Event::trigger_by_name(string name) const {
    for (unsigned i = 0; i < triggers().size(); i++) {
       const MOD::Trigger& current_trigger = triggers().at(i);
 
-      if (current_trigger.name() == name) 
+      if (current_trigger.name() == name)
          return current_trigger;
    }
 
@@ -167,15 +224,15 @@ const string MOD::Event::stringify_jet(PseudoJet jet) const {
         << setw(16) << fixed << setprecision(8) << jet.E()
         << setw(16) << fixed << setprecision(8) << jet.user_info<MOD::InfoCalibratedJet>().JEC()
         << setw(16) << fixed << setprecision(8) << jet.user_info<MOD::InfoCalibratedJet>().area()
-        << setw(16) << fixed << setprecision(8) << jet.user_info<MOD::InfoCalibratedJet>().number_of_constituents()   
+        << setw(16) << fixed << setprecision(8) << jet.user_info<MOD::InfoCalibratedJet>().number_of_constituents()
         << setw(16) << fixed << setprecision(8) << jet.user_info<MOD::InfoCalibratedJet>().charged_multiplicity()
         << setw(16) << fixed << setprecision(8) << jet.user_info<MOD::InfoCalibratedJet>().neutral_hadron_fraction()
         << setw(16) << fixed << setprecision(8) << jet.user_info<MOD::InfoCalibratedJet>().neutral_em_fraction()
-        << setw(16) << fixed << setprecision(8) << jet.user_info<MOD::InfoCalibratedJet>().charged_hadron_fraction()   
-        << setw(16) << fixed << setprecision(8) << jet.user_info<MOD::InfoCalibratedJet>().charged_em_fraction() 
+        << setw(16) << fixed << setprecision(8) << jet.user_info<MOD::InfoCalibratedJet>().charged_hadron_fraction()
+        << setw(16) << fixed << setprecision(8) << jet.user_info<MOD::InfoCalibratedJet>().charged_em_fraction()
         << endl;
    }
-   
+
 
    return ss.str();
 }
@@ -197,22 +254,22 @@ const string MOD::Event::stringify_pfc(PseudoJet particle) const {
 
 string MOD::Event::make_string() const {
    stringstream file_to_write;
-   
- 
-   file_to_write << "BeginEvent Version " << _version << " " << _data_type.first << " " << _data_type.second;  // Don't put an endl here because for "pristine", we'll put a "Hardest_Jet_Selection" here. 
+
+
+   file_to_write << "BeginEvent Version " << _version << " " << _data_type.first << " " << _data_type.second;  // Don't put an endl here because for "pristine", we'll put a "Hardest_Jet_Selection" here.
 
 
    if (_data_source == EXPERIMENT) { // Data is from experiment.
-      
+
       file_to_write << endl;
 
       // First, write out conditions.
       file_to_write << _condition.make_header_string();
-       
-     //  cout << "condition " << _condition << endl;
-      file_to_write << _condition;   
 
-      // Then, write out all triggers. 
+     //  cout << "condition " << _condition << endl;
+      file_to_write << _condition;
+
+      // Then, write out all triggers.
       for(unsigned int i = 0; i < _triggers.size(); i++) {
          if (i == 0)
             file_to_write << _triggers[i].make_header_string();
@@ -225,7 +282,7 @@ string MOD::Event::make_string() const {
             file_to_write << _cms_jets[i].user_info<MOD::InfoCalibratedJet>().header();
          file_to_write << stringify_jet(_cms_jets[i]);
       }
-      
+
       // Finally, write out all particles.
       for (unsigned int i = 0; i < _particles.size(); i++) {
          if (i == 0)
@@ -235,7 +292,7 @@ string MOD::Event::make_string() const {
 
    }
    else if ( (_data_source == MC_TRUTH) || (_data_source == MC_RECO) ) {
-      
+
       file_to_write << endl;
 
       for (unsigned i = 0; i < _particles.size(); i++) {
@@ -246,7 +303,7 @@ string MOD::Event::make_string() const {
 
    }
    else if (_data_source == PRISTINE) {
-      
+
 
       file_to_write << " Hardest_Jet_Selection" << endl;
 
@@ -254,10 +311,10 @@ string MOD::Event::make_string() const {
 
       // First, write out conditions.
       file_to_write << _condition.make_header_string();
-      file_to_write << _condition;   
-      
+      file_to_write << _condition;
+
       // We only output the hardest jet and its constituents.
-      // The reason for that is, we want to do our analysis on FastJet-clustered jets instead of on cms jets. However, we need to apply JEC to our AK5 jets. 
+      // The reason for that is, we want to do our analysis on FastJet-clustered jets instead of on cms jets. However, we need to apply JEC to our AK5 jets.
       // Those JEC factors are known for cms jets but not for FastJet-clustered jets. This means, we need to figure out a correspondance between cms and FastJet-clustered jets.
       // This is hard to do for jets other than the hardest one.
       // So we select the hardest cms jet, use delta R to find the corresponding FastJet-clustered jet and then just output constituents of that jet.
@@ -278,7 +335,7 @@ string MOD::Event::make_string() const {
       file_to_write << "# PDPFC" << "              px              py              pz          energy   pdgId" << endl;
 
       for (unsigned i = 0; i < _particles.size(); i++) {
-         
+
          file_to_write << "  PDPFC"
                        << setw(16) << fixed << setprecision(8) << _particles[i].px()
                        << setw(16) << fixed << setprecision(8) << _particles[i].py()
@@ -293,7 +350,7 @@ string MOD::Event::make_string() const {
       throw runtime_error("Invalid data source!");
    }
 
-   
+
    file_to_write << "EndEvent" << endl;
 
    return file_to_write.str();
@@ -302,14 +359,46 @@ string MOD::Event::make_string() const {
 
 
 const PseudoJet & MOD::Event::hardest_jet() const {
-   
-   // EXPERIMENT = 0, MC_TRUTH = 1, MC_RECO = 2, PRISTINE = 3 
+
+   // EXPERIMENT = 0, MC_TRUTH = 1, MC_RECO = 2, PRISTINE = 3
+    
+    //cout << "hardest_jet "<< _closest_fastjet_jet_to_trigger_jet.pt() << endl;
+   // cout << "hardest_jet2 " << _hardest_jet.pt() << endl;
+   // cout << "equal " << (_hardest_jet.pt() == _closest_fastjet_jet_to_trigger_jet.pt()) << endl;
+
+
+    
 
    if (_data_source == EXPERIMENT)
       return _closest_fastjet_jet_to_trigger_jet;
 
    return _hardest_jet;
 }
+
+const PseudoJet & MOD::Event::second_hardest_jet() const {
+    
+    // EXPERIMENT = 0, MC_TRUTH = 1, MC_RECO = 2, PRISTINE = 3
+    
+    
+     if (_data_source == EXPERIMENT)
+        return _closest_fastjet_jet_to_second_hardest_cms_jet;
+    
+    return _second_hardest_jet;
+    
+}
+
+const PseudoJet & MOD::Event::third_hardest_jet() const {
+    
+    // EXPERIMENT = 0, MC_TRUTH = 1, MC_RECO = 2, PRISTINE = 3
+    
+    
+    if (_data_source == EXPERIMENT)
+        return _closest_fastjet_jet_to_third_hardest_cms_jet;
+    
+    return _third_hardest_jet;
+    
+}
+
 
 
 void MOD::Event::convert_to_one_jet() {
@@ -321,11 +410,12 @@ void MOD::Event::convert_to_one_jet() {
 
    vector<PseudoJet> particles = jet.constituents();
 
-   int pdgId;
+   int pdgId, vertex;
    for (unsigned i = 0; i < particles.size(); i++) {
       pdgId = particles[i].user_info<MOD::InfoPFC>().pdgId();
+      vertex = particles[i].user_info<MOD::InfoPFC>().vertex();
 
-      particles[i].set_user_info( new MOD::InfoPFC(pdgId, "PDPFC") );
+      particles[i].set_user_info( new MOD::InfoPFC(pdgId, "PDPFC", vertex) );
    }
 
    vector<PseudoJet> just_one_jet{jet};
@@ -343,7 +433,7 @@ void MOD::Event::convert_to_one_jet() {
 
    // cout << _jets[0].px() << endl;
 
-   
+
 
 
 }
@@ -355,19 +445,23 @@ void MOD::Event::establish_properties() {
    ClusterSequence * cs = new ClusterSequence(_particles, jet_def);
    vector<PseudoJet> ak5_jets = sorted_by_pt(cs->inclusive_jets(0.0));
    _jets = ak5_jets;
-
+    
    cs->delete_self_when_unused();
 
    // cout << data_source() << endl;
 
-   if (data_source() == EXPERIMENT) {  // Experiment 
+   if (data_source() == EXPERIMENT) {  // Experiment
 
       // cout << "Setting trigger jet!" << endl;
       set_trigger_jet();
 
       // Next, find out the specific FastJet that's closest to _trigger_jet.
-      //cout << "Closest Jet" << endl;
       set_closest_fastjet_jet_to_trigger_jet();
+      set_closest_fastjet_jet_to_second_hardest_cms_jet();
+       
+
+      set_closest_fastjet_jet_to_third_hardest_cms_jet();
+
 
       // cout << "Trigger jet matched!" << endl;
       // set_trigger_jet_is_matched();
@@ -384,10 +478,12 @@ void MOD::Event::establish_properties() {
 
 
 
-  
-   set_hardest_jet();
 
-   // cout << _hardest_jet.pt() << endl;
+   set_hardest_jet();
+   set_second_hardest_jet();
+   set_third_hardest_jet();
+
+
 }
 
 
@@ -405,17 +501,17 @@ bool MOD::Event::read_event(istream & data_stream, std::string type_of_data) {
       double area;
       string tag, version_keyword, a, b, c;
       double px, py, pz, energy, jec;
-       
+
       int cur_count;
 
-      iss >> tag;      
+      iss >> tag;
       istringstream stream(line);
 
       if (line.empty()) {
          continue;
       }
       else {
-         
+
 
          if (tag == "BeginEvent") {
 
@@ -427,15 +523,15 @@ bool MOD::Event::read_event(istream & data_stream, std::string type_of_data) {
 
 
             set_weight(weight);
-             
+
             cur_count = 0;
-            
+
 
          }
          else if (tag == "1JET") {
             try {
                set_data_source(PRISTINE);
-               
+
                stream >> tag >> px >> py >> pz >> energy >> jec >> area >> weight;
 
                _weight = weight;
@@ -443,7 +539,7 @@ bool MOD::Event::read_event(istream & data_stream, std::string type_of_data) {
                PseudoJet jet = PseudoJet(px, py, pz, energy);
                jet.set_user_info( new MOD::InfoCalibratedJet("1JET", jec, area) );
                vector<PseudoJet> jets{jet};
-               
+
                _cms_jets = jets;
                _jets = jets;
 
@@ -485,7 +581,7 @@ bool MOD::Event::read_event(istream & data_stream, std::string type_of_data) {
                // cout << "Adding AK5" << endl;
                add_cms_jet(stream);
             }
-        
+
             catch (exception& e) {
                throw runtime_error("Invalid file format AK5! Something's wrong with the way jets have been written.");
             }
@@ -537,7 +633,7 @@ bool MOD::Event::read_event(istream & data_stream, std::string type_of_data) {
             }
          }
          else if (tag == "EndEvent") {
-            
+
             // cout << "EndEvent" << endl;
 
             set_multiplicity(cur_count);
@@ -555,9 +651,9 @@ bool MOD::Event::read_event(istream & data_stream, std::string type_of_data) {
             throw runtime_error("Invalid file format! Unrecognized tag: " + tag + "!");
          }
       }
-      
+
    }
-    
+
    // cout << "processed error " << endl;
 
    return false;
@@ -584,18 +680,18 @@ int MOD::Event::assigned_trigger_prescale() const {
 }
 
 void MOD::Event::set_assigned_trigger() {
-   
+
    string trigger_to_use = "";
    string trigger = "";
 
    // First, figure out the hardest pT.
    PseudoJet trigger_jet = _trigger_jet;
-   
+
    //cout << "JEC is: " << _hardest_jet_jec << endl;
 
    trigger_jet *= _hardest_jet_jec;
-    
-  
+
+
 
    if (trigger_jet.E() == 0.0) {
       _assigned_trigger_name = "";
@@ -643,7 +739,7 @@ void MOD::Event::set_assigned_trigger() {
 
       if (trigger_to_use != "") {
          _assigned_trigger_name = trigger_to_use;
-         _assigned_trigger = trigger_by_short_name(trigger_to_use);   
+         _assigned_trigger = trigger_by_short_name(trigger_to_use);
       }
       else {
          _assigned_trigger_name = "";
@@ -651,7 +747,7 @@ void MOD::Event::set_assigned_trigger() {
       }
    }
 
-   
+
    // cout << "Here: " << _assigned_trigger.name() << endl;
 
 }
@@ -662,11 +758,39 @@ int MOD::Event::get_hardest_jet_quality() const {
     return _hardest_jet_quality;
 }
 
-double MOD::Event::get_hardest_jet_jec() const {
+int MOD::Event::get_second_hardest_jet_quality() const {
+    // cout << typeid(sorted_by_pt(_jets)[0]).name() << endl;
+    //  return sorted_by_pt(_jets)[0].user_info<InfoCalibratedJet>().JEC();
+    return _second_hardest_jet_quality;
+}
+
+int MOD::Event::get_third_hardest_jet_quality() const {
+    // cout << typeid(sorted_by_pt(_jets)[0]).name() << endl;
+    //  return sorted_by_pt(_jets)[0].user_info<InfoCalibratedJet>().JEC();
+    return _third_hardest_jet_quality;
+}
+
+
+
+double MOD::Event::get_second_hardest_jet_jec() const {
    // cout << typeid(sorted_by_pt(_jets)[0]).name() << endl;
    //  return sorted_by_pt(_jets)[0].user_info<InfoCalibratedJet>().JEC();
-   return _hardest_jet_jec;
+   return _second_hardest_jet_jec;
 }
+
+double MOD::Event::get_third_hardest_jet_jec() const {
+    // cout << typeid(sorted_by_pt(_jets)[0]).name() << endl;
+    //  return sorted_by_pt(_jets)[0].user_info<InfoCalibratedJet>().JEC();
+    return _third_hardest_jet_jec;
+}
+
+double MOD::Event::get_hardest_jet_jec() const {
+    // cout << typeid(sorted_by_pt(_jets)[0]).name() << endl;
+    //  return sorted_by_pt(_jets)[0].user_info<InfoCalibratedJet>().JEC();
+    return _hardest_jet_jec;
+}
+
+
 
 double MOD::Event::get_hardest_jet_area() const {
     // TODO: Area needs to be fixed.
@@ -676,12 +800,12 @@ double MOD::Event::get_hardest_jet_area() const {
 }
 
 void MOD::Event::set_trigger_jet() {
-	
+
    /*
    for (unsigned i=0; i < _cms_jets.size(); i++) {
 	cout << _cms_jets[i].pt() << ", ";
    }
-	
+
    cout << endl << "========================================" << endl;
    */
 
@@ -697,14 +821,14 @@ void MOD::Event::set_trigger_jet() {
    for (unsigned i=0; i < processed_jets.size(); i++) {
 	cout << processed_jets[i].pt() << ", ";
    }
-	
+
    cout << endl << "========================================" << endl;
-   
+
 
    for (unsigned i=0; i < processed_jets.size(); i++) {
 	cout << processed_jets[i].user_info<InfoCalibratedJet>().JEC() << ", ";
    }
-	
+
    cout << endl << "========================================" << endl;
 
 
@@ -715,14 +839,23 @@ void MOD::Event::set_trigger_jet() {
    // cout << processed_jets.size() << endl;
 
    // Then, sort the jets and store the hardest one as _trigger_jet.
-   if (processed_jets.size() > 0) {
+   if (processed_jets.size() > 2) {
       vector<PseudoJet> sorted_processed_jets = sorted_by_pt(processed_jets);
-      
+
       //cout << sorted_processed_jets[0].pt() << endl;
 
       int index = find(processed_jets.begin(), processed_jets.end(), sorted_processed_jets[0]) - processed_jets.begin();
       //auto index = distance(processed_jets.begin(), it);
       _trigger_jet = _cms_jets[index];
+       
+      int second_hardest_index = find(processed_jets.begin(), processed_jets.end(), sorted_processed_jets[1]) - processed_jets.begin();
+
+      _second_hardest_cms_jet = _cms_jets[second_hardest_index];
+       
+       int third_hardest_index = find(processed_jets.begin(), processed_jets.end(), sorted_processed_jets[2]) - processed_jets.begin();
+       
+      _third_hardest_cms_jet = _cms_jets[third_hardest_index];
+
 
       //cout << "index is " << index << endl;
 
@@ -732,12 +865,98 @@ void MOD::Event::set_trigger_jet() {
    }
    else {
       _trigger_jet = PseudoJet();
+      _second_hardest_cms_jet = PseudoJet();
+      _third_hardest_cms_jet = PseudoJet();
+
    }
 }
 
 
 const fastjet::PseudoJet & MOD::Event::closest_fastjet_jet_to_trigger_jet() const {
    return _closest_fastjet_jet_to_trigger_jet;
+    
+    
+}
+
+void MOD::Event::set_closest_fastjet_jet_to_third_hardest_cms_jet() {
+    
+    if (_third_hardest_cms_jet.E() > 0) {   // This ensures that trigger jet is a valid jet and not an empty PseudoJet().
+        
+        // Next, check if the trigger jet has a rapidity of < 2.4.
+        
+        // if ( abs(_trigger_jet.eta()) < 2.4 ) {
+        vector<PseudoJet> fastjet_jets = _jets;
+        
+        // Loop through all FastJet pseudojets, calculating delta R for each one.
+        vector<double> delta_Rs;
+        for (unsigned i = 0; i < fastjet_jets.size(); i++) {
+            delta_Rs.push_back( _third_hardest_cms_jet.delta_R(fastjet_jets[i]) );
+        }
+        
+        // Find the index of the fastjet jet that has the lowest delta R. This will be the jet that's "closest" to the CMS jet.
+        int index = -1;
+        double delta_R = numeric_limits<double>::max();
+        for (unsigned i = 0; i < delta_Rs.size(); i++) {
+            if (delta_Rs[i] <= delta_R) {
+                delta_R = delta_Rs[i];
+                index = i;
+            }
+        }
+        
+        if (index >= 0) {
+            
+            // We now have the corresponding third "hardest" FastJet jet.
+            _closest_fastjet_jet_to_third_hardest_cms_jet = fastjet_jets[index];
+            return;
+        }
+        
+        // }
+        
+    }
+    
+    _closest_fastjet_jet_to_second_hardest_cms_jet = PseudoJet();
+    return;
+}
+
+
+void MOD::Event::set_closest_fastjet_jet_to_second_hardest_cms_jet() {
+    
+    if (_second_hardest_cms_jet.E() > 0) {   // This ensures that trigger jet is a valid jet and not an empty PseudoJet().
+        
+        // Next, check if the trigger jet has a rapidity of < 2.4.
+        
+        // if ( abs(_trigger_jet.eta()) < 2.4 ) {
+        vector<PseudoJet> fastjet_jets = _jets;
+        
+        // Loop through all FastJet pseudojets, calculating delta R for each one.
+        vector<double> delta_Rs;
+        for (unsigned i = 0; i < fastjet_jets.size(); i++) {
+            delta_Rs.push_back( _second_hardest_cms_jet.delta_R(fastjet_jets[i]) );
+        }
+        
+        // Find the index of the fastjet jet that has the lowest delta R. This will be the jet that's "closest" to the CMS jet.
+        int index = -1;
+        double delta_R = numeric_limits<double>::max();
+        for (unsigned i = 0; i < delta_Rs.size(); i++) {
+            if (delta_Rs[i] <= delta_R) {
+                delta_R = delta_Rs[i];
+                index = i;
+            }
+        }
+        
+        if (index >= 0) {
+            
+            // We now have the corresponding "hardest" FastJet jet.
+            _closest_fastjet_jet_to_second_hardest_cms_jet = fastjet_jets[index];
+            return;
+        }
+        
+        // }
+        
+    }
+    
+    _closest_fastjet_jet_to_second_hardest_cms_jet = PseudoJet();
+    return;
 }
 
 void MOD::Event::set_closest_fastjet_jet_to_trigger_jet() {
@@ -745,7 +964,7 @@ void MOD::Event::set_closest_fastjet_jet_to_trigger_jet() {
    if (_trigger_jet.E() > 0) {   // This ensures that trigger jet is a valid jet and not an empty PseudoJet().
 
       // Next, check if the trigger jet has a rapidity of < 2.4.
-      
+
       // if ( abs(_trigger_jet.eta()) < 2.4 ) {
          vector<PseudoJet> fastjet_jets = _jets;
 
@@ -754,8 +973,8 @@ void MOD::Event::set_closest_fastjet_jet_to_trigger_jet() {
          for (unsigned i = 0; i < fastjet_jets.size(); i++) {
             delta_Rs.push_back( _trigger_jet.delta_R(fastjet_jets[i]) );
          }
-         
-         // Find the index of the fastjet jet that has the lowest delta R. This will be the jet that's "closest" to the CMS jet. 
+
+         // Find the index of the fastjet jet that has the lowest delta R. This will be the jet that's "closest" to the CMS jet.
          int index = -1;
          double delta_R = numeric_limits<double>::max();
          for (unsigned i = 0; i < delta_Rs.size(); i++) {
@@ -769,7 +988,7 @@ void MOD::Event::set_closest_fastjet_jet_to_trigger_jet() {
 
             // We now have the corresponding "hardest" FastJet jet.
             _closest_fastjet_jet_to_trigger_jet = fastjet_jets[index];
-            return;   
+            return;
          }
 
       // }
@@ -826,6 +1045,20 @@ void MOD::Event::set_trigger_jet_is_matched() {
  }
 */
 
+bool MOD::Event::is_jet_quality_met(int number_jets_to_analyze) {
+    
+    // UNDETERMINED = -1, FAILED = 0, LOOSE = 1, MEDIUM = 2, TIGHT = 3
+    
+    if (number_jets_to_analyze >= 3){
+        return _hardest_jet_quality >= 1 && _second_hardest_jet_quality >= 1 && _third_hardest_jet_quality >= 1;}
+    else if (number_jets_to_analyze >= 2){
+        return _hardest_jet_quality >= 1 && _second_hardest_jet_quality >= 1;}
+
+    
+    return _hardest_jet_quality >= 1;
+}
+
+
 
 bool MOD::Event::is_trigger_jet_matched() {
 
@@ -845,13 +1078,13 @@ bool MOD::Event::is_trigger_jet_matched() {
 
    // Next, compare if the 4-vector matches upto 10e-4 precision or not.
    double tolerance = pow(10., -3.);
-   if ( ( abs(_trigger_jet.px() - _closest_fastjet_jet_to_trigger_jet.px()) < tolerance ) && ( abs(_trigger_jet.py() - _closest_fastjet_jet_to_trigger_jet.py()) < tolerance ) && ( abs(_trigger_jet.pz() - _closest_fastjet_jet_to_trigger_jet.pz()) < tolerance ) && ( abs(_trigger_jet.E() - _closest_fastjet_jet_to_trigger_jet.E()) < tolerance ) ) {      
+   if ( ( abs(_trigger_jet.px() - _closest_fastjet_jet_to_trigger_jet.px()) < tolerance ) && ( abs(_trigger_jet.py() - _closest_fastjet_jet_to_trigger_jet.py()) < tolerance ) && ( abs(_trigger_jet.pz() - _closest_fastjet_jet_to_trigger_jet.pz()) < tolerance ) && ( abs(_trigger_jet.E() - _closest_fastjet_jet_to_trigger_jet.E()) < tolerance ) ) {
       return true;
    }
 
 
    return false;
-   
+
 }
 
 
@@ -863,18 +1096,35 @@ void MOD::Event::set_hardest_jet() {
 }
 
 
+void MOD::Event::set_second_hardest_jet() {
+    _second_hardest_jet = sorted_by_pt(_jets)[1];
+}
 
-vector<PseudoJet> MOD::Event::apply_jet_energy_corrections(vector<PseudoJet> jets) {
+void MOD::Event::set_third_hardest_jet() {
+    _third_hardest_jet = sorted_by_pt(_jets)[2];
+}
+
+
+
+
+
+vector<PseudoJet> MOD::Event::apply_jet_energy_corrections(vector<PseudoJet> cms_jets) {
 
    vector<PseudoJet> jec_corrected_jets;
 
-   for (unsigned i = 0; i < jets.size(); i++) {
-      jec_corrected_jets.push_back( jets[i] * jets[i].user_info<InfoCalibratedJet>().JEC() );
+   for (unsigned i = 0; i < cms_jets.size(); i++) {
+      jec_corrected_jets.push_back( cms_jets[i] * cms_jets[i].user_info<InfoCalibratedJet>().JEC() );
    }
 
-   if (jets.size() > 0) {
+   if (cms_jets.size() > 2) {
       _hardest_jet_jec = sorted_by_pt(jec_corrected_jets)[0].user_info<InfoCalibratedJet>().JEC();
+      _second_hardest_jet_jec = sorted_by_pt(jec_corrected_jets)[1].user_info<InfoCalibratedJet>().JEC();
+      _third_hardest_jet_jec = sorted_by_pt(jec_corrected_jets)[2].user_info<InfoCalibratedJet>().JEC();
+
       _hardest_jet_quality = sorted_by_pt(jec_corrected_jets)[0].user_info<InfoCalibratedJet>().jet_quality();
+      _second_hardest_jet_quality = sorted_by_pt(jec_corrected_jets)[1].user_info<InfoCalibratedJet>().jet_quality();
+      _third_hardest_jet_quality = sorted_by_pt(jec_corrected_jets)[2].user_info<InfoCalibratedJet>().jet_quality();
+
    }
 
    return jec_corrected_jets;

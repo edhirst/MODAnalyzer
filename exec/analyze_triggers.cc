@@ -80,11 +80,13 @@ int main(int argc, char * argv[]) {
 
 
        if(lumi_block_lumi_info.find(hash_value) != lumi_block_lumi_info.end()){
+           
            analyze_event(event_being_read, output_file, event_serial_number);
+           event_serial_number++;
+
        }
       
       event_being_read = MOD::Event();
-      event_serial_number++;
    }
 
    auto finish = std::chrono::steady_clock::now();
@@ -103,6 +105,7 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
    vector<MOD::Property> properties;
    
    if ( (event_being_read.cms_jets().size() == 0) or (event_being_read.jets().size() == 0) or ( ! trigger_jet.has_user_info())) {
+       cout << "returning" << endl;
       return;
    }
 
@@ -112,9 +115,11 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
    
    try {
       for (unsigned i = 0; i < triggers.size(); i++) {
+        
+          
          
          if (triggers[i].fired()) {
-
+             
             fastjet::PseudoJet trigger_jet = event_being_read.trigger_jet();
 
             properties.push_back(MOD::Property("# Entry", "  Entry"));

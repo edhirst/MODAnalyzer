@@ -10,7 +10,7 @@ from MODPlot import *
 
 
 import parse
-import pfc_parse
+#import pfc_parse
 
 
 
@@ -62,8 +62,8 @@ parsed_log = parse.load_root_files_to_hist(log=True)
 parsed_log_hists = compile_sources(parsed_log)
 
 # Uncomment to load PFC hists. Make sure you have run ./python/pfc_parse.py first
-parsed_pfc = pfc_parse.load_root_files_to_hist()
-parsed_pfc_hists = compile_sources(parsed_pfc)
+#parsed_pfc = pfc_parse.load_root_files_to_hist()
+#parsed_pfc_hists = compile_sources(parsed_pfc)
 
 
 
@@ -74,7 +74,6 @@ print "Finished parsing all files in {} seconds. Now plotting them!".format(end 
 
 
 start = time.time()
-"""
 
 
 create_multi_page_plot(filename=default_dir + "hardest_pT_linear.pdf", 
@@ -88,7 +87,6 @@ create_multi_page_plot(filename=default_dir + "hardest_eta_linear.pdf",
 create_multi_page_plot(filename=default_dir + "hardest_phi_linear.pdf", 
                        hists=compile_hists('hardest_phi', parsed_hists))
 
-"""
 
 create_multi_page_plot(filename=default_dir + "mul_pre_SD_linear.pdf", 
                        hists=compile_hists('mul_pre_SD', parsed_hists))
@@ -96,7 +94,7 @@ create_multi_page_plot(filename=default_dir + "mul_pre_SD_linear.pdf",
 
 create_multi_page_plot(filename=default_dir + "mass_pre_SD_linear.pdf",
                        hists=compile_hists('mass_pre_SD', parsed_hists))
-"""
+
 create_multi_page_plot(filename=default_dir + "track_mass_pre_SD_linear.pdf",
                        hists=compile_hists('track_mass_pre_SD', parsed_hists))
 
@@ -110,7 +108,6 @@ create_multi_page_plot(filename=default_dir + "zg_10_linear.pdf",
 
 create_multi_page_plot(filename=default_dir + "rg_10_linear.pdf", 
                        hists=compile_hists('rg_10', parsed_hists))
-"""
 
 create_multi_page_plot(filename=default_dir + "rg_10_log.pdf",
                        hists=compile_hists('rg_10', parsed_log_hists),x_scale='log')

@@ -120,7 +120,7 @@ def parse_file(input_files, output_filename, data_type, all_hists, log_hists):
 
                                         if condition_boundaries[1] != None and float(numbers[keyword_index]) > float(condition_boundaries[1]):
                                             condition_satisfied = False
-                                    if int(numbers[keywords_index_dictionary['jet_quality']]) < 1 and data_type != 'sim_gen' :
+                                    if int(numbers[keywords_index_dictionary['jet_quality']]) < 3 and data_type != 'sim_gen' :
                                         condition_satisfied = False
 
 
@@ -235,7 +235,7 @@ def parse_file(input_files, output_filename, data_type, all_hists, log_hists):
                                         if condition_boundaries[1] != None and float(numbers[keyword_index]) > float(condition_boundaries[1]):
                                             condition_satisfied = False
 
-                                    if int(numbers[keywords_index_dictionary['jet_quality']]) < 1 and data_type != 'sim_gen':
+                                    if int(numbers[keywords_index_dictionary['jet_quality']]) < 3 and data_type != 'sim_gen':
                                         condition_satisfied = False
                                         #print("jet_quality", int(numbers[keywords_index_dictionary['jet_quality']]), pT_of_this_event)
 
@@ -354,9 +354,9 @@ def parse_to_root_files():
 
     for data_file in data_files:
         if data_file.endswith(".dat"):
-            if 'pfc' in data_file:
+            if 'pfc.dat' in data_file:
                 data_files_sim_pfc.append(input_directory + data_file)
-            elif 'gen' in data_file:
+            elif 'gen.dat' in data_file:
                 data_files_sim_gen.append(input_directory + data_file)
             else:
                 data_files_2011.append(input_directory + data_file)
@@ -409,7 +409,7 @@ def trigger_luminosity_dictionary_2011(input_files):
     for input_file in input_files:
         input_files_short.append(input_file.split('/')[-1])
     print(input_files_short)
-    mod_file_with_trigger = [line.rstrip('\n') for line in open("/home/preksha/Documents/mengproject/MODAnalyzer/effective_luminosity_by_trigger.csv")]
+    mod_file_with_trigger = [line.rstrip('\n') for line in open("effective_luminosity_by_trigger.csv")]
     mod_trigger_luminosities = {}
     for mod_trigger_lumi in mod_file_with_trigger:
         if mod_trigger_lumi.replace(" ",""):
