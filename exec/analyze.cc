@@ -38,6 +38,7 @@ double pT_D(PseudoJet jet);
 unordered_map<int, double> get_lumi_info_by_block(string lumi_data_file_name);
 string get_just_file_name(string & input_file_name);
 string replace_string(string subject, const string& search, const string& replace);
+fastjet::Selector SelectorPileup();
 
 int main(int argc, char * argv[]) {
 
@@ -78,6 +79,8 @@ int main(int argc, char * argv[]) {
         }
         if (strcmp(argv[i], "-number_of_jets") == 0){
            number_jets_to_analyze = stoi(argv[i+1]);
+            cout << "number_of_jets" << number_jets_to_analyze << endl;
+
         }
 
    }
@@ -121,11 +124,10 @@ int main(int argc, char * argv[]) {
            int hash_value = run_number*1000+lumi_block;
 
           // If the event being read has the assigned trigger fired and event is good, analyze and write it out
-           cout << (event_being_read.assigned_trigger_fired()) << endl;
           if (event_being_read.assigned_trigger_fired() and event_being_read.is_trigger_jet_matched() and event_being_read.is_jet_quality_met(number_jets_to_analyze)
                                             and (lumi_block_lumi_info.find(hash_value) != lumi_block_lumi_info.end())) {
               analyze_event(event_being_read, output_file, event_serial_number_analyzed_2011, data_set_to_process, number_jets_to_analyze);
-              event_serial_number_analyzed_2011++;
+              //event_serial_number_analyzed_2011++;
           }
 
           // Go through all possible triggers (regardless of whether assigned trigger fired), check if trigger exists and event is good, and keep cumulative total of effective luminosities
@@ -223,17 +225,24 @@ int main(int argc, char * argv[]) {
 
            MOD::Event decayed_event;
 
+           
            decayed_event.decay_particles(event_being_read, &pythia);
-
-
-          analyze_event(event_being_read, output_file_gen, event_serial_number_gen, type_of_data, number_jets_to_analyze);
-
-          analyze_event(decayed_event, output_file_gen_decay, event_serial_number_gen, type_of_data, number_jets_to_analyze);
-
-
-           event_being_read = MOD::Event();
-           decayed_event = MOD::Event();
-           event_serial_number_gen++;
+           
+          // analyze_event(event_being_read, output_file_gen, event_serial_number_gen, type_of_data, number_jets_to_analyze);
+          // analyze_event(decayed_event, output_file_gen_decay, event_serial_number_gen, type_of_data, number_jets_to_analyze);
+          
+          if(decayed_event.match_partons()){
+               //analyze_event(event_being_read, output_file_gen, event_serial_number_gen, type_of_data, number_jets_to_analyze);
+              
+                analyze_event(decayed_event, output_file_gen_decay, event_serial_number_gen, type_of_data, number_jets_to_analyze);
+          }
+          else{
+              //cout << "partons not matched" << endl;
+          }
+          
+          event_being_read = MOD::Event();
+          decayed_event = MOD::Event();
+          event_serial_number_gen++;
        }
 
        ofstream output_event_counts("event_count_by_pythia_and_mod.csv", ios::out | ios::app);
@@ -264,6 +273,9 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
    Selector pT_1_GeV_selector = SelectorPtMin(1.0);
    Selector pT_0_5_GeV_selector = SelectorPtMin(0.5);
    Selector pT_015_020_GeV_selector = SelectorPtRange(0.15, 0.2);
+    
+    
+   Selector pileup_selector = SelectorPileup();
 
    // cout << "reached here" << endl;
 
@@ -274,8 +286,9 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
 
    vector<PseudoJet> filtered_hardest_jet_constituents = pT_015_020_GeV_selector(event_being_read.hardest_jet().constituents());
 
-   vector<PseudoJet> hardest_jet_constituents = event_being_read.hardest_jet().constituents();
+   vector<PseudoJet> hardest_jet_constituents = pileup_selector(event_being_read.hardest_jet().constituents());
 
+   //vector<PseudoJet> hardest_jet_constituents = event_being_read.hardest_jet().constituents();
 
 
    ClusterSequence cs = ClusterSequence(hardest_jet_constituents, jet_def_cambridge);
@@ -337,7 +350,8 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
 
 
    properties.push_back(MOD::Property("jet_quality", event_being_read.get_hardest_jet_quality()));
-
+    
+    properties.push_back(MOD::Property("npv", event_being_read.npv()));
 
    // properties.push_back( MOD::Property("softkill_pT_loss", (uncorrected_hardest_jet_no_softkiller.pt() - uncorrected_hardest_jet_with_softkiller.pt() ) / uncorrected_hardest_jet_no_softkiller.pt() ) );
    // properties.push_back( MOD::Property("frac_pT_loss", (hardest_jet.pt() - soft_drop( hardest_jet ).pt() ) / hardest_jet.pt() ) );
@@ -348,9 +362,19 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
 
    if (data_set_to_process == "2011" or data_set_to_process == "sim_pfc"){properties.push_back(MOD::Property("trigger_fired", event_being_read.assigned_trigger_name()));}
 
-   if (data_set_to_process == "sim_gen"){   properties.push_back(MOD::Property("trigger_fired", "no_trigger"));}
+   if (data_set_to_process == "sim_gen"){
+       
+       properties.push_back(MOD::Property("trigger_fired", "no_trigger"));
+       properties.push_back(MOD::Property("hardest_jet_parton_id", event_being_read.hardest_jet_parton_id()));
+       properties.push_back(MOD::Property("second_hardest_jet_parton_id", event_being_read.second_hardest_jet_parton_id()));
+
+   
+   
+   }
 
    properties.push_back( MOD::Property("hardest_phi", event_being_read.hardest_jet().phi()) );
+    
+   
 
 
    if ((event_being_read.data_source() == 3) || (event_being_read.data_source() == 0))
@@ -475,8 +499,10 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
    // Get all charged particles with 0.5 GeV particles removed.
    // vector<fastjet::PseudoJet> track_constituents = MOD::filter_charged(pT_0_5_GeV_selector(event_being_read.hardest_jet().constituents()));
 
-   // Get all charged particles no filter
-   vector<fastjet::PseudoJet> track_constituents = MOD::filter_charged(event_being_read.hardest_jet().constituents());
+   // Get all charged particles removing pileup
+   vector<fastjet::PseudoJet> track_constituents = MOD::filter_charged(pileup_selector(event_being_read.hardest_jet().constituents()));
+    
+   //vector<fastjet::PseudoJet> track_constituents = MOD::filter_charged(event_being_read.hardest_jet().constituents());
 
    // Cluster them using Cambridge/Alachen with infinite radius. This makes sure that we get the same jets as "regular" ak5 jets except now with just charged particles.
    ClusterSequence cs_track(track_constituents, jet_def_cambridge);
@@ -609,8 +635,47 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
        properties.push_back( MOD::Property("delta_phi_second_and_first", second_hardest_jet.delta_phi_to(hardest_jet)) );
        
        
+       
+       vector<fastjet::PseudoJet> second_hardest_track_constituents = MOD::filter_charged(pileup_selector(event_being_read.second_hardest_jet().constituents()));
+       
+       //vector<fastjet::PseudoJet> track_constituents = MOD::filter_charged(event_being_read.hardest_jet().constituents());
+       
+       // Cluster them using Cambridge/Alachen with infinite radius. This makes sure that we get the same jets as "regular" ak5 jets except now with just charged particles.
+       ClusterSequence cs_second_hardest_track(second_hardest_track_constituents, jet_def_cambridge);
+       
+       
+       if (cs_second_hardest_track.inclusive_jets().size() > 0 ) {
+
+           PseudoJet second_hardest_track_jet = cs_second_hardest_track.inclusive_jets()[0];
+           properties.push_back( MOD::Property("second_hardest_track_mul_pre_SD", (int) second_hardest_track_jet.constituents().size()) );
+           //cout << "track_mul_pre_SD" << endl;
+           
+           
+           properties.push_back( MOD::Property("second_hardest_track_mul_post_SD", (int) soft_drop(second_hardest_track_jet).constituents().size()) );
+           
+           properties.push_back( MOD::Property("second_hardest_track_mass_pre_SD", second_hardest_track_jet.m()) );
+           properties.push_back( MOD::Property("second_hardest_track_mass_post_SD", soft_drop(second_hardest_track_jet).m()) );
+
+
+       }
+       else {
+           properties.push_back( MOD::Property("second_hardest_track_mul_pre_SD", -1. ));
+           //cout << "track_mul_pre_SD" << endl;
+           
+           
+           properties.push_back( MOD::Property("second_hardest_track_mul_post_SD", -1. ));
+           
+           properties.push_back( MOD::Property("second_hardest_track_mass_pre_SD", -1. ));
+           properties.push_back( MOD::Property("second_hardest_track_mass_post_SD", -1. ));
+
+       }
 
        
+
+       
+       
+
+       if(number_jets_to_analyze >= 3) {
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
        double third_hardest_jec = 1.0;
        
@@ -671,7 +736,7 @@ void analyze_event(MOD::Event & event_being_read, ofstream & output_file, int & 
        // Cluster them using Cambridge/Alachen with infinite radius. This makes sure that we get the same jets as "regular" ak5 jets except now with just charged particles.
 
 
-
+       }
        
    }
     
@@ -867,3 +932,20 @@ string replace_string(string subject, const string& search, const string& replac
     }
     return subject;
 }
+
+
+class SelectorWorkerPileup : public fastjet::SelectorWorker {
+public:
+    
+    virtual bool pass(const fastjet::PseudoJet & particle) const {
+        // we check that the user_info_ptr is non-zero
+        return (particle.has_user_info<MOD::InfoPFC>()
+                &&      (particle.user_info<MOD::InfoPFC>().vertex() == 0 or  particle.user_info<MOD::InfoPFC>().vertex() == -1) );
+    }
+};
+
+// now the two selector functions
+fastjet::Selector SelectorPileup() {
+    return new SelectorWorkerPileup();
+}
+
