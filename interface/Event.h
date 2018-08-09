@@ -43,16 +43,22 @@ namespace MOD {
 
             const int event_number() const;
             const int run_number() const;
+            const int npv() const;
+
 
             const MOD::Condition condition() const;
 
             const int version() const;
             const data_source_t data_source() const;
             const double weight() const;
+          
+            const int hardest_jet_parton_id() const;
+            const int second_hardest_jet_parton_id() const;
 
             const std::pair<std::string, std::string> data_type() const;
 
             const std::vector<fastjet::PseudoJet> & particles() const;
+            const std::vector<fastjet::PseudoJet> & partons() const;
             const std::vector<fastjet::PseudoJet> & cms_jets() const;
             const std::vector<fastjet::PseudoJet> & jets() const;
 
@@ -60,6 +66,7 @@ namespace MOD {
 
             std::string make_string() const;
             std::string assigned_trigger_name() const;
+          
 
             const Trigger trigger_by_name(std::string name) const;
             const Trigger trigger_by_short_name(std::string name) const;
@@ -90,6 +97,8 @@ namespace MOD {
 
             void add_condition(std::istringstream & input_stream);
             void add_particle(std::istringstream & input_stream);
+            void add_parton(std::istringstream & input_stream);
+
             void add_cms_jet(std::istringstream & input_stream);
             void add_trigger(std::istringstream & input_stream);
 
@@ -101,6 +110,7 @@ namespace MOD {
             void set_multiplicity(int multiplicity);
             void establish_properties();
             void decay_particles(MOD::Event old_object, Pythia8::Pythia *pythia);
+            bool match_partons();
 
             void convert_to_one_jet();
 
@@ -126,6 +136,9 @@ namespace MOD {
             int _hardest_jet_quality;
             int _second_hardest_jet_quality;
             int _third_hardest_jet_quality;
+          
+            int _hardest_jet_parton_id;
+            int _second_hardest_jet_parton_id;
 
 
             std::pair<std::string, std::string> _data_type;
@@ -133,6 +146,7 @@ namespace MOD {
 
             std::vector<MOD::Trigger> _triggers;
             std::vector<fastjet::PseudoJet> _particles;
+            std::vector<fastjet::PseudoJet> _partons;
             std::vector<fastjet::PseudoJet> _cms_jets;
             std::vector<fastjet::PseudoJet> _jets;
 
