@@ -15,6 +15,7 @@
 #include "fastjet/ClusterSequence.hh"
 #include "InfoPFC.h"
 #include "InfoCalibratedJet.h"
+#include "fastjet/Selector.hh"
 
 
 
@@ -24,7 +25,7 @@
 namespace MOD {
  
   std::vector<fastjet::PseudoJet> filter_charged(std::vector<fastjet::PseudoJet>);
-
+    
 }
 
 
