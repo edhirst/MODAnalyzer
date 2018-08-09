@@ -18,6 +18,10 @@ const int MOD::Event::run_number() const {
    return _condition.run_number();
 }
 
+const int MOD::Event::npv() const {
+    return _condition.npv();
+}
+
 const MOD::Condition MOD::Event::condition() const {
    return _condition;
 }
@@ -28,6 +32,14 @@ const int MOD::Event::version() const {
 
 const pair<string, string> MOD::Event::data_type() const {
    return _data_type;
+}
+
+const int MOD::Event::hardest_jet_parton_id() const {
+    return _hardest_jet_parton_id;
+}
+
+const int MOD::Event::second_hardest_jet_parton_id() const {
+    return _second_hardest_jet_parton_id;
 }
 
 
@@ -41,6 +53,10 @@ void MOD::Event::set_data_type(string a, string b) {
 
 const vector<PseudoJet> & MOD::Event::particles() const {
    return _particles;
+}
+
+const vector<PseudoJet> & MOD::Event::partons() const {
+    return _partons;
 }
 
 
@@ -64,11 +80,68 @@ void MOD::Event::add_particle(istringstream & input_stream) {
    PseudoJet new_particle = PseudoJet(px, py, pz, energy);
    new_particle.set_user_info(new InfoPFC(pdgId, tag, PV));
 
-  if (PV == 0 or PV == -1) {
-      _particles.push_back(new_particle);
-  }
+   _particles.push_back(new_particle);
 
     
+}
+
+void MOD::Event::add_parton(istringstream & input_stream) {
+    string tag;
+    double px, py, pz, energy;
+    int pdgId;
+    
+    input_stream >> tag >> px >> py >> pz >> energy >> pdgId;
+    
+    PseudoJet new_parton = PseudoJet(px, py, pz, energy);
+    
+    int PV = -1;
+    new_parton.set_user_info(new InfoPFC(pdgId, tag, PV));
+    
+    _partons.push_back(new_parton);
+}
+    
+
+bool MOD::Event::match_partons(){
+    
+    if (_data_source != MC_TRUTH) {return true;}
+    
+    vector<PseudoJet> partons = _partons;
+    
+    PseudoJet parton_1 = partons.end() [-2];
+    PseudoJet parton_2 = partons.end() [-1];
+    
+    
+    PseudoJet hardest_jet = _hardest_jet;
+    PseudoJet second_hardest_jet = _second_hardest_jet;
+    
+    
+    int match_threshold = 1.0;
+    double AK5_radius = 0.5;
+    
+    
+    if(hardest_jet.delta_R(parton_1) < match_threshold*AK5_radius){
+        _hardest_jet_parton_id = parton_1.user_info<MOD::InfoPFC>().pdgId();
+    }
+    else if (hardest_jet.delta_R(parton_2) < match_threshold*AK5_radius){
+        _hardest_jet_parton_id = parton_2.user_info<MOD::InfoPFC>().pdgId();
+    }
+    else{
+        return false;
+    }
+        
+    if(second_hardest_jet.delta_R(parton_1) < match_threshold*AK5_radius){
+        _second_hardest_jet_parton_id = parton_1.user_info<MOD::InfoPFC>().pdgId();
+    }
+    else if (second_hardest_jet.delta_R(parton_2) < match_threshold*AK5_radius){
+        _second_hardest_jet_parton_id = parton_2.user_info<MOD::InfoPFC>().pdgId();
+    }
+    else{
+        return false;
+    }
+
+    
+    return true;
+
 }
 
 void MOD::Event::decay_particles(MOD::Event old_object, Pythia8::Pythia *pythia) {
@@ -87,7 +160,7 @@ void MOD::Event::decay_particles(MOD::Event old_object, Pythia8::Pythia *pythia)
   double px, py, pz, e;
   int pdgId;
   pythia->event.append(90, -11, 0, 0, 0., 0., 0., 7000., 7000.);
-
+    
  for (unsigned i = 0; i < gen_particles.size(); i++) {
    pdgId = gen_particles[i].user_info<MOD::InfoPFC>().pdgId();
    px = gen_particles[i].px();
@@ -98,12 +171,13 @@ void MOD::Event::decay_particles(MOD::Event old_object, Pythia8::Pythia *pythia)
    pythia->event.append( pdgId, 91, 0, 0, px, py, pz, e, mass);
   }
   pythia->next();
+    
 
 
 // now iterate through the particles and add them to event_being_read.particles()
    for (int i = 0; i < pythia->event.size(); ++i){
          if (pythia->event[i].isFinal()){
-               string trial_line = string("Gen")+" "+to_string(pythia->event[i].px())+" "+to_string(pythia->event[i].py())+" "+to_string(pythia->event[i].pz())+" "+to_string(pythia->event[i].e())+" "+to_string(pythia->event[i].id());
+               string trial_line = string("Gen")+" "+to_string(pythia->event[i].px())+" "+to_string(pythia->event[i].py())+" "+to_string(pythia->event[i].pz())+" "+to_string(pythia->event[i].e())+" "+to_string(pythia->event[i].id())+" 0";
                //cout << to_string(pythia->event[i].id()) << endl;
                std::istringstream ss;
                  ss.str (trial_line);
@@ -112,15 +186,22 @@ void MOD::Event::decay_particles(MOD::Event old_object, Pythia8::Pythia *pythia)
                  add_particle(ss);
                      }
                 }
+    
+    vector<PseudoJet> partons = old_object.partons();
+    for (unsigned i = 0; i < partons.size(); i++) {
+        string parton = stringify_pfc(partons[i]);
+        std::istringstream ss;
+        ss.str(parton);
+        add_parton(ss);
+    }
 
-
-
+    
      set_version(6);
      set_data_type("CMS_2011", "Sim");
      set_data_source(1);
      set_multiplicity(pythia->event.size());
      establish_properties();
-      pythia->event.reset();
+     pythia->event.reset();
 
 
 }
@@ -245,11 +326,12 @@ const string MOD::Event::stringify_pfc(PseudoJet particle) const {
         << setw(16) << fixed << setprecision(8) << particle.py()
         << setw(16) << fixed << setprecision(8) << particle.pz()
         << setw(16) << fixed << setprecision(8) << particle.E()
-        << setw(16) << noshowpos << particle.user_info<MOD::InfoPFC>().pdgId()
+        << setw(16) << fixed << setprecision(8) << particle.user_info<MOD::InfoPFC>().pdgId()
         << endl;
 
    return ss.str();
 }
+
 
 
 string MOD::Event::make_string() const {
@@ -460,7 +542,7 @@ void MOD::Event::establish_properties() {
       set_closest_fastjet_jet_to_second_hardest_cms_jet();
        
 
-      set_closest_fastjet_jet_to_third_hardest_cms_jet();
+      //set_closest_fastjet_jet_to_third_hardest_cms_jet();
 
 
       // cout << "Trigger jet matched!" << endl;
@@ -481,7 +563,7 @@ void MOD::Event::establish_properties() {
 
    set_hardest_jet();
    set_second_hardest_jet();
-   set_third_hardest_jet();
+   //set_third_hardest_jet();
 
 
 }
@@ -594,6 +676,14 @@ bool MOD::Event::read_event(istream & data_stream, std::string type_of_data) {
             catch (exception& e) {
                throw runtime_error("Invalid file format! Something's wrong with the way triggers have been written.");
             }
+         }
+         else if (tag == "Hard") {
+             try {
+                 add_parton(stream);
+             }
+             catch (exception& e) {
+                 throw runtime_error("Invalid file format! Something's wrong with the way Partons have been written.");
+             }
          }
          else if (tag == "Cond") {
             try {
@@ -839,7 +929,7 @@ void MOD::Event::set_trigger_jet() {
    // cout << processed_jets.size() << endl;
 
    // Then, sort the jets and store the hardest one as _trigger_jet.
-   if (processed_jets.size() > 2) {
+   if (processed_jets.size() >= 2) {
       vector<PseudoJet> sorted_processed_jets = sorted_by_pt(processed_jets);
 
       //cout << sorted_processed_jets[0].pt() << endl;
@@ -852,9 +942,9 @@ void MOD::Event::set_trigger_jet() {
 
       _second_hardest_cms_jet = _cms_jets[second_hardest_index];
        
-       int third_hardest_index = find(processed_jets.begin(), processed_jets.end(), sorted_processed_jets[2]) - processed_jets.begin();
+      // int third_hardest_index = find(processed_jets.begin(), processed_jets.end(), sorted_processed_jets[2]) - processed_jets.begin();
        
-      _third_hardest_cms_jet = _cms_jets[third_hardest_index];
+      //_third_hardest_cms_jet = _cms_jets[third_hardest_index];
 
 
       //cout << "index is " << index << endl;
@@ -1116,14 +1206,14 @@ vector<PseudoJet> MOD::Event::apply_jet_energy_corrections(vector<PseudoJet> cms
       jec_corrected_jets.push_back( cms_jets[i] * cms_jets[i].user_info<InfoCalibratedJet>().JEC() );
    }
 
-   if (cms_jets.size() > 2) {
+   if (cms_jets.size() > 1) {
       _hardest_jet_jec = sorted_by_pt(jec_corrected_jets)[0].user_info<InfoCalibratedJet>().JEC();
       _second_hardest_jet_jec = sorted_by_pt(jec_corrected_jets)[1].user_info<InfoCalibratedJet>().JEC();
-      _third_hardest_jet_jec = sorted_by_pt(jec_corrected_jets)[2].user_info<InfoCalibratedJet>().JEC();
+      //_third_hardest_jet_jec = sorted_by_pt(jec_corrected_jets)[2].user_info<InfoCalibratedJet>().JEC();
 
       _hardest_jet_quality = sorted_by_pt(jec_corrected_jets)[0].user_info<InfoCalibratedJet>().jet_quality();
       _second_hardest_jet_quality = sorted_by_pt(jec_corrected_jets)[1].user_info<InfoCalibratedJet>().jet_quality();
-      _third_hardest_jet_quality = sorted_by_pt(jec_corrected_jets)[2].user_info<InfoCalibratedJet>().jet_quality();
+      //_third_hardest_jet_quality = sorted_by_pt(jec_corrected_jets)[2].user_info<InfoCalibratedJet>().jet_quality();
 
    }
 
